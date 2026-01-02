@@ -33,7 +33,7 @@ const NavBar = () => {
                 <div>
                     <a href="#" className="nav__link nav__logo">
                         <i className='bx bxs-disc nav__icon' ></i>
-                        <span className="nav__logo-name">Bedimcode</span>
+                        <span className="nav__logo-name">Evolyn</span>
                     </a>
     
                     <div className="nav__list">

@@ -29,7 +29,7 @@ const Header = () => {
     return (
         <div className="header">
             <div className="header__container">
-                <a href="#" className="header__logo">Bedimcode</a>
+                <a href="#" className="header__logo">Evolyn</a>
 
                 <div className="header__search">
                     <input type="search" placeholder="Search" className="header__input" />
