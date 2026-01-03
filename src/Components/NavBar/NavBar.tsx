@@ -1,6 +1,10 @@
 import "./NavBar.scss"
+import { NavBarProperty } from "./types"
+import { getNavBarContent } from "../../API/NavBar/api"
+import { useEffect, useState } from "react"
 
 const NavBar = () => {
+    const [navBarDetails, setNavBarDetails] = useState<any>([]);
     /*==================== SHOW NAVBAR ====================*/
     const showMenu = (headerToggle, navbarId) =>{
         const toggleBtn = document.getElementById(headerToggle),
@@ -27,9 +31,20 @@ const NavBar = () => {
     }
 
     linkColor.forEach(l => l.addEventListener('click', colorLink))
+
+const getNavBarData = () => {
+    const navBarContent = getNavBarContent();
+    navBarContent.sort((a, b) => Number(a.order) - Number(b.order));
+    console.log('NavBarContent : ', navBarContent);
+    setNavBarDetails(navBarContent);
+}
+
+    useEffect(() => {
+        getNavBarData();
+    }, []);
     return (
         <div className="nav" id="navbar">
-            <nav className="nav__container">
+            {/* <nav className="nav__container">
                 <div>
                     <a href="#" className="nav__link nav__logo">
                         <i className='bx bxs-disc nav__icon' ></i>
@@ -38,7 +53,6 @@ const NavBar = () => {
     
                     <div className="nav__list">
                         <div className="nav__items">
-                            <h3 className="nav__subtitle">Profile</h3>
     
                             <a href="#" className="nav__link active">
                                 <i className='bx bx-home nav__icon' ></i>
@@ -65,11 +79,6 @@ const NavBar = () => {
                                 <i className='bx bx-message-rounded nav__icon' ></i>
                                 <span className="nav__name">Messages</span>
                             </a>
-                        </div>
-    
-                        <div className="nav__items">
-                            <h3 className="nav__subtitle">Menu</h3>
-    
                             <div className="nav__dropdown">
                                 <a href="#" className="nav__link">
                                     <i className='bx bx-bell nav__icon' ></i>
@@ -100,6 +109,50 @@ const NavBar = () => {
                     </div>
                 </div>
 
+                <a href="#" className="nav__link nav__logout">
+                    <i className='bx bx-log-out nav__icon' ></i>
+                    <span className="nav__name">Log Out</span>
+                </a>
+            </nav> */}
+            <nav className="nav__container">
+                <div>
+                    <a href="#" className="nav__link nav__logo">
+                        <i className='bx bxs-disc nav__icon' ></i>
+                        <span className="nav__logo-name">Evolyn</span>
+                    </a>
+                    <div className="nav__list">
+                        {navBarDetails.map((navData, index) => (
+                            <div className="nav__items" key={index}>
+                                {index === 0 ? (
+                                    <a href="#" className="nav__link active">
+                                        <i className={navData.icon}></i>
+                                        <span className="nav__name">{navData.name}</span>
+                                        {navData.dropDown?.length > 0 && (
+                                            <i className="bx bx-chevron-down nav__icon nav__dropdown-icon"></i>
+                                        )}
+                                    </a>
+                                ) : (
+                                    <a href="#" className="nav__link">
+                                        <i className={navData.icon}></i>
+                                        <span className="nav__name">{navData.name}</span>
+                                        {navData.dropDown?.length > 0 && (
+                                            <i className="bx bx-chevron-down nav__icon nav__dropdown-icon"></i>
+                                        )}
+                                    </a>
+                                )}
+                                {navData.dropDown?.length > 0 && (
+                                    <div className="nav__dropdown-collapse">
+                                        <div className="nav__dropdown-content">
+                                            {navData.dropDown.map((dropDownContent, index) => {
+                                                <a href="#" className="nav__dropdown-item" key={index}>{dropDownContent}</a>
+                                            })}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                </div>
                 <a href="#" className="nav__link nav__logout">
                     <i className='bx bx-log-out nav__icon' ></i>
                     <span className="nav__name">Log Out</span>

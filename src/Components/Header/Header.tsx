@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import "./Header.scss";
-import profileIcon from "../../Statics/dark-theme-profile.svg";
+// import profileIcon from "../../Statics/dark-theme-profile.svg";
 import ToggleSwitch from "../ToggleSwitch/toggleSwitch";
 
 const Header = () => {
@@ -39,9 +39,9 @@ const Header = () => {
                 <div>
                     <div className="toggleSwitch-profile">
                         <ToggleSwitch />
-                        <div>
+                        {/* <div>
                             <img src={profileIcon} alt="Profile" className="header__img" />
-                        </div>
+                        </div> */}
                     </div>
                     <div className="header__toggle">
                         <i className="bx bx-menu" id="header-toggle"></i>
