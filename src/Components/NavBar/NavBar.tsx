@@ -2,8 +2,10 @@ import "./NavBar.scss"
 import { NavBarProperty } from "./types"
 import { getNavBarContent } from "../../API/NavBar/api"
 import { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom";
 
 const NavBar = () => {
+    const navigate = useNavigate();
     const [navBarDetails, setNavBarDetails] = useState<any>([]);
     /*==================== SHOW NAVBAR ====================*/
     const showMenu = (headerToggle, navbarId) =>{
@@ -32,12 +34,17 @@ const NavBar = () => {
 
     linkColor.forEach(l => l.addEventListener('click', colorLink))
 
-const getNavBarData = () => {
-    const navBarContent = getNavBarContent();
-    navBarContent.sort((a, b) => Number(a.order) - Number(b.order));
-    console.log('NavBarContent : ', navBarContent);
-    setNavBarDetails(navBarContent);
-}
+    const getNavBarData = () => {
+        const navBarContent = getNavBarContent();
+        navBarContent.sort((a, b) => Number(a.order) - Number(b.order));
+
+        setNavBarDetails(navBarContent);
+    }
+
+    const handleClick = (event, navDataName) => {
+        const target = "/" + navDataName.toLowerCase();
+        navigate(target);
+    }
 
     useEffect(() => {
         getNavBarData();
@@ -116,7 +123,7 @@ const getNavBarData = () => {
             </nav> */}
             <nav className="nav__container">
                 <div>
-                    <a href="#" className="nav__link nav__logo">
+                    <a className="nav__link nav__logo" onClick={(event) => handleClick(event, "")}>
                         <i className='bx bxs-disc nav__icon' ></i>
                         <span className="nav__logo-name">Evolyn</span>
                     </a>
@@ -124,7 +131,7 @@ const getNavBarData = () => {
                         {navBarDetails.map((navData, index) => (
                             <div className="nav__items" key={index}>
                                 {index === 0 ? (
-                                    <a href="#" className="nav__link active">
+                                    <a className="nav__link active" onClick={(event) => handleClick(event, "")}>
                                         <i className={navData.icon}></i>
                                         <span className="nav__name">{navData.name}</span>
                                         {navData.dropDown?.length > 0 && (
@@ -132,7 +139,7 @@ const getNavBarData = () => {
                                         )}
                                     </a>
                                 ) : (
-                                    <a href="#" className="nav__link">
+                                    <a className="nav__link" onClick={(event) => handleClick(event, navData.name)}>
                                         <i className={navData.icon}></i>
                                         <span className="nav__name">{navData.name}</span>
                                         {navData.dropDown?.length > 0 && (
@@ -144,7 +151,7 @@ const getNavBarData = () => {
                                     <div className="nav__dropdown-collapse">
                                         <div className="nav__dropdown-content">
                                             {navData.dropDown.map((dropDownContent, index) => {
-                                                <a href="#" className="nav__dropdown-item" key={index}>{dropDownContent}</a>
+                                                <a className="nav__dropdown-item" key={index}>{dropDownContent}</a>
                                             })}
                                         </div>
                                     </div>
@@ -153,7 +160,7 @@ const getNavBarData = () => {
                         ))}
                     </div>
                 </div>
-                <a href="#" className="nav__link nav__logout">
+                <a className="nav__link nav__logout">
                     <i className='bx bx-log-out nav__icon' ></i>
                     <span className="nav__name">Log Out</span>
                 </a>
