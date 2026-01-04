@@ -29,6 +29,51 @@ const Explore = () => {
             IntroCardIconColor: "#fde68a",
         },
     ];  
+
+    const principles = [
+        {
+           Heading1: "Intentional.",
+           Heading2: "But Smarter.",
+           SubHeading: "Evolyn quietly observes your actions, identifies patterns, and helps you stay aligned — even when motivation fades.",
+           boxColor: "linear-gradient(135deg, #2563eb, #0ea5e9)",
+           reverse: false,
+           Points: [
+            "Always-on tracking",
+            "Zero manual reporting",
+            "Data-backed insights",
+            "No missed signals",
+           ], 
+        },
+        {
+            Heading1: "Authentic.",
+            Heading2: "The Real You, Amplified.",
+            SubHeading:
+                "Your AI Twin doesn’t imitate — it represents you accurately, consistently, and professionally.",
+            boxColor: "linear-gradient(135deg, #059669, #10b981)",
+            reverse: true,
+            Points: [
+                "Speaks in your tone",
+                "Shares your story",
+                "Reflects your personality",
+                "Represents you authentically",
+            ],
+        },
+        {
+            Heading1: "Simple.",
+            Heading2: "Because AI Should Feel Effortless.",
+            SubHeading:
+                "Set it up once. Evolyn works quietly in the background — handling conversations, questions, and leads for you.",
+            boxColor: "linear-gradient(135deg, #7c3aed, #9333ea)",
+            reverse: false,
+            Points: [
+                "Create your page once",
+                "Train your Twin easily",
+                "Let it work for you",
+            ],
+        },
+    ];
+
+
     return (
         <div>
             <div className="EyeBrow-Container">
@@ -63,6 +108,37 @@ Designed to work quietly — and compound over time.</div>
             <div className="explore-card-container">
                 {introCardData.map((item, index) => (
                     <IntroCards {...item} key={index}/>
+                ))}
+            </div>
+            <div className="principles-section">
+                {principles.map((item, index) => (
+                    <div
+                        key={index}
+                        className="principle-row"
+                        style={{ flexDirection: item.reverse ? "row-reverse" : "row" }}
+                    >
+                        <div className="principle-text">
+                            <h1>
+                                {item.Heading1}
+                                <br />
+                                <span>{item.Heading2}</span>
+                            </h1>
+                            <p>{item.SubHeading}</p>
+                        </div>
+                        <div
+                            className="principle-box"
+                            style={{ background: item.boxColor }}
+                        >
+                            {item.Points.map((point, idx) => (
+                                <div className="principle-point" key={idx}>
+                                    <div className="principle-check">
+                                        <i className="bx bxs-check-circle"></i>
+                                    </div>
+                                    <span>{point}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
                 ))}
             </div>
         </div>
