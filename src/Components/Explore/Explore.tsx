@@ -2,6 +2,7 @@
 import EyeBrowSection from "../../Common/EyeBrowSection/EyeBrowSection";
 import IntroCards from "../../Common/IntroCards/IntroCards";
 import FeatureCard from "../FeatureCard/FeatureCard";
+import Footer from "../Footer/Footer";
 import "./Explore.scss";
 
 
@@ -223,6 +224,7 @@ Designed to work quietly — and compound over time.</div>
                     <FeatureCard key={index} {...item} />
                 ))}
             </div>
+            <Footer />
         </div>
     );
 }
