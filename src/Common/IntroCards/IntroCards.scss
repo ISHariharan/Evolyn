@@ -1,0 +1,74 @@
+.intro-card {
+  display: block;
+  text-align: left;
+  gap: clamp(10px, 2.5vw, 16px);
+  padding: clamp(12px, 2.5vw, 20px);
+  border-radius: 12px;
+  background: var(--intro-bg, var(--container-color));
+  color: var(--intro-text, var(--text-color));
+  border: 1px solid var(--first-color-light);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  width: min(92vw, 640px);
+  margin: 16px auto;
+  margin-top: 4%;
+  transition: background-color .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+
+.introCard-icon-container{
+  padding: 2%;
+  width: 10%;
+  border-radius: 10%;
+  margin-bottom: 20px;
+}
+
+.intro-card__icon {
+  font-size: clamp(20px, 6vw, 36px);
+  line-height: 1;
+  color: var(--intro-icon, var(--first-color));
+  flex: 0 0 auto;
+  margin-top: 2px;
+}
+
+.intro-card__text {
+  min-width: 0; /* allow text to wrap nicely */
+}
+
+.intro-card__title {
+  margin: 0 0 6px 0;
+  font-size: clamp(1rem, 2.5vw, 1.5rem);
+  font-weight: 600;
+  color: var(--title-color);
+  line-height: 1.25;
+  word-break: break-word;
+}
+
+.intro-card__sub {
+  display: block;
+  font-size: clamp(0.9rem, 2vw, 1.05rem);
+  color: var(--intro-text, var(--text-color));
+  line-height: 1.5;
+}
+
+/* Small screens: slightly tighter radius and spacing handled by clamp() already */
+@media (max-width: 480px) {
+  .intro-card {
+    border-radius: 10px;
+    flex-direction: column;
+    align-items: stretch;
+    width: 94vw;
+  }
+  .intro-card__icon {
+    margin-top: 0;
+    font-size: clamp(22px, 8vw, 32px);
+  }
+}
+
+/* Larger screens: allow a touch more breathing room */
+@media (min-width: 1024px) {
+  .intro-card {
+    gap: 18px;
+  }
+  .intro-card__title {
+    margin-bottom: 8px;
+  }
+}

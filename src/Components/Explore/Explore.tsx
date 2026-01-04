@@ -1,10 +1,34 @@
 
 import FeatureCard from "../FeatureCard/FeatureCard";
 import EyeBrowSection from "../../Common/EyeBrowSection/EyeBrowSection";
+import IntroCards from "../../Common/IntroCards/IntroCards";
 import "./Explore.scss";
 
 
 const Explore = () => {
+    const introCardData = [
+        {
+            IntroCardIcon: "bx bx-grid-alt evolyn-card-icon",
+            IntroCardHeader: "Don’t just track your life.",
+            IntroCardSubHeader: "Build systems that convert daily actions into long-term outcomes.",
+            IntroIconBackgroundColor: "#1e3a8a",
+            IntroCardIconColor: "#ffffff",
+        },
+        {
+            IntroCardIcon: "bx bx-brain evolyn-card-icon",
+            IntroCardHeader: "Your growth, reimagined.",
+            IntroCardSubHeader: "Everything looks simple on the surface — but works intelligently underneath.",
+            IntroIconBackgroundColor: "#065f46",
+            IntroCardIconColor: "#ecfeff",
+        },
+        {
+            IntroCardIcon: "bx bx-line-chart evolyn-card-icon",
+            IntroCardHeader: "Progress that speaks for itself.",
+            IntroCardSubHeader: "Evolyn turns behavior into insights — and insights into proof.",
+            IntroIconBackgroundColor: "#7c2d12",
+            IntroCardIconColor: "#fde68a",
+        },
+    ];  
     return (
         <div>
             <div className="EyeBrow-Container">
@@ -35,6 +59,11 @@ Designed to work quietly — and compound over time.</div>
                     <p>Get Started</p>
                     <div className="explore-getStarted-rightIcon bx bx-right-arrow-alt"></div>
                 </button>
+            </div>
+            <div className="explore-card-container">
+                {introCardData.map((item, index) => (
+                    <IntroCards {...item} key={index}/>
+                ))}
             </div>
         </div>
     );
