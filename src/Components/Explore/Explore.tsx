@@ -1,7 +1,7 @@
 
-import FeatureCard from "../FeatureCard/FeatureCard";
 import EyeBrowSection from "../../Common/EyeBrowSection/EyeBrowSection";
 import IntroCards from "../../Common/IntroCards/IntroCards";
+import FeatureCard from "../FeatureCard/FeatureCard";
 import "./Explore.scss";
 
 
@@ -73,6 +73,75 @@ const Explore = () => {
         },
     ];
 
+    const FeatureCardData = [
+        {
+            Title : "Stride",
+            Tag: "Daily Execution",
+            Description : "A lightweight execution engine that turns intent into action — without friction or noise.",
+            key_importance : [
+                "Enforces daily discipline",
+                "Reduces execution fatigue",
+                "Maintains work-in-progress focus",
+                "Builds momentum through completion",
+            ],
+        },
+        {
+            Title : "Expense Tracker",
+            Tag: "Financial Awareness",
+            Description : "Understand where your money goes and regain control through clear financial signals.",
+            key_importance : [
+                "Increases spending awareness",
+                "Detects unhealthy patterns early",
+                "Encourages intentional decisions",
+                "Supports long-term financial discipline",
+            ],
+        },
+        {
+            Title : "Learning Flow",
+            Tag: "Skill Building",
+            Description : "Structured learning journeys that turn effort into measurable, provable skill growth.",
+            key_importance : [
+                "Converts time into outcomes",
+                "Tracks real learning progress",
+                "Reinforces long-term consistency",
+                "Enables verifiable skill proof",
+            ],
+        },
+        {
+            Title : "Health & Nutrition",
+            Tag: "Physical Discipline",
+            Description : "Track health inputs with clarity — focused on trends, not obsession.",
+            key_importance : [
+                "Improves daily health awareness",
+                "Encourages sustainable habits",
+                "Identifies plateaus and drift",
+                "Supports long-term wellbeing",
+            ],
+        },
+        {
+            Title : "Investment Tracker",
+            Tag: "Wealth Discipline",
+            Description : "A disciplined view of investments built for consistency, not speculation.",
+            key_importance : [
+                "Promotes consistent investing",
+                "Improves allocation visibility",
+                "Builds audit-ready history",
+                "Reduces emotional decisions",
+            ],
+        },
+        {
+            Title : "Skill Proof",
+            Tag: "Using BlockChain",
+            Description : "Immutable, privacy-first proof for meaningful learning and achievement.",
+            key_importance : [
+                "Prevents progress tampering",
+                "Preserves data privacy",
+                "Strengthens credibility",
+                "Enables long-term trust",
+            ],
+        }
+    ];
+
 
     return (
         <div>
@@ -139,6 +208,19 @@ Designed to work quietly — and compound over time.</div>
                             ))}
                         </div>
                     </div>
+                ))}
+            </div>
+            <div className="explore-feature-section">
+                <div className="explore-feature-section-header">
+                    <h1>What Makes Evolyn Powerful</h1>
+                </div>
+                <div className="explore-feature-section-subheader">
+                    <h3>Core capabilities that transform actions into long-term transformation</h3>
+                </div>
+            </div>
+            <div className="explore-features-container">
+                {FeatureCardData.map((item, index) => (
+                    <FeatureCard key={index} {...item} />
                 ))}
             </div>
         </div>

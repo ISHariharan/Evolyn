@@ -25,6 +25,8 @@
   --gold-2: #c9b25c;
   --gold-3: #f5e58a;
   --gold-text: #1a1a1a;
+  --reverse-body-color: #212121;
+  --reverse-text-color:  #cccccc;
 
   /*========== Font and typography ==========*/
   --body-font: 'Poppins', sans-serif;
@@ -55,6 +57,8 @@
   --gold-2: #9c8735;
   --gold-3: #e6d27a;
   --gold-text: #0f0f0f;
+  --reverse-body-color: #F9F6FD;
+  --reverse-text-color: #58555E;
 }
 
 @media screen and (min-width: 1024px) {

@@ -85,6 +85,7 @@
     flex-direction: column;
     align-items: center;
     margin: 6rem auto;
+    margin-bottom: 3rem;
 }
 
 .principle-row {
@@ -164,6 +165,33 @@
 .principle-check i {
     font-size: 18px;
     color: #ffffff;
+}
+
+.explore-feature-section{
+    padding-top: 1%;
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    margin-bottom: 2%;
+}
+
+.explore-feature-section-header{
+    font-size: 48px;
+    font-weight: 700;
+    color: var(--title-color)
+}
+
+.explore-feature-section-subheader{
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--text-color)
+}
+
+.explore-features-container{
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 5%;
 }
 
 @media (max-width: 1024px) {
