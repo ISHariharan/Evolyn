@@ -1,0 +1,73 @@
+.EyeBrow-Container{
+    display: flex;
+    justify-content: center;
+    margin-top: 3%;
+}
+
+.explore-main-heading{
+    margin-top: 1%;
+    display: block;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 72px;
+    line-height: -10px;
+}
+
+.explore-main-heading-h1{
+    color : var(--title-color);
+    line-height: 1.25;
+}
+
+.explore-heading-gradient{ 
+    color: var(--title-color)
+}
+
+.explore-subheading{
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 32.5px;
+    vertical-align: baseline;
+    width: 60%;
+    margin: 2rem auto;
+}
+
+.explore-chat-card{
+    border-radius: 10px;
+    padding: 2%;
+    background-color: var(--card-color);
+    color: var(--card-text-color);
+    margin: 4% auto;
+    width: 60%;
+    display: flex;
+    gap: 2%;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 12px var(--text-color);
+}
+
+.explore-chatIcon{
+    font-size: 44px;
+}
+
+.explore-getStarted-button{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin: 0 auto;
+    padding: 1% 2%;
+    background: linear-gradient(
+        135deg,
+        var(--gold-1) 0%,
+        var(--gold-2) 25%,
+        var(--gold-3) 50%,
+        var(--gold-2) 75%,
+        var(--gold-1) 100%
+    );
+
+    color: var(--gold-text);
+    border-radius: 10px;
+}
+
+.explore-getStarted-rightIcon{
+    font-size: 24px;
+}

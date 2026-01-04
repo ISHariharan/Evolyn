@@ -9,7 +9,7 @@
   --nav-width: 219px;
 
   /*========== Colors ==========*/
-  --first-color: #6923D0;
+  --first-color: #2c2832;
   --first-color-light: #F4F0FA;
   --title-color: #19181B;
   --text-color: #58555E;
@@ -18,6 +18,13 @@
   --container-color: #FFFFFF;
   --button-text-color : #ffffff;
   --button-color: #1a1a1a;
+  --eyebrow-color: #58555E;
+  --card-color: #a370ff;
+  --card-text-color: #ffffff;
+  --gold-1: #6f5c2e;
+  --gold-2: #c9b25c;
+  --gold-3: #f5e58a;
+  --gold-text: #1a1a1a;
 
   /*========== Font and typography ==========*/
   --body-font: 'Poppins', sans-serif;
@@ -43,6 +50,11 @@
   --container-color: #1a1a1a;
   --button-color: #a370ff;
   --button-text-color : #ffffff;
+  --eyebrow-color: #a370ff; 
+  --gold-1: #3b2f14;
+  --gold-2: #9c8735;
+  --gold-3: #e6d27a;
+  --gold-text: #0f0f0f;
 }
 
 @media screen and (min-width: 1024px) {
