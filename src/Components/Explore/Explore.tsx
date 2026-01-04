@@ -219,7 +219,7 @@ Designed to work quietly — and compound over time.</div>
                     <h3>Core capabilities that transform actions into long-term transformation</h3>
                 </div>
             </div>
-            <div className="explore-features-container">
+            <div className="explore-features-container features-grid">
                 {FeatureCardData.map((item, index) => (
                     <FeatureCard key={index} {...item} />
                 ))}

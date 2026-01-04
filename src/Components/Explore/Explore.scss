@@ -2,59 +2,69 @@
     display: flex;
     justify-content: center;
     margin-top: 3%;
+    padding-inline: 1rem;
 }
 
+/* Main heading */
 .explore-main-heading{
     margin-top: 1%;
-    display: block;
-    justify-content: center;
-    font-weight: 700;
-    font-size: 72px;
-    line-height: -10px;
+    text-align: center;
 }
 
 .explore-main-heading-h1{
-    color : var(--title-color);
-    line-height: 1.25;
+    color: var(--title-color);
+    line-height: 1.2;
 }
 
+.explore-main-heading-h1 h1{
+    font-weight: 700;
+    font-size: clamp(2rem, 7vw, 4.5rem);
+    margin: 0;
+}
+
+/* Gradient emphasis text */
 .explore-heading-gradient{ 
-    color: var(--title-color)
+    color: var(--title-color);
 }
 
+/* Subheading paragraph */
 .explore-subheading{
-    font-size: 20px;
+    font-size: clamp(1rem, 2.1vw, 1.25rem);
     font-weight: 400;
-    line-height: 32.5px;
+    line-height: 1.6;
     vertical-align: baseline;
-    width: 60%;
-    margin: 2rem auto;
+    width: min(92vw, 900px);
+    margin: 1.25rem auto 2rem;
+    text-align: center;
+    padding-inline: 0.5rem;
 }
 
+/* Chat card */
 .explore-chat-card{
     border-radius: 10px;
-    padding: 2%;
+    padding: clamp(12px, 2.5vw, 20px);
     background-color: var(--card-color);
     color: var(--card-text-color);
     margin: 4% auto;
-    width: 60%;
+    width: min(92vw, 900px);
     display: flex;
-    gap: 2%;
+    gap: clamp(10px, 2vw, 16px);
     justify-content: center;
     align-items: center;
     box-shadow: 0 4px 12px var(--text-color);
 }
 
 .explore-chatIcon{
-    font-size: 44px;
+    font-size: clamp(28px, 5vw, 44px);
 }
 
+/* CTA */
 .explore-getStarted-button{
     display: flex;
     gap: 10px;
     align-items: center;
     margin: 0 auto;
-    padding: 1% 2%;
+    padding: clamp(8px, 2vw, 12px) clamp(14px, 3vw, 24px);
     background: linear-gradient(
         135deg,
         var(--gold-1) 0%,
@@ -63,29 +73,33 @@
         var(--gold-2) 75%,
         var(--gold-1) 100%
     );
-
     color: var(--gold-text);
     border-radius: 10px;
+    font-size: clamp(0.95rem, 2vw, 1.05rem);
 }
 
 .explore-getStarted-rightIcon{
-    font-size: 24px;
+    font-size: clamp(18px, 3.2vw, 24px);
 }
 
+/* Intro cards container */
 .explore-card-container{
     display: flex;
     justify-content: center;
     align-items: center;
     flex-wrap: wrap;
+    gap: 12px;
+    padding-inline: 1rem;
 }
 
+/* Principles section */
 .principles-section {
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 6rem auto;
-    margin-bottom: 3rem;
+    margin: clamp(3rem, 7vw, 6rem) auto 3rem;
+    padding-inline: 1rem;
 }
 
 .principle-row {
@@ -95,7 +109,7 @@
     align-items: center;
     justify-content: space-between;
     margin-bottom: 5%;
-    gap: 4rem;
+    gap: clamp(1.5rem, 4vw, 4rem);
 }
 
 .principle-text {
@@ -105,10 +119,11 @@
 }
 
 .principle-text h1 {
-    font-size: 3rem;
+    font-size: clamp(2rem, 4.5vw, 3rem);
     font-weight: 700;
-    line-height: 1.1;
+    line-height: 1.15;
     color: var(--title-color);
+    margin: 0;
 }
 
 .principle-text h1 span {
@@ -117,19 +132,19 @@
 
 .principle-text p {
     margin-top: 1rem;
-    font-size: 1.05rem;
+    font-size: clamp(1rem, 2.2vw, 1.05rem);
     color: var(--text-color);
     max-width: 520px;
     line-height: 1.6;
 }
 
+/* Box on the right/left */
 .principle-box {
-    width: 460px;       /* prevents over-stretching */
-    padding: 2.25rem 2.75rem;
-
+    width: 100%;
+    max-width: 520px;
+    padding: clamp(1.5rem, 3vw, 2.75rem);
     border-radius: 18px;
     color: #ffffff;
-
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
 }
 
@@ -137,7 +152,6 @@
     display: flex;
     align-items: center;
     gap: 1rem;
-
     margin-bottom: 1.2rem;
 }
 
@@ -154,11 +168,9 @@
     width: 28px;
     height: 28px;
     border-radius: 50%;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     background: rgba(255, 255, 255, 0.15);
 }
 
@@ -167,63 +179,83 @@
     color: #ffffff;
 }
 
+/* Full-bleed feature section background */
 .explore-feature-section{
-    padding-top: 1%;
     width: 100vw;
     margin-left: calc(50% - 50vw);
     margin-right: calc(50% - 50vw);
-    margin-bottom: 2%;
+    padding-block: clamp(24px, 6vw, 64px);
 }
 
-.explore-feature-section-header{
-    font-size: 48px;
-    font-weight: 700;
-    color: var(--title-color)
-}
-
+/* Headings inside feature section */
+.explore-feature-section-header,
 .explore-feature-section-subheader{
-    font-size: 20px;
-    font-weight: 400;
-    color: var(--text-color)
+    width: min(92vw, 1200px);
+    margin: 0 auto;
+    text-align: center;
+    color: var(--title-color);
 }
 
+.explore-feature-section-header h1{
+    font-size: clamp(1.75rem, 5.5vw, 3rem);
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+}
+
+.explore-feature-section-subheader h3{
+    font-size: clamp(1rem, 2.4vw, 1.25rem);
+    font-weight: 500;
+    margin: 0;
+    color: var(--text-color);
+}
+
+/* Features grid */
 .explore-features-container{
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 5%;
+    width: min(92vw, 1200px);
+    margin: 1.25rem auto 3rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: clamp(16px, 3vw, 28px);
 }
 
+.features-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .features-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Breakpoints */
 @media (max-width: 1024px) {
     .principle-row {
         flex-direction: column;
         align-items: flex-start;
         gap: 2rem;
     }
-
-    .principle-box {
-        width: 100%;
-        max-width: 520px;
-    }
 }
-
 
 @media (max-width: 900px) {
     .principle-row {
         flex-direction: column;
     }
-
     .principle-text h1 {
-        font-size: 2.4rem;
+        font-size: clamp(1.75rem, 6vw, 2.4rem);
     }
 }
 
 @media (max-width: 600px) {
     .principle-text h1 {
-        font-size: 2.2rem;
-    }
-
-    .principle-box {
-        padding: 2rem;
+        font-size: clamp(1.6rem, 6.5vw, 2.2rem);
     }
 }
