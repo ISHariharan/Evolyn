@@ -16,6 +16,8 @@
   --text-color-light: #A5A1AA;
   --body-color: #F9F6FD;
   --container-color: #FFFFFF;
+  --button-text-color : #ffffff;
+  --button-color: #1a1a1a;
 
   /*========== Font and typography ==========*/
   --body-font: 'Poppins', sans-serif;
@@ -39,6 +41,8 @@
   --text-color-light: #888888;
   --body-color: #212121;
   --container-color: #1a1a1a;
+  --button-color: #a370ff;
+  --button-text-color : #ffffff;
 }
 
 @media screen and (min-width: 1024px) {
