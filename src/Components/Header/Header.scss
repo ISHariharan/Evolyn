@@ -57,6 +57,39 @@
   cursor: pointer;
 }
 
+.header-login-btn {
+  height: calc(var(--header-height) - 10px);
+  padding: 0 1rem;
+  align-self: center;
+  background-color: var(--container-color);
+  color: var(--title-color);
+  border : 1px solid var(--eyebrow-color);
+}
+
+.header-login-btn:hover {
+  color: var(--button-text-color);
+}
+
+.login-button-arrow:hover{
+  background : var(--container-color);
+}
+
+.header-login-btn {
+  color: inherit;
+}
+
+.header-login-btn svg {
+  width: 1.75rem;
+  height: 1.75rem;
+}
+
+.Header-button-container{
+  display : flex;
+  align-items: center;
+  gap: 10%;
+  height: 100%;
+}
+
 .toggleSwitch-profile {
   display: flex;
   align-items: center;
