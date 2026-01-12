@@ -6,7 +6,10 @@ const AuthForm = ({isOpen, onClose}) => {
         <div className="AuthForm-Overlay">
             <div className="AuthForm-PopUp">
                 <form className="form">
-                    <p className="AuthForm-Title">Register </p>
+                    <div className="AuthForm-header-text">
+                        <div><p className="AuthForm-Title">Register </p></div>
+                        <div><button className="AuthForm-close-icon bx bx-x-circle" onClick={onClose}></button></div>
+                    </div>
                     <p className="message">Signup now and get full access to our app. </p>
                     <div className="flex">
                     <label>

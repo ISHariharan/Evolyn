@@ -7,6 +7,17 @@
   justify-content: center;
 }
   
+.AuthForm-header-text{
+  display: flex;
+  align-items: center;
+  gap: 55%
+}
+
+.AuthForm-close-icon{
+  font-size: 28px;
+  color: #00bfff;
+}
+
   .form {
     display: flex;
     flex-direction: column;
