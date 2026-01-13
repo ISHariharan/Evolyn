@@ -15,11 +15,11 @@
 
 .AuthForm-close-icon{
   font-size: 28px;
-  color: #00bfff;
+  color: var(--button-color);
 }
 
 .AuthForm-SignIn-Form{
-  color : #00bfff;
+  color : var(--button-color);
 }
 
   .Authform {
@@ -31,7 +31,7 @@
     padding: 20px;
     border-radius: 20px;
     position: relative;
-    background-color: #1a1a1a;
+    background-color: var(--body-color);
     color: #fff;
     border: 1px solid #333;
   }
@@ -44,7 +44,7 @@
     display: flex;
     align-items: center;
     padding-left: 30px;
-    color: #00bfff;
+    color: var(--button-color);
   }
 
   .AuthForm-Title::before {
@@ -66,13 +66,13 @@
     width: 16px;
     border-radius: 50%;
     left: 0px;
-    background-color: #00bfff;
+    background-color: var(--button-color);
   }
 
   .message, 
   .AuthForm-signin {
     font-size: 14.5px;
-    color: rgba(255, 255, 255, 0.7);
+    color: var(--text-color);
   }
 
   .AuthForm-signin {
@@ -98,8 +98,8 @@
   }
 
   .Authform label .input {
-    background-color: #333;
-    color: #fff;
+    background-color: var(--body-color);
+    color: var(--text-color);
     width: 100%;
     padding: 20px 05px 05px 10px;
     outline: 0;
@@ -108,7 +108,7 @@
   }
 
   .Authform label .input + span {
-    color: rgba(255, 255, 255, 0.5);
+    color: var(--eyebrow-color);
     position: absolute;
     left: 10px;
     top: 0px;
@@ -124,7 +124,7 @@
 
   .Authform label .input:focus + span,
   .Authform label .input:valid + span {
-    color: #00bfff;
+    color: var(--text-color);
     top: 0px;
     font-size: 0.7em;
     font-weight: 600;
@@ -139,14 +139,10 @@
     outline: none;
     padding: 10px;
     border-radius: 10px;
-    color: #fff;
+    color: var(--button-text-color);
     font-size: 16px;
     transform: .3s ease;
-    background-color: #00bfff;
-  }
-
-  .submit:hover {
-    background-color: #00bfff96;
+    background-color: var(--button-color);
   }
 
   @keyframes pulse {
