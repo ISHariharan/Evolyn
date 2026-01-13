@@ -1,7 +1,11 @@
 .AuthForm-Overlay{
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.6);
+  background: color-mix(
+    in srgb,
+    var(--reverse-body-color) 30%,
+    transparent
+  );
   display: flex;
   align-items: center;
   justify-content: center;

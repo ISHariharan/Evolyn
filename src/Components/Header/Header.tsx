@@ -45,7 +45,7 @@ const Header = () => {
 
                 <div className="Header-button-container">
                     <div>
-                        <div className="toggleSwitch-profile">
+                        <div className="toggleSwitch-profile relative z-10">
                             <ToggleSwitch />
                             {/* <div>
                                 <img src={profileIcon} alt="Profile" className="header__img" />
