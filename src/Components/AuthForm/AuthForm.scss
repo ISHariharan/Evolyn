@@ -10,7 +10,7 @@
 .AuthForm-header-text{
   display: flex;
   align-items: center;
-  gap: 55%
+  justify-content: space-between;
 }
 
 .AuthForm-close-icon{
@@ -18,7 +18,11 @@
   color: #00bfff;
 }
 
-  .form {
+.AuthForm-SignIn-Form{
+  color : #00bfff;
+}
+
+  .Authform {
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -66,20 +70,20 @@
   }
 
   .message, 
-  .signin {
+  .AuthForm-signin {
     font-size: 14.5px;
     color: rgba(255, 255, 255, 0.7);
   }
 
-  .signin {
+  .AuthForm-signin {
     text-align: center;
   }
 
-  .signin a:hover {
+  .AuthForm-signin a:hover {
     text-decoration: underline royalblue;
   }
 
-  .signin a {
+  .AuthForm-signin a {
     color: #00bfff;
   }
 
@@ -89,11 +93,11 @@
     gap: 6px;
   }
 
-  .form label {
+  .Authform label {
     position: relative;
   }
 
-  .form label .input {
+  .Authform label .input {
     background-color: #333;
     color: #fff;
     width: 100%;
@@ -103,7 +107,7 @@
     border-radius: 10px;
   }
 
-  .form label .input + span {
+  .Authform label .input + span {
     color: rgba(255, 255, 255, 0.5);
     position: absolute;
     left: 10px;
@@ -113,13 +117,13 @@
     transition: 0.3s ease;
   }
 
-  .form label .input:placeholder-shown + span {
+  .Authform label .input:placeholder-shown + span {
     top: 12.5px;
     font-size: 0.9em;
   }
 
-  .form label .input:focus + span,
-  .form label .input:valid + span {
+  .Authform label .input:focus + span,
+  .Authform label .input:valid + span {
     color: #00bfff;
     top: 0px;
     font-size: 0.7em;
