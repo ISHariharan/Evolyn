@@ -1,9 +1,18 @@
 import "./AuthForm.scss";
 import { useState, useEffect } from "react";
+import { userDetails, verifyUserDetails } from "../../API/AuthForm";
+import {userDetailsType} from "./types";
 
 const AuthForm = ({isOpen, onClose}) => {
     const [authFormType, setAuthFormType] = useState<string>("SignUp");
     const [authFormDetails, setAuthFormDetails] = useState<boolean>(true);
+    const [firstName, setFirstName] = useState<string>("");
+    const [lastName, setLastName] = useState<string>("");
+    const [email, setEmail] = useState<string>("");
+    const [passWord, setPassword] = useState<string>("");
+    const [confirmPassword, setConfirmPassword] = useState<string>("");
+    const [isDisabled, setIsDisabled] = useState<boolean>(true);
+
     let oppAuthFormType = authFormType === 'SignUp' ? 'SignIn' : 'SignUp';
 
     const swapAuthForm = (authFormSelected) => {
@@ -11,6 +20,66 @@ const AuthForm = ({isOpen, onClose}) => {
         oppAuthFormType = authFormSelected === 'SignUp' ? 'SignIn' : 'SignUp';
         setAuthFormDetails(!authFormDetails);
     }
+
+    const validateButtonFunction = (firstName, lastName, email, passWord, confirmPassword) => {
+        if(authFormType === 'SignIn' && email && passWord) {
+            return true;
+        }
+        if(authFormType === 'SignUp' && firstName && lastName && email && (passWord === confirmPassword)) {
+            return true;
+        }
+        return false;
+    }
+
+    const handleSubmit = async (formType) => {
+        const validation = validateButtonFunction(firstName, lastName, email, passWord, confirmPassword);
+        if(!validation) return;
+
+        setIsDisabled(true);
+        if(authFormType === 'SignUp') {
+            const props : userDetailsType= {
+                firstName : firstName,
+                lastName : lastName,
+                email : email,
+                password : passWord,
+            };
+            userDetails(props);
+        } else {
+            const props : userDetailsType = {
+                email : email,
+                password: passWord,
+            }
+            verifyUserDetails(props);
+        }
+
+    }
+
+    const isFormValid = () => {
+        if (authFormType === "SignUp") {
+            return (
+            firstName.trim() &&
+            lastName.trim() &&
+            email.trim() &&
+            passWord &&
+            confirmPassword &&
+            passWord === confirmPassword
+            );
+        }
+
+        
+        return email.trim() && passWord;
+    };
+
+    useEffect(() => {
+        setIsDisabled(!isFormValid());
+    }, [
+        firstName,
+        lastName,
+        email,
+        passWord,
+        confirmPassword,
+        authFormType,
+    ]);
 
     if(!isOpen) return;
 
@@ -26,30 +95,30 @@ const AuthForm = ({isOpen, onClose}) => {
                     {authFormDetails && (
                         <div className="flex">
                             <label>
-                                <input className="input" type="text" placeholder="" required />
+                                <input className="input" type="text" placeholder="" onChange={(event) => setFirstName(event.target.value)} required />
                                 <span>Firstname</span>
                             </label>
                             <label>
-                                <input className="input" type="text" placeholder="" required />
+                                <input className="input" type="text" placeholder="" onChange={(event) => setLastName(event.target.value)} required />
                                 <span>Lastname</span>
                             </label>
                         </div>
                     )}  
                     <label>
-                        <input className="input" type="email" placeholder="" required />
+                        <input className="input" type="email" placeholder="" onChange={(event) => setEmail(event.target.value)} required />
                         <span>Email</span>
                     </label> 
                     <label>
-                        <input className="input" type="password" placeholder="" required />
+                        <input className="input" type="password" placeholder="" onChange={(event) => setPassword(event.target.value)} required />
                         <span>Password</span>
                     </label>
                     {authFormDetails && (
                         <label>
-                            <input className="input" type="password" placeholder="" required />
+                            <input className="input" type="password" onChange={(event) => setConfirmPassword(event.target.value)} placeholder="" required />
                             <span>Confirm password</span>
                         </label>
                     )}
-                    <button className="submit" onClick={onClose}>Submit</button>
+                    <button className="submit" onClick={() => handleSubmit(authFormType)} disabled={isDisabled}>{authFormType}</button>
                     <p className="AuthForm-signin">Already have an acount ? <button onClick={() => swapAuthForm(oppAuthFormType)} className="AuthForm-SignIn-Form">{oppAuthFormType}</button> </p>
                 </form>
             </div>
