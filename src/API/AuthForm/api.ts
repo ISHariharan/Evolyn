@@ -11,7 +11,6 @@ export const storeUserDetails = async (storeUserDetails : userDetailsType) => {
         },
         body : JSON.stringify(storeUserDetails),
     });
-    console.log('Response : ', response, storeUserDetails);
 }
 
 export const verifyUser = async (userDetails : userDetailsType) => {
@@ -23,5 +22,4 @@ export const verifyUser = async (userDetails : userDetailsType) => {
         },
         body : JSON.stringify(userDetails),
     });
-    console.log('Response : ', response, userDetails);
 }
