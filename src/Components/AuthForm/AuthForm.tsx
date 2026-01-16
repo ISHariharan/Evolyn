@@ -2,6 +2,7 @@ import "./AuthForm.scss";
 import { useState, useEffect } from "react";
 import { userDetails, verifyUserDetails } from "../../API/AuthForm";
 import {userDetailsType} from "./types";
+import { generateUUID } from "../../Common/UUIDGenerator/UUIDGenerator";
 
 const AuthForm = ({isOpen, onClose}) => {
     const [authFormType, setAuthFormType] = useState<string>("SignUp");
@@ -37,7 +38,9 @@ const AuthForm = ({isOpen, onClose}) => {
 
         setIsDisabled(true);
         if(authFormType === 'SignUp') {
+            const uuid = generateUUID();
             const props : userDetailsType= {
+                uuid: uuid,
                 firstName : firstName,
                 lastName : lastName,
                 email : email,
