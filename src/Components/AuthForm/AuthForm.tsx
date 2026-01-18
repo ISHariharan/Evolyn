@@ -1,12 +1,11 @@
 import "./AuthForm.scss";
 import { useState, useEffect } from "react";
 import { userDetails, verifyUserDetails } from "../../API/AuthForm";
-import {userDetailsType} from "./types";
+import { userDetailsType } from "./types";
 import { generateUUID } from "../../Common/UUIDGenerator/UUIDGenerator";
 
-const AuthForm = ({isOpen, onClose}) => {
-    const [authFormType, setAuthFormType] = useState<string>("SignUp");
-    const [authFormDetails, setAuthFormDetails] = useState<boolean>(true);
+const AuthForm = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
+    const [authFormType, setAuthFormType] = useState<"SignUp" | "SignIn">("SignUp");
     const [firstName, setFirstName] = useState<string>("");
     const [lastName, setLastName] = useState<string>("");
     const [email, setEmail] = useState<string>("");
@@ -14,119 +13,232 @@ const AuthForm = ({isOpen, onClose}) => {
     const [confirmPassword, setConfirmPassword] = useState<string>("");
     const [isDisabled, setIsDisabled] = useState<boolean>(true);
 
-    let oppAuthFormType = authFormType === 'SignUp' ? 'SignIn' : 'SignUp';
+    const [strength, setStrength] = useState<"weak" | "medium" | "strong" | "">("");
+    const [strengthText, setStrengthText] = useState<string>("");
 
-    const swapAuthForm = (authFormSelected) => {
-        setAuthFormType(authFormSelected);
-        oppAuthFormType = authFormSelected === 'SignUp' ? 'SignIn' : 'SignUp';
-        setAuthFormDetails(!authFormDetails);
-    }
+    const oppAuthFormType = authFormType === "SignUp" ? "SignIn" : "SignUp";
 
-    const validateButtonFunction = (firstName, lastName, email, passWord, confirmPassword) => {
-        if(authFormType === 'SignIn' && email && passWord) {
-            return true;
-        }
-        if(authFormType === 'SignUp' && firstName && lastName && email && (passWord === confirmPassword)) {
-            return true;
-        }
-        return false;
-    }
-
-    const handleSubmit = async (formType) => {
-        const validation = validateButtonFunction(firstName, lastName, email, passWord, confirmPassword);
-        if(!validation) return;
-
-        setIsDisabled(true);
-        if(authFormType === 'SignUp') {
-            const uuid = generateUUID();
-            const props : userDetailsType= {
-                uuid: uuid,
-                firstName : firstName,
-                lastName : lastName,
-                email : email,
-                password : passWord,
-            };
-            userDetails(props);
-        } else {
-            const props : userDetailsType = {
-                email : email,
-                password: passWord,
-            }
-            verifyUserDetails(props);
+    const calculatePasswordStrength = (pwd: string) => {
+        if (!pwd) {
+            setStrength("");
+            setStrengthText("");
+            return;
         }
 
-    }
+        const hasMinLength = pwd.length >= 8;
+        const hasUpper = /[A-Z]/.test(pwd);
+        const hasLower = /[a-z]/.test(pwd);
+        const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(pwd);
+
+        const score = [hasMinLength, hasUpper, hasLower, hasSpecial].filter(Boolean).length;
+
+        if (score <= 1) {
+            setStrength("weak");
+            setStrengthText("Weak");
+        } else if (score === 2 || score === 3) {
+            setStrength("medium");
+            setStrengthText("Okay");
+        } else if (score === 4) {
+            setStrength("strong");
+            setStrengthText("Strong");
+        }
+    };
 
     const isFormValid = () => {
-        if (authFormType === "SignUp") {
-            return (
-            firstName.trim() &&
-            lastName.trim() &&
-            email.trim() &&
-            passWord &&
-            confirmPassword &&
-            passWord === confirmPassword
-            );
+        if (authFormType === "SignIn") {
+            return !!email.trim() && !!passWord;
         }
 
-        
-        return email.trim() && passWord;
+        return (
+            !!firstName.trim() &&
+            !!lastName.trim() &&
+            !!email.trim() &&
+            !!passWord &&
+            passWord === confirmPassword &&
+            strength === "strong" 
+        );
     };
 
     useEffect(() => {
         setIsDisabled(!isFormValid());
-    }, [
-        firstName,
-        lastName,
-        email,
-        passWord,
-        confirmPassword,
-        authFormType,
-    ]);
+    }, [firstName, lastName, email, passWord, confirmPassword, authFormType, strength]);
 
-    if(!isOpen) return;
+    useEffect(() => {
+        if (authFormType === "SignUp") {
+        calculatePasswordStrength(passWord);
+        } else {
+        setStrength("");
+        setStrengthText("");
+        }
+    }, [passWord, authFormType]);
 
-    return (
-        <div className="AuthForm-Overlay">
-            <div className="AuthForm-PopUp">
-                <form className="Authform">
-                    <div className="AuthForm-header-text">
-                        <div><p className="AuthForm-Title">{authFormType === 'SignUp' ? 'Register' : 'Login'} </p></div>
-                        <div><button className="AuthForm-close-icon bx bx-x-circle" onClick={onClose}></button></div>
-                    </div>
-                    <p className="message">{authFormType} now and get full access to our app. </p>
-                    {authFormDetails && (
-                        <div className="flex">
-                            <label>
-                                <input className="input" type="text" placeholder="" onChange={(event) => setFirstName(event.target.value)} required />
-                                <span>Firstname</span>
-                            </label>
-                            <label>
-                                <input className="input" type="text" placeholder="" onChange={(event) => setLastName(event.target.value)} required />
-                                <span>Lastname</span>
-                            </label>
-                        </div>
-                    )}  
-                    <label>
-                        <input className="input" type="email" placeholder="" onChange={(event) => setEmail(event.target.value)} required />
-                        <span>Email</span>
-                    </label> 
-                    <label>
-                        <input className="input" type="password" placeholder="" onChange={(event) => setPassword(event.target.value)} required />
-                        <span>Password</span>
-                    </label>
-                    {authFormDetails && (
-                        <label>
-                            <input className="input" type="password" onChange={(event) => setConfirmPassword(event.target.value)} placeholder="" required />
-                            <span>Confirm password</span>
-                        </label>
-                    )}
-                    <button className="submit" onClick={() => handleSubmit(authFormType)} disabled={isDisabled}>{authFormType}</button>
-                    <p className="AuthForm-signin">Already have an acount ? <button onClick={() => swapAuthForm(oppAuthFormType)} className="AuthForm-SignIn-Form">{oppAuthFormType}</button> </p>
-                </form>
+    const handleSubmit = async (e: React.MouseEvent) => {
+        e.preventDefault();
+        if (isDisabled) return;
+
+        if (authFormType === "SignUp") {
+            const uuid = generateUUID();
+            const props: userDetailsType = {
+                uuid,
+                firstName,
+                lastName,
+                email,
+                password: passWord,
+            };
+            await userDetails(props);
+        } else {
+            const props: userDetailsType = {
+                email,
+                password: passWord,
+            };
+            await verifyUserDetails(props);
+        }
+    };
+
+    const swapAuthForm = () => {
+        setAuthFormType(oppAuthFormType);
+        setFirstName("");
+        setLastName("");
+        setEmail("");
+        setPassword("");
+        setConfirmPassword("");
+    };
+
+  if (!isOpen) return null;
+
+  const passwordsMatch = passWord === confirmPassword && !!confirmPassword;
+  const showMismatch = !!confirmPassword && !passwordsMatch;
+
+  return (
+    <div className="AuthForm-Overlay">
+      <div className="AuthForm-PopUp">
+        <form className="Authform" onSubmit={(e) => e.preventDefault()}>
+          <div className="AuthForm-header-text">
+            <p className="AuthForm-Title">{authFormType === "SignUp" ? "Register" : "Login"}</p>
+            <button
+              type="button"
+              className="AuthForm-close-icon bx bx-x-circle"
+              onClick={onClose}
+            />
+          </div>
+
+          <p className="message">
+            {authFormType.toLowerCase()} now and get full access to our app.
+          </p>
+
+          {authFormType === "SignUp" && (
+            <div className="flex">
+              <label>
+                <input
+                  className="input"
+                  type="text"
+                  value={firstName}
+                  placeholder=""
+                  onChange={(e) => setFirstName(e.target.value)}
+                  required
+                />
+                <span>Firstname</span>
+              </label>
+              <label>
+                <input
+                  className="input"
+                  type="text"
+                  value={lastName}
+                  placeholder=""
+                  onChange={(e) => setLastName(e.target.value)}
+                  required
+                />
+                <span>Lastname</span>
+              </label>
             </div>
-        </div>
-    );
-}
+          )}
+
+          <label>
+            <input
+              className="input"
+              type="email"
+              value={email}
+              placeholder=""
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            <span>Email</span>
+          </label>
+
+          <label>
+            <input
+              className="input"
+              type="password"
+              value={passWord}
+              placeholder=""
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <span>Password</span>
+          </label>
+
+          {authFormType === "SignUp" && (
+            <>
+              <label>
+                <input
+                  className={`input ${showMismatch ? "mismatch" : ""}`}
+                  type="password"
+                  value={confirmPassword}
+                  placeholder=""
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                />
+                <span>Confirm password</span>
+              </label>
+
+              {/* Password strength indicator */}
+              {passWord && (
+                <div className={`password-strength-container ${passwordsMatch ? "passwords-match" : ""}`}>
+                  <div className={`password-strength-bar strength-${strength}`} />
+                </div>
+              )}
+
+              {/* Strength text */}
+              {passWord && !passwordsMatch && (
+                <div className={`password-strength-text strength-${strength}-text`}>
+                  {strengthText}
+                </div>
+              )}
+
+              {/* Password mismatch error */}
+              {showMismatch && (
+                <div className="password-match-error">
+                  Passwords do not match
+                </div>
+              )}
+            </>
+          )}
+
+          <button
+            type="button"
+            className={`submit ${!isDisabled && strength === "medium" ? "almost-valid" : ""}`}
+            onClick={handleSubmit}
+            disabled={isDisabled}
+          >
+            {authFormType}
+          </button>
+
+          <p className="AuthForm-signin">
+            {authFormType === "SignUp"
+              ? "Already have an account? "
+              : "Don't have an account? "}
+            <button
+              type="button"
+              onClick={swapAuthForm}
+              className="AuthForm-SignIn-Form"
+            >
+              {oppAuthFormType}
+            </button>
+          </p>
+        </form>
+      </div>
+    </div>
+  );
+};
 
 export default AuthForm;

@@ -149,6 +149,121 @@
     background-color: var(--button-color);
   }
 
+  /* =============================================
+   Password Strength Indicator - Theme aware
+   ============================================= */
+
+.password-strength-container {
+  margin: 8px 0 14px 0;
+  height: 6px;
+  background: rgba(100, 100, 100, 0.18);
+  border-radius: 6px;
+  overflow: hidden;
+  transition: all 0.35s ease;
+}
+
+.password-strength-bar {
+  height: 100%;
+  width: 0%;
+  background: var(--button-color);
+  transition: 
+    width 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.4s ease;
+  box-shadow: 0 0 8px color-mix(in srgb, var(--button-color) 50%, transparent);
+}
+
+
+.strength-weak    { width: 35%;  opacity: 0.55; }
+.strength-medium  { width: 70%;  opacity: 0.82; }
+.strength-strong  { width: 100%; opacity: 1; }
+
+
+.strength-strong {
+  animation: strength-glow 2.2s infinite ease-in-out;
+}
+
+@keyframes strength-glow {
+  0%, 100% {
+    box-shadow: 0 0 8px color-mix(in srgb, var(--button-color) 50%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 14px color-mix(in srgb, var(--button-color) 75%, transparent);
+  }
+}
+
+
+.passwords-match .password-strength-container {
+  height: 0;
+  margin: 0;
+  opacity: 0;
+}
+
+
+.password-strength-text {
+  font-size: 0.78rem;
+  text-align: right;
+  margin-top: 4px;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.strength-weak-text    { color: #ff6b6b; }
+.strength-medium-text  { color: #ffaa33; }
+.strength-strong-text  { color: var(--button-color); }
+
+
+.submit {
+  border: none;
+  outline: none;
+  padding: 12px;
+  border-radius: 10px;
+  color: var(--button-text-color);
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.28s ease;
+  background-color: #555;           
+  opacity: 0.58;
+  user-select: none;
+}
+
+.submit:enabled {
+  background-color: var(--button-color);
+  opacity: 1;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+}
+
+.submit:enabled:hover {
+  transform: translateY(-1.5px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.24);
+}
+
+.submit.almost-valid {
+  background: linear-gradient(90deg, 
+    color-mix(in srgb, var(--button-color) 75%, #000 100%) 0%,
+    var(--button-color) 100%
+  );
+}
+
+
+.input.mismatch {
+  border-color: #ff4d4d !important;
+  background-color: rgba(255, 77, 77, 0.05);
+}
+
+
+.password-match-error {
+  color: #ff4d4d;
+  font-size: 0.81rem;
+  margin-top: 6px;
+  padding-left: 4px;
+  font-weight: 500;
+}
+
+.password-match-error::before {
+  content: "• ";
+}
+
   @keyframes pulse {
     from {
       transform: scale(0.9);
