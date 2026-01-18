@@ -37,7 +37,7 @@ const AuthForm = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void })
             setStrengthText("Weak");
         } else if (score === 2 || score === 3) {
             setStrength("medium");
-            setStrengthText("Okay");
+            setStrengthText("Medium");
         } else if (score === 4) {
             setStrength("strong");
             setStrengthText("Strong");
