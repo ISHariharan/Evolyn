@@ -1,0 +1,50 @@
+.toastmessage-success-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 12px;
+  background: #e6f7ef;
+  overflow: hidden;
+}
+
+.toastmessage-success-wave {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  fill: #b7e6d1;
+}
+
+.toastmessage-success-icon-container {
+  background: #2ecc71;
+  border-radius: 50%;
+  padding: 8px;
+}
+
+.toastmessage-success-icon {
+  width: 24px;
+  height: 24px;
+  color: white;
+}
+
+.toastmessage-success-text-container {
+  flex: 1;
+}
+
+.toastmessage-success-title {
+  font-weight: 600;
+  color: #1e8449;
+}
+
+.toastmessage-success-subtitle {
+  font-size: 12px;
+  color: #239b56;
+}
+
+.toastmessage-success-close {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
