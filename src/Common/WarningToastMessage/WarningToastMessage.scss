@@ -1,0 +1,39 @@
+.toastmessage-warning-card {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 12px;
+  background: #fff6e5;
+}
+
+.toastmessage-warning-icon-container {
+  background: #f39c12;
+  border-radius: 50%;
+  padding: 8px;
+}
+
+.toastmessage-warning-icon {
+  width: 24px;
+  height: 24px;
+  color: white;
+}
+
+.toastmessage-warning-text-container {
+  flex: 1;
+}
+
+.toastmessage-warning-title {
+  font-weight: 600;
+  color: #d68910;
+}
+
+.toastmessage-warning-subtitle {
+  font-size: 12px;
+  color: #f39c12;
+}
+
+.toastmessage-warning-close {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
