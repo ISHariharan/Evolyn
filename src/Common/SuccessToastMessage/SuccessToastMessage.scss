@@ -1,75 +1,78 @@
-.toastmessage-success-card {
+/* From Uiverse.io by akshat-patel28 */
+.SuccessToastMessage-card {
+  height: 70px;
+  border-radius: 8px;
+  box-sizing: border-box;
+  padding: 10px 15px;
+  background-color: var(--container-color);
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
   position: relative;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 16px;
-  border-radius: 12px;
-  background: #ecfdf5;
   overflow: hidden;
-
-  [data-theme="dark"] & {
-    background: #064e3b;
-  }
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 15px;
 }
 
-.toastmessage-success-wave {
+.SuccessToastMessage-wave {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  fill: #6ee7b7;
-
-  [data-theme="dark"] & {
-    fill: #10b981;
-  }
+  transform: rotate(90deg);
+  left: -31px;
+  top: 32px;
+  width: 80px;
+  fill: color-mix(in srgb, var(--success-icon) 15%, transparent);
 }
 
-.toastmessage-success-icon-container {
-  background: #10b981;
+.SuccessToastMessage-icon-container {
+  width: 35px;
+  height: 35px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: color-mix(in srgb, var(--success-icon) 18%, transparent);
   border-radius: 50%;
-  padding: 8px;
-
-  [data-theme="dark"] & {
-    background: #34d399;
-  }
+  margin-left: 8px;
 }
 
-.toastmessage-success-icon {
-  width: 24px;
-  height: 24px;
-  color: white;
+.SuccessToastMessage-icon {
+  width: 17px;
+  height: 17px;
+  color: var(--success-icon);
 }
 
-.toastmessage-success-text-container {
-  flex: 1;
+.SuccessToastMessage-message-text-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  flex-grow: 1;
 }
 
-.toastmessage-success-title {
-  font-weight: 600;
-  color: #065f46;
-
-  [data-theme="dark"] & {
-    color: #d1fae5;
-  }
+.SuccessToastMessage-message-text,
+.SuccessToastMessage-sub-text {
+  margin: 0;
+  cursor: default;
 }
 
-.toastmessage-success-subtitle {
-  font-size: 12px;
-  color: #047857;
-
-  [data-theme="dark"] & {
-    color: #a7f3d0;
-  }
+.SuccessToastMessage-message-text {
+  color: var(--success-title);
+  font-size: 17px;
+  font-weight: 700;
 }
 
-.toastmessage-success-close {
-  width: 16px;
-  height: 16px;
+.SuccessToastMessage-sub-text {
+  font-size: 14px;
+  color : var(--text-color);
+}
+
+.SuccessToastMessage-cross-icon {
+  width: 18px;
+  height: 18px;
+  color: #555;
   cursor: pointer;
-  color: #065f46;
+}
 
-  [data-theme="dark"] & {
-    color: #d1fae5;
-  }
+.SuccessToastMessage-sub-text,
+.SuccessToastMessage-cross-icon {
+  color: var(--text-color);                
 }

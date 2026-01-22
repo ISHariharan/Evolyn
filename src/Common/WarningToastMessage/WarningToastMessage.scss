@@ -1,61 +1,73 @@
-.toastmessage-warning-card {
-  display: flex;
+/* From Uiverse.io by akshat-patel28 */
+.WarningToastMessage-card {
+  height: 70px;
+  border-radius: 8px;
+  box-sizing: border-box;
+  padding: 10px 15px;
+  background-color: var(--container-color);
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
   align-items: center;
-  gap: 12px;
-  padding: 16px;
-  border-radius: 12px;
-  background: #fffbeb;
-
-  [data-theme="dark"] & {
-    background: #78350f;
-  }
+  justify-content: space-around;
+  gap: 15px;
 }
 
-.toastmessage-warning-icon-container {
-  background: #f59e0b;
+.WarningToastMessage-wave {
+  position: absolute;
+  transform: rotate(90deg);
+  left: -31px;
+  top: 32px;
+  width: 80px;
+  fill: color-mix(in srgb, var(--warning-icon) 15%, transparent);
+}
+
+.WarningToastMessage-icon-container {
+  width: 35px;
+  height: 35px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: color-mix(in srgb, var(--warning-icon) 18%, transparent);
   border-radius: 50%;
-  padding: 8px;
-
-  [data-theme="dark"] & {
-    background: #fbbf24;
-  }
+  margin-left: 8px;
 }
 
-.toastmessage-warning-icon {
-  width: 24px;
-  height: 24px;
-  color: white;
+.WarningToastMessage-icon {
+  width: 17px;
+  height: 17px;
+  color: var(--warning-icon);
 }
 
-.toastmessage-warning-text-container {
-  flex: 1;
+.WarningToastMessage-message-text-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  flex-grow: 1;
 }
 
-.toastmessage-warning-title {
-  font-weight: 600;
-  color: #92400e;
-
-  [data-theme="dark"] & {
-    color: #fde68a;
-  }
+.WarningToastMessage-message-text,
+.WarningToastMessage-sub-text {
+  margin: 0;
+  cursor: default;
 }
 
-.toastmessage-warning-subtitle {
-  font-size: 12px;
-  color: #b45309;
-
-  [data-theme="dark"] & {
-    color: #fcd34d;
-  }
+.WarningToastMessage-message-text {
+  color: var(--warning-title);
+  font-size: 17px;
+  font-weight: 700;
 }
 
-.toastmessage-warning-close {
-  width: 16px;
-  height: 16px;
+.WarningToastMessage-sub-text {
+  font-size: 14px;
+  color : var(--text-color);
+}
+
+.WarningToastMessage-cross-icon {
+  width: 18px;
+  height: 18px;
+  color: #555;
   cursor: pointer;
-  color: #92400e;
-
-  [data-theme="dark"] & {
-    color: #fde68a;
-  }
 }

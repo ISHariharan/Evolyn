@@ -31,22 +31,18 @@
   --success-bg: #ecfdf5;
   --success-icon: #10b981;
   --success-title: #065f46;
-  --success-subtitle: #047857;
 
   --error-bg: #fef2f2;
   --error-icon: #ef4444;
   --error-title: #991b1b;
-  --error-subtitle: #b91c1c;
 
   --warning-bg: #fffbeb;
   --warning-icon: #f59e0b;
   --warning-title: #92400e;
-  --warning-subtitle: #b45309;
 
   --info-bg: #eff6ff;
   --info-icon: #3b82f6;
   --info-title: #1e40af;
-  --info-subtitle: #1d4ed8;
 
   /*========== Font and typography ==========*/
   --body-font: 'Poppins', sans-serif;
@@ -83,22 +79,18 @@
   --success-bg: #064e3b;
   --success-icon: #34d399;
   --success-title: #d1fae5;
-  --success-subtitle: #a7f3d0;
 
   --error-bg: #7f1d1d;
   --error-icon: #f87171;
   --error-title: #fecaca;
-  --error-subtitle: #fca5a5;
 
   --warning-bg: #78350f;
   --warning-icon: #fbbf24;
   --warning-title: #fde68a;
-  --warning-subtitle: #fcd34d;
 
   --info-bg: #1e3a8a;
   --info-icon: #60a5fa;
   --info-title: #bfdbfe;
-  --info-subtitle: #93c5fd;
 }
 
 @media screen and (min-width: 1024px) {
