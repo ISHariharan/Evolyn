@@ -1,15 +1,24 @@
 .toastmessage-info-card {
   display: flex;
+  align-items: center;
   gap: 12px;
   padding: 16px;
   border-radius: 12px;
-  background: #eaf2fd;
+  background: #eff6ff;
+
+  [data-theme="dark"] & {
+    background: #1e3a8a;
+  }
 }
 
 .toastmessage-info-icon-container {
-  background: #3498db;
+  background: #3b82f6;
   border-radius: 50%;
   padding: 8px;
+
+  [data-theme="dark"] & {
+    background: #60a5fa;
+  }
 }
 
 .toastmessage-info-icon {
@@ -24,16 +33,29 @@
 
 .toastmessage-info-title {
   font-weight: 600;
-  color: #2c81ba;
+  color: #1e40af;
+
+  [data-theme="dark"] & {
+    color: #bfdbfe;
+  }
 }
 
 .toastmessage-info-subtitle {
   font-size: 12px;
-  color: #3498db;
+  color: #1d4ed8;
+
+  [data-theme="dark"] & {
+    color: #93c5fd;
+  }
 }
 
 .toastmessage-info-close {
   width: 16px;
   height: 16px;
   cursor: pointer;
+  color: #1e40af;
+
+  [data-theme="dark"] & {
+    color: #bfdbfe;
+  }
 }

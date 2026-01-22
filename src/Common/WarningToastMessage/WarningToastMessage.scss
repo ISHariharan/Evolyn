@@ -1,15 +1,24 @@
 .toastmessage-warning-card {
   display: flex;
+  align-items: center;
   gap: 12px;
   padding: 16px;
   border-radius: 12px;
-  background: #fff6e5;
+  background: #fffbeb;
+
+  [data-theme="dark"] & {
+    background: #78350f;
+  }
 }
 
 .toastmessage-warning-icon-container {
-  background: #f39c12;
+  background: #f59e0b;
   border-radius: 50%;
   padding: 8px;
+
+  [data-theme="dark"] & {
+    background: #fbbf24;
+  }
 }
 
 .toastmessage-warning-icon {
@@ -24,16 +33,29 @@
 
 .toastmessage-warning-title {
   font-weight: 600;
-  color: #d68910;
+  color: #92400e;
+
+  [data-theme="dark"] & {
+    color: #fde68a;
+  }
 }
 
 .toastmessage-warning-subtitle {
   font-size: 12px;
-  color: #f39c12;
+  color: #b45309;
+
+  [data-theme="dark"] & {
+    color: #fcd34d;
+  }
 }
 
 .toastmessage-warning-close {
   width: 16px;
   height: 16px;
   cursor: pointer;
+  color: #92400e;
+
+  [data-theme="dark"] & {
+    color: #fde68a;
+  }
 }
