@@ -5,8 +5,12 @@
   gap: 12px;
   padding: 16px;
   border-radius: 12px;
-  background: #e6f7ef;
+  background: #ecfdf5;
   overflow: hidden;
+
+  [data-theme="dark"] & {
+    background: #064e3b;
+  }
 }
 
 .toastmessage-success-wave {
@@ -14,13 +18,21 @@
   bottom: 0;
   left: 0;
   width: 100%;
-  fill: #b7e6d1;
+  fill: #6ee7b7;
+
+  [data-theme="dark"] & {
+    fill: #10b981;
+  }
 }
 
 .toastmessage-success-icon-container {
-  background: #2ecc71;
+  background: #10b981;
   border-radius: 50%;
   padding: 8px;
+
+  [data-theme="dark"] & {
+    background: #34d399;
+  }
 }
 
 .toastmessage-success-icon {
@@ -35,16 +47,29 @@
 
 .toastmessage-success-title {
   font-weight: 600;
-  color: #1e8449;
+  color: #065f46;
+
+  [data-theme="dark"] & {
+    color: #d1fae5;
+  }
 }
 
 .toastmessage-success-subtitle {
   font-size: 12px;
-  color: #239b56;
+  color: #047857;
+
+  [data-theme="dark"] & {
+    color: #a7f3d0;
+  }
 }
 
 .toastmessage-success-close {
   width: 16px;
   height: 16px;
   cursor: pointer;
+  color: #065f46;
+
+  [data-theme="dark"] & {
+    color: #d1fae5;
+  }
 }
