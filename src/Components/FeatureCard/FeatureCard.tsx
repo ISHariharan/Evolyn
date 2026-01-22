@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import "./FeatureCard.scss";
 import { FeatureCardType } from "./type";
 
-const FeatureCard = ({Title, Tag, Description, key_importance} : FeatureCardType) => {
+const FeatureCard = ({Title, Tag, Description, key_importance, navigation} : FeatureCardType) => {
   return (
     <div className="card">
         <div className="card-header">
@@ -20,7 +20,7 @@ const FeatureCard = ({Title, Tag, Description, key_importance} : FeatureCardType
             </li>
           ))}
         </ul>
-        <button type="button" className="action">Get Started</button>
+        <button type="button" className="action"><a href={navigation}>Get Started</a></button>
     </div>
   );
 };

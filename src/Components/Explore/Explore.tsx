@@ -85,6 +85,7 @@ const Explore = () => {
                 "Maintains work-in-progress focus",
                 "Builds momentum through completion",
             ],
+            navigation : "/stride",
         },
         {
             Title : "Expense Tracker",
@@ -96,6 +97,7 @@ const Explore = () => {
                 "Encourages intentional decisions",
                 "Supports long-term financial discipline",
             ],
+            navigation : "/",
         },
         {
             Title : "Learning Flow",
@@ -107,6 +109,7 @@ const Explore = () => {
                 "Reinforces long-term consistency",
                 "Enables verifiable skill proof",
             ],
+            navigation : "/",
         },
         {
             Title : "Health & Nutrition",
@@ -118,6 +121,7 @@ const Explore = () => {
                 "Identifies plateaus and drift",
                 "Supports long-term wellbeing",
             ],
+            navigation : "/",
         },
         {
             Title : "Investment Tracker",
@@ -129,6 +133,7 @@ const Explore = () => {
                 "Builds audit-ready history",
                 "Reduces emotional decisions",
             ],
+            navigation : "/",
         },
         {
             Title : "Skill Proof",
@@ -140,6 +145,7 @@ const Explore = () => {
                 "Strengthens credibility",
                 "Enables long-term trust",
             ],
+            navigation : "/",
         }
     ];
 

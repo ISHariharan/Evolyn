@@ -3,4 +3,5 @@ export interface FeatureCardType {
     Tag: string;
     Description : string;
     key_importance: string[];
+    navigation: string;
 }
