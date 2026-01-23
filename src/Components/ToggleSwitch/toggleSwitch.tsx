@@ -1,22 +1,28 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
 import "./toggleSwitch.css";
+import { useStore } from "../../Store/GlobalStore/GlobalStore";
 
 const ToggleSwitch = () => {
-    const [theme, setTheme] = useState("light");
+    const {state, dispatch} = useStore();
+    let currentTheme;
+    console.log('State : ', state.theme);
+    const [theme, setTheme] = useState(state.theme);
 
     useEffect(() => {
         document.documentElement.setAttribute("data-theme", theme);
     }, [theme]);
 
     const handleToggle = () => {
-        setTheme(theme === "light" ? "dark" : "light");
+        currentTheme = theme === "light" ? "dark" : "light";
+        dispatch({type: "SET_THEME", payload: currentTheme});
+        setTheme(currentTheme);
     };
 
     return (
         <div>
             <label className="switch">
-                <input type="checkbox" onChange={handleToggle} checked={theme === "dark"} />
+                <input type="checkbox" onChange={handleToggle} checked={state.theme === "dark"} />
                 <span className="slider">
           <svg
               className="slider-icon"
