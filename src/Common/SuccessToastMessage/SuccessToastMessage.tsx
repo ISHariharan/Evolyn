@@ -1,19 +1,19 @@
 import { useState, useEffect } from "react";
 import "./SuccessToastMessage.scss";
 
-const SuccessToastMessage = ({duration= 3000, onClose}) => {
+const SuccessToastMessage = ({duration= 3000 ,ToastMessageHeader, ToastMessageBody}) => {
   const [visible, setVisible] = useState(true);
   
   useEffect(() => {
       const timer = setTimeout(() => {
         setVisible(false);
         setTimeout(() => {
-          onClose?.();
+        //   onClose?.();
         }, 250);
       }, duration);
   
       return () => clearTimeout(timer);
-  }, [duration, onClose]);
+  }, [duration]);
 
 
   return (
@@ -44,8 +44,8 @@ const SuccessToastMessage = ({duration= 3000, onClose}) => {
             </div>
 
             <div className="SuccessToastMessage-message-text-container">
-                <p className="SuccessToastMessage-message-text">Success message</p>
-                <p className="SuccessToastMessage-sub-text">Everything seems</p>
+                <p className="SuccessToastMessage-message-text">{ToastMessageHeader}</p>
+                <p className="SuccessToastMessage-sub-text">{ToastMessageBody}</p>
             </div>
 
             <svg

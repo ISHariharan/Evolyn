@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { userDetails, verifyUserDetails } from "../../API/AuthForm";
 import { userDetailsType } from "./types";
 import { generateUUID } from "../../Common/UUIDGenerator/UUIDGenerator";
+import SuccessToastMessage from "../../Common/SuccessToastMessage/SuccessToastMessage";
 
 const AuthForm = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
     const [authFormType, setAuthFormType] = useState<"SignUp" | "SignIn">("SignUp");
@@ -12,6 +13,9 @@ const AuthForm = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void })
     const [passWord, setPassword] = useState<string>("");
     const [confirmPassword, setConfirmPassword] = useState<string>("");
     const [isDisabled, setIsDisabled] = useState<boolean>(true);
+    const [showSuccessToast, setShowSuccesToast] = useState(false);
+    const [toastHeader, setToastHeader] = useState("");
+    const [toastBody, setToastBody] = useState("");
 
     const [strength, setStrength] = useState<"weak" | "medium" | "strong" | "">("");
     const [strengthText, setStrengthText] = useState<string>("");
@@ -72,6 +76,15 @@ const AuthForm = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void })
         }
     }, [passWord, authFormType]);
 
+    const triggerToastMessage = (response) => {
+      console.log("Response : ", response);
+      if (response.ok) {
+        setToastHeader("Registration Success");
+        setToastBody(response.data.message);
+        setShowSuccesToast(true);
+      }
+    }
+
     const handleSubmit = async (e: React.MouseEvent) => {
         e.preventDefault();
         if (isDisabled) return;
@@ -85,13 +98,15 @@ const AuthForm = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void })
                 email,
                 password: passWord,
             };
-            await userDetails(props);
+            const response = await userDetails(props);
+            triggerToastMessage(response);
         } else {
             const props: userDetailsType = {
                 email,
                 password: passWord,
             };
-            await verifyUserDetails(props);
+            const response = await verifyUserDetails(props);
+            triggerToastMessage(response);
         }
     };
 
@@ -237,6 +252,14 @@ const AuthForm = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void })
           </p>
         </form>
       </div>
+      {showSuccessToast && (
+        <SuccessToastMessage
+          ToastMessageHeader={toastHeader}
+          ToastMessageBody={toastBody}
+          duration={3000}
+        />
+      )}
+
     </div>
   );
 };
