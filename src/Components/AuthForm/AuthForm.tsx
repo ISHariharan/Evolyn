@@ -86,7 +86,7 @@ const AuthForm = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void })
         setShowSuccesToast(true);
       } else {
         setToastHeader("Registration Failed");
-        setToastBody(response.data.message);
+        setToastBody(response.data.error);
         setShowErrorToast(true);
       }
     }
