@@ -1,19 +1,19 @@
 import { useEffect, useState } from "react";
 import "./ErrorToastMessage.scss";
 
-const ErrorToastMessage = ({ duration = 3000, onClose }) => {
+const ErrorToastMessage = ({ duration = 3000, ToastMessageHeader, ToastMessageBody  }) => {
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setVisible(false);
       setTimeout(() => {
-        onClose?.();
+        // onClose?.();
       }, 250);
     }, duration);
 
     return () => clearTimeout(timer);
-  }, [duration, onClose]);
+  }, [duration]);
 
 
   return (
@@ -44,8 +44,8 @@ const ErrorToastMessage = ({ duration = 3000, onClose }) => {
         </div>
 
         <div className="ErrorToastMessage-message-text-container">
-          <p className="ErrorToastMessage-message-text">Error message</p>
-          <p className="ErrorToastMessage-sub-text">Something went wrong</p>
+          <p className="ErrorToastMessage-message-text">{ToastMessageHeader}</p>
+          <p className="ErrorToastMessage-sub-text">{ToastMessageBody}</p>
         </div>
 
         <svg

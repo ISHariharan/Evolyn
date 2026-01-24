@@ -4,6 +4,7 @@ import { userDetails, verifyUserDetails } from "../../API/AuthForm";
 import { userDetailsType } from "./types";
 import { generateUUID } from "../../Common/UUIDGenerator/UUIDGenerator";
 import SuccessToastMessage from "../../Common/SuccessToastMessage/SuccessToastMessage";
+import ErrorToastMessage from "../../Common/ErrorToastMessage/ErrorToastMessage";
 
 const AuthForm = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
     const [authFormType, setAuthFormType] = useState<"SignUp" | "SignIn">("SignUp");
@@ -14,6 +15,7 @@ const AuthForm = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void })
     const [confirmPassword, setConfirmPassword] = useState<string>("");
     const [isDisabled, setIsDisabled] = useState<boolean>(true);
     const [showSuccessToast, setShowSuccesToast] = useState(false);
+    const [showErrorToast, setShowErrorToast] = useState(false);
     const [toastHeader, setToastHeader] = useState("");
     const [toastBody, setToastBody] = useState("");
 
@@ -82,6 +84,10 @@ const AuthForm = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void })
         setToastHeader("Registration Success");
         setToastBody(response.data.message);
         setShowSuccesToast(true);
+      } else {
+        setToastHeader("Registration Failed");
+        setToastBody(response.data.message);
+        setShowErrorToast(true);
       }
     }
 
@@ -259,7 +265,13 @@ const AuthForm = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void })
           duration={3000}
         />
       )}
-
+      {showErrorToast && (
+        <ErrorToastMessage
+          ToastMessageHeader={toastHeader}
+          ToastMessageBody={toastBody}
+          duration={3000}
+        />
+      )}
     </div>
   );
 };
