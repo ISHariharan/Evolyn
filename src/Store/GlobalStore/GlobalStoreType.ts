@@ -1,5 +1,6 @@
 export interface StoreType {
     theme : string;
+    authenticated : boolean;
 }
 
 export interface Action{

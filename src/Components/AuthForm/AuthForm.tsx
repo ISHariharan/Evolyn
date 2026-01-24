@@ -5,6 +5,7 @@ import { userDetailsType } from "./types";
 import { generateUUID } from "../../Common/UUIDGenerator/UUIDGenerator";
 import SuccessToastMessage from "../../Common/SuccessToastMessage/SuccessToastMessage";
 import ErrorToastMessage from "../../Common/ErrorToastMessage/ErrorToastMessage";
+import { useStore } from "../../Store/GlobalStore/GlobalStore";
 
 const AuthForm = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
     const [authFormType, setAuthFormType] = useState<"SignUp" | "SignIn">("SignUp");
@@ -18,6 +19,7 @@ const AuthForm = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void })
     const [showErrorToast, setShowErrorToast] = useState(false);
     const [toastHeader, setToastHeader] = useState("");
     const [toastBody, setToastBody] = useState("");
+    const {state, dispatch} = useStore();
 
     const [strength, setStrength] = useState<"weak" | "medium" | "strong" | "">("");
     const [strengthText, setStrengthText] = useState<string>("");
@@ -70,6 +72,10 @@ const AuthForm = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void })
     }, [firstName, lastName, email, passWord, confirmPassword, authFormType, strength]);
 
     useEffect(() => {
+        console.log("Authenticated : ", state.authenticated);
+    }, [state.authenticated]);
+
+    useEffect(() => {
         if (authFormType === "SignUp") {
         calculatePasswordStrength(passWord);
         } else {
@@ -84,10 +90,12 @@ const AuthForm = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void })
         setToastHeader("Registration Success");
         setToastBody(response.data.message);
         setShowSuccesToast(true);
+        dispatch({type: "SET_AUTHENTICATED", payload : "true"});
       } else {
         setToastHeader("Registration Failed");
         setToastBody(response.data.error);
         setShowErrorToast(true);
+        dispatch({type: "SET_AUTHENTICATED", payload : "false"});
       }
     }
 
