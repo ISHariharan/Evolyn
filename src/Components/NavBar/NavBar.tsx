@@ -4,11 +4,13 @@ import { getNavBarContent } from "../../API/NavBar/api";
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom";
 import { useStore } from "../../Store/GlobalStore/GlobalStore";
+import Dialog from "../../Common/DialogBox/DialogBox";
 
 const NavBar = () => {
     const navigate = useNavigate();
     const {state, dispatch} = useStore();
     const [navBarDetails, setNavBarDetails] = useState<any>([]);
+    const [showDialog, setShowDialog] = useState<boolean>(false);
     /*==================== SHOW NAVBAR ====================*/
     const showMenu = (headerToggle, navbarId) =>{
         const toggleBtn = document.getElementById(headerToggle),
@@ -51,10 +53,18 @@ const NavBar = () => {
         setNavBarDetails(navBarContent);
     }
 
-    const handleLogOut = () => {
-        navigate('/');
-        dispatch({type : "SET_AUTHENTICATED", payload : false});
-        dispatch({ type: "SET_USERDETAILS", payload: { email: "" } });
+    const handleLogOut = (result?: string) => {
+        if(result == "cancel") {
+            setShowDialog(false);
+            return;
+        } 
+        if(result == "logout"){
+            setShowDialog(false);
+            navigate('/');
+            dispatch({type : "SET_AUTHENTICATED", payload : false});
+            dispatch({ type: "SET_USERDETAILS", payload: { email: "" } });
+        }
+        setShowDialog(true);
     }
 
     const handleClick = (event, navDataName) => {
@@ -126,7 +136,7 @@ const NavBar = () => {
                     </div>
                 </div>
                 {state.authenticated && (
-                    <button onClick={handleLogOut}>
+                    <button onClick={() => handleLogOut()}>
                         <a className="nav__link nav__logout">
                             <i className='bx bx-log-out nav__icon' ></i>
                             <span className="nav__name">Log Out</span>
@@ -134,6 +144,9 @@ const NavBar = () => {
                     </button>
                 )}
             </nav>
+            {showDialog && (
+                <Dialog isOpen={showDialog} onClose={() => setShowDialog(false)} Heading="Leaving already?" Description="Want to log out of Evolyn now?" SecondaryButton="Cancel" PrimaryButton="Logout" onSecondary={() => handleLogOut("cancel")} onPrimary={() => handleLogOut('logout')}/>
+            )}
         </div>
     );
 }
