@@ -44,6 +44,19 @@
   --info-icon: #3b82f6;
   --info-title: #1e40af;
 
+  /* ── Stride EmptyState SVG Colors ──────────────────────────────── */
+  --shadow-color:       rgba(0,0,0,0.38);
+  --ambient-shadow:     rgba(0,0,0,0.14);
+  --board-gradient-end: rgba(0,0,0,0.04);
+  --topbar-bg:          rgba(0,0,0,0.03);
+  --column-header-bg:   rgba(0,0,0,0.05);
+  --column-bg:          rgba(0,0,0,0.025);
+  --divider:            rgba(0,0,0,0.07);
+  --shine:              rgba(255,255,255,0.35);
+  --card-todo:     #e2e8f0;
+  --card-progress: #fef3c7;
+  --card-done:     #dcfce7;
+
   /*========== Font and typography ==========*/
   --body-font: 'Poppins', sans-serif;
   --normal-font-size: .938rem;
@@ -91,6 +104,20 @@
   --info-bg: #1e3a8a;
   --info-icon: #60a5fa;
   --info-title: #bfdbfe;
+
+
+  /* ── Stride EmptyState SVG Colors ──────────────────────────────── */
+  --shadow-color:       rgba(0,0,0,0.6);
+  --ambient-shadow:     rgba(0,0,0,0.22);
+  --board-gradient-end: rgba(0,0,0,0.06);
+  --topbar-bg:          rgba(0,0,0,0.09);
+  --column-header-bg:   rgba(255,255,255,0.07);
+  --column-bg:          rgba(0,0,0,0.08);
+  --divider:            rgba(255,255,255,0.06);
+  --shine:              rgba(255,255,255,0.22);
+  --card-todo:     #334155;
+  --card-progress: #713f12;
+  --card-done:     #14532d;
 }
 
 @media screen and (min-width: 1024px) {
