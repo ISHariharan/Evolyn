@@ -52,6 +52,7 @@ const NavBar = () => {
     }
 
     const handleLogOut = () => {
+        navigate('/home');
         dispatch({type : "SET_AUTHENTICATED", payload : false});
     }
 
