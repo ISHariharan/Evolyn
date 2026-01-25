@@ -1,11 +1,12 @@
 export interface StoreType {
     theme : string;
     authenticated : boolean;
+    userDetails : any;
 }
 
 export interface Action{
-    type: string;
-    payload: string;
+    type: any;
+    payload: any;
 }
 
 export interface StoreContextType {
