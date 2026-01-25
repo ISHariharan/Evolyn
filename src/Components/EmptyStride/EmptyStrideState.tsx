@@ -1,11 +1,13 @@
 import "./EmptyStrideState.scss";
-import EmptyStateImage from "../../Statics/StrideEmptyState.svg";
+import { ReactComponent as EmptyStateImage } from "../../Statics/StrideEmptyState.svg";
 
 const EmptyStrideState = () => {
     return (
         <div className="EmptyStride-Container">
+            <h1 className="EmptyStride-Heading">You've not started your WorkSpace</h1>
+            <h3 className="EmptyStride-SubHeading">Organize your day-to-day tasks with Kanban boards</h3>
             <div className="EmptyStrideState-Image-Container">
-                <img src={EmptyStateImage} alt="Stride Empty State Image" width="50%" height="50%"/>
+                <EmptyStateImage width="50%" height="50%" aria-label="Stride Empty State Image" />
             </div>
             <div className="relative group">
                 <button
