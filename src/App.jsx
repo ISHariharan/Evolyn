@@ -5,6 +5,7 @@ import NavBar from './Components/NavBar/NavBar';
 import Header from './Components/Header/Header';
 import Explore from './Components/Explore/Explore';
 import Stride from "./Pages/Stride/Stride";
+import ProtectedRoute from "./Components/ProtectedRoute/ProtectedRoute";
 
 function App() {
   return (
@@ -12,7 +13,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/stride" element={<Stride />} />
+          <Route path="/stride" element={<ProtectedRoute><Stride /></ProtectedRoute>} />
           <Route path="/explore" element={<Explore />} />
         </Routes>
         <Header/>

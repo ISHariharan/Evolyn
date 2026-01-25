@@ -52,8 +52,9 @@ const NavBar = () => {
     }
 
     const handleLogOut = () => {
-        navigate('/home');
+        navigate('/');
         dispatch({type : "SET_AUTHENTICATED", payload : false});
+        dispatch({ type: "SET_USERDETAILS", payload: { email: "" } });
     }
 
     const handleClick = (event, navDataName) => {
