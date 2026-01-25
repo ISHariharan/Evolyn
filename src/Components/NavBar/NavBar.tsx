@@ -51,6 +51,10 @@ const NavBar = () => {
         setNavBarDetails(navBarContent);
     }
 
+    const handleLogOut = () => {
+        dispatch({type : "SET_AUTHENTICATED", payload : false});
+    }
+
     const handleClick = (event, navDataName) => {
         const target = "/" + navDataName.toLowerCase();
         navigate(target);
@@ -62,82 +66,10 @@ const NavBar = () => {
     }, []);
 
     useEffect(() => {
-        if(state.authenticated){
-            getNavBarData();
-        }
+        getNavBarData();
     }, [state.authenticated]);
     return (
         <div className="nav" id="navbar">
-            {/* <nav className="nav__container">
-                <div>
-                    <a href="#" className="nav__link nav__logo">
-                        <i className='bx bxs-disc nav__icon' ></i>
-                        <span className="nav__logo-name">Evolyn</span>
-                    </a>
-    
-                    <div className="nav__list">
-                        <div className="nav__items">
-    
-                            <a href="#" className="nav__link active">
-                                <i className='bx bx-home nav__icon' ></i>
-                                <span className="nav__name">Home</span>
-                            </a>
-                            
-                            <div className="nav__dropdown">
-                                <a href="#" className="nav__link">
-                                    <i className='bx bx-user nav__icon' ></i>
-                                    <span className="nav__name">Profile</span>
-                                    <i className='bx bx-chevron-down nav__icon nav__dropdown-icon'></i>
-                                </a>
-
-                                <div className="nav__dropdown-collapse">
-                                    <div className="nav__dropdown-content">
-                                        <a href="#" className="nav__dropdown-item">Passwords</a>
-                                        <a href="#" className="nav__dropdown-item">Mail</a>
-                                        <a href="#" className="nav__dropdown-item">Accounts</a>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <a href="#" className="nav__link">
-                                <i className='bx bx-message-rounded nav__icon' ></i>
-                                <span className="nav__name">Messages</span>
-                            </a>
-                            <div className="nav__dropdown">
-                                <a href="#" className="nav__link">
-                                    <i className='bx bx-bell nav__icon' ></i>
-                                    <span className="nav__name">Notifications</span>
-                                    <i className='bx bx-chevron-down nav__icon nav__dropdown-icon'></i>
-                                </a>
-
-                                <div className="nav__dropdown-collapse">
-                                    <div className="nav__dropdown-content">
-                                        <a href="#" className="nav__dropdown-item">Blocked</a>
-                                        <a href="#" className="nav__dropdown-item">Silenced</a>
-                                        <a href="#" className="nav__dropdown-item">Publish</a>
-                                        <a href="#" className="nav__dropdown-item">Program</a>
-                                    </div>
-                                </div>
-
-                            </div>
-
-                            <a href="#" className="nav__link">
-                                <i className='bx bx-compass nav__icon' ></i>
-                                <span className="nav__name">Explore</span>
-                            </a>
-                            <a href="#" className="nav__link">
-                                <i className='bx bx-bookmark nav__icon' ></i>
-                                <span className="nav__name">Saved</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <a href="#" className="nav__link nav__logout">
-                    <i className='bx bx-log-out nav__icon' ></i>
-                    <span className="nav__name">Log Out</span>
-                </a>
-            </nav> */}
             <nav className="nav__container">
                 <div>
                     <a className="nav__link nav__logo" onClick={(event) => handleClick(event, "")}>
@@ -192,7 +124,7 @@ const NavBar = () => {
                     </div>
                 </div>
                 {state.authenticated && (
-                    <button>
+                    <button onClick={handleLogOut}>
                         <a className="nav__link nav__logout">
                             <i className='bx bx-log-out nav__icon' ></i>
                             <span className="nav__name">Log Out</span>
