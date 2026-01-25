@@ -13,16 +13,25 @@ const initialStoreState: StoreType = {
 }
 
 const getInitialState = () => {
-  const savedTheme = localStorage.getItem("theme");
-  const authenticated = localStorage.getItem("authenticated");
-  const userDetails = localStorage.getItem("userdetails")
-  
+  const savedTheme = localStorage.getItem("theme") || "light";
+
+  const authenticatedRaw = localStorage.getItem("authenticated");
+  const authenticated = authenticatedRaw === "true";
+
+  const userDetailsRaw = localStorage.getItem("userdetails");
+  let parsedUserDetails: any = { email: "" };
+  if (userDetailsRaw) {
+    try {
+      parsedUserDetails = JSON.parse(userDetailsRaw);
+    } catch {
+      parsedUserDetails = { email: "" };
+    }
+  }
+
   return {
-    theme: savedTheme || "light",
-    authenticated: authenticated || false,
-    userDetails : userDetails || {
-        email : '',
-    },
+    theme: savedTheme,
+    authenticated,
+    userDetails: parsedUserDetails,
   };
 };
 
@@ -32,7 +41,8 @@ const reducer = (state, action) => {
         case "SET_THEME":
             return {...state, theme: action.payload};
         case "SET_AUTHENTICATED":
-            const payload = action.payload === "true" ? true : false;
+            const payload =
+                action.payload === true || action.payload === "true" ? true : false;
             return {...state, authenticated: payload};
         case "SET_USERDETAILS": 
             return {...state, userDetails : action.payload};
@@ -50,8 +60,8 @@ export const StoreProvider = ({children}) => {
 
     useEffect(() => {
         localStorage.setItem("theme", state.theme);
-        localStorage.setItem("authenticated", state.authenticated);
-        localStorage.setItem("userdetails", state.userDetails);
+        localStorage.setItem("authenticated", String(state.authenticated));
+        localStorage.setItem("userdetails", JSON.stringify(state.userDetails));
     }, [state.theme, state.authenticated, state.userDetails]);
 
     return(
@@ -62,4 +72,3 @@ export const StoreProvider = ({children}) => {
 }
 
 export const useStore = () => useContext(StoreContext);
-

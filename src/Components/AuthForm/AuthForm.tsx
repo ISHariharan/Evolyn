@@ -86,6 +86,9 @@ const AuthForm = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void })
 
     const triggerToastMessage = (response) => {
       console.log("Response : ", response);
+      const userDetails = {
+        email : email,
+      }
       const SucessToastHeader = authFormType === 'SignIn' ? "Login Successful" : "Registration Successful";
       const ErrorToastMessage = authFormType === 'SignIn' ? "Login Failed" : "Registration Failed";
       if (response.ok) {
@@ -98,6 +101,7 @@ const AuthForm = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void })
         } else {
           swapAuthForm();
         }
+        dispatch({type: "SET_USERDETAILS", payload : userDetails});
       } else {
         setToastHeader(ErrorToastMessage);
         setToastBody(response.data.error);
