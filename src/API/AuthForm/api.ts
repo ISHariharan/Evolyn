@@ -34,6 +34,17 @@ export const verifyUser = async (userDetails : userDetailsType) => {
         },
         body : JSON.stringify(userDetails),
     });
-    console.log('Response : ', response);
-    return response;
+
+    let data = null;
+    try {
+        data = await response.json();
+    } catch (err) {
+        data = err;
+    }
+    return {
+        ok: response.ok,
+        status: response.status,
+        statusText: response.statusText,
+        data,
+    };
 }

@@ -86,13 +86,20 @@ const AuthForm = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void })
 
     const triggerToastMessage = (response) => {
       console.log("Response : ", response);
+      const SucessToastHeader = authFormType === 'SignIn' ? "Login Successful" : "Registration Successful";
+      const ErrorToastMessage = authFormType === 'SignIn' ? "Login Failed" : "Registration Failed";
       if (response.ok) {
-        setToastHeader("Registration Success");
+        setToastHeader(SucessToastHeader);
         setToastBody(response.data.message);
         setShowSuccesToast(true);
         dispatch({type: "SET_AUTHENTICATED", payload : "true"});
+        if(authFormType === 'SignIn') {
+          onClose();
+        } else {
+          swapAuthForm();
+        }
       } else {
-        setToastHeader("Registration Failed");
+        setToastHeader(ErrorToastMessage);
         setToastBody(response.data.error);
         setShowErrorToast(true);
         dispatch({type: "SET_AUTHENTICATED", payload : "false"});
