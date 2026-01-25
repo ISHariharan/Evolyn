@@ -48,3 +48,27 @@ export const verifyUser = async (userDetails : userDetailsType) => {
         data,
     };
 }
+
+export const checkLoggedInUserDetails = async (email : string) => {
+    const url = `${evolynApi}/verify/loggedin/user`;
+    const response = await fetch(url, {
+        method : 'POST',
+        headers : {
+            "Content-Type": "application/json",
+        },
+        body : JSON.stringify({"email" : email}),
+    })
+    let data = null;
+    try {
+        data = await response.json();
+    } catch (err) {
+        data = err;
+    }
+   
+    return {
+        ok: response.ok,
+        status: response.status,
+        statusText: response.statusText,
+        data,
+    };
+}

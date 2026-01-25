@@ -1,30 +1,39 @@
 import "./LoginAvatar.scss";
 import { useStore } from "../../Store/GlobalStore/GlobalStore";
+import { useEffect, useState } from "react";
+import { checkLoggedInUser } from "../../API/AuthForm/index";
 
 
 const LoginAvatar = () => {
     const { state } = useStore();
+    const [avatarName, setAvatarName] = useState<string>("");
+    const [userFullName, setUserFullName] = useState<string>("");
 
-    // Safely extract email from store (handles object or string values)
     const userDetails = state?.userDetails;
-    let email: string = "";
-    if (userDetails && typeof userDetails === "object") {
-        email = (userDetails as any).email || "";
-    } else if (typeof userDetails === "string") {
-        try {
-            const parsed = JSON.parse(userDetails);
-            email = parsed?.email || "";
-        } catch {
-            email = "";
-        }
-    }
+    const email = userDetails?.email;
+
+    const loginStatus = async (userEmail: string) => {
+        const user_name = await checkLoggedInUser(userEmail);
+        setAvatarName(user_name?.data.firstName[0] + user_name?.data.lastName[0]);
+        setUserFullName(user_name?.data.firstName + " " + user_name?.data.lastName);
+    }    
+
+    useEffect(() => {
+        loginStatus(email);
+    }, [])
 
     const initial = email ? email.charAt(0).toUpperCase() : "U";
 
     return (
-        <div className="LoginAvatar-Container" title={email || "User"}>
-            <div className="LoginAvatar-Initial">{initial}</div>
-            {email && <span className="LoginAvatar-Email">{email}</span>}
+       <div className="LoginAvatar">
+            {avatarName && (
+                <ul className="LoginAvatar__menu">
+                <li style={{ '--i': '#a555ff', '--j': '#ea51ff' } as any}>
+                    <span className="icon">{avatarName}</span>
+                    <span className="title">{userFullName}</span>
+                </li>
+                </ul>
+            )}
         </div>
     );
 }
