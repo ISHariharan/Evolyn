@@ -1,0 +1,263 @@
+.create-stride-workspace__backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: -1;
+}
+
+.create-stride-workspace__dialog {
+  width: 480px;
+  max-width: 92%;
+  background: var(--container-color);
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  animation: createStrideWorkspaceFadeIn 0.18s ease-out;
+}
+
+.IconName-WorkspaceName-Container{
+    display: flex;
+    gap: 3%;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Header */
+.create-stride-workspace__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+}
+
+.create-stride-workspace__subtitle {
+  margin-top: 6px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #6b7280;
+  max-width: 420px;
+}
+
+.create-stride-workspace__header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.create-stride-workspace__close {
+  border: none;
+  background: transparent;
+  font-size: 18px;
+  cursor: pointer;
+  color: #6b7280;
+}
+
+.create-stride-workspace__close:hover {
+  color: #111827;
+}
+
+/* Body */
+.create-stride-workspace__body {
+  padding: 20px;
+}
+
+.Stride-Workspace-Icons-Container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
+  gap: 10px;
+  margin: 10px 0 16px;
+  padding: 12px;
+  background: rgba(99, 102, 241, 0.04);
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+/* Single Icon Wrapper */
+.Stride-Workspace-Icon-Container {
+  height: 44px;
+  width: 44px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  background: var(--container-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    border-color 0.15s ease,
+    background 0.15s ease;
+}
+
+.Stride-Workspace-Icon-Container > div {
+  font-size: 20px;
+  color: var(--title-color);
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.Stride-Workspace-Icon-Container:hover {
+  background: rgba(99, 102, 241, 0.08);
+  border-color: rgba(99, 102, 241, 0.4);
+  box-shadow: 0 6px 14px rgba(99, 102, 241, 0.15);
+  transform: translateY(-2px);
+}
+
+.Stride-Workspace-Icon-Container:hover > div {
+  color: var(--first-color);
+  transform: scale(1.08);
+}
+
+
+.Stride-Workspace-Icon-Container:active {
+  transform: scale(0.96);
+  box-shadow: 0 3px 8px rgba(99, 102, 241, 0.2);
+}
+
+
+.Stride-Workspace-Icon-Container.is-selected {
+  background: rgba(99, 102, 241, 0.12);
+  border-color: var(--first-color);
+  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.25);
+}
+
+.Stride-Workspace-Icon-Container.is-selected > div {
+  color: var(--first-color);
+  transform: scale(1.12);
+}
+
+
+.Stride-Workspace-Icons-Container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.Stride-Workspace-Icons-Container::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.3);
+  border-radius: 6px;
+}
+
+.Stride-Workspace-Icons-Container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.create-stride-workspace__form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+.create-stride-workspace__form-group label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--title-color);
+}
+
+.Stride-IconName-Button {
+  height: 38px;
+  width: 38px;             
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  padding: 0;               
+  display: flex;            
+  align-items: center;
+  justify-content: center;
+  background: var(--container-color);
+  cursor: pointer;
+}
+
+.Stride-IconName {
+  font-size: 20px;          
+  line-height: 1;           
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+
+.Stride-WorkspaceName-InputBox-Container{
+    width: 100%;
+}
+
+// .Stride-WorkspaceName-InputBox::placeholder{
+//     color: var(--first-color);
+// }
+
+// .Stride-WorkspaceName-Description::placeholder {
+//     color: var(--first-color);
+// }
+
+
+.create-stride-workspace__form-group input {
+  height: 38px;
+  padding: 0 12px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+  outline: none;
+  width: 100%;
+  background-color: var(--container-color);
+}
+
+.create-stride-workspace__form-group input:focus {
+  border-color: #6366f1; /* Evolyn accent */
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+
+.create-stride-workspace__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 20px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.create-stride-workspace__btn {
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.create-stride-workspace__btn--secondary {
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  color: black;
+}
+
+.create-stride-workspace__btn--secondary:hover {
+  background: #f9fafb;
+}
+
+.create-stride-workspace__btn--primary {
+  border: none;
+  background: var(--button-color);
+  color: #ffffff;
+}
+
+.create-stride-workspace__btn--primary:hover {
+  background: #4f46e5;
+}
+
+/* Animation */
+@keyframes createStrideWorkspaceFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
