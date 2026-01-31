@@ -20,7 +20,7 @@ const getInitialState = () => {
   const authenticated = authenticatedRaw === "true";
 
   const userDetailsRaw = localStorage.getItem("userdetails");
-  let parsedUserDetails: any = { email: "" };
+  let parsedUserDetails: any = { email: "", id: "" };
   if (userDetailsRaw) {
     try {
       parsedUserDetails = JSON.parse(userDetailsRaw);

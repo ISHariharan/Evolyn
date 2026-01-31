@@ -19,7 +19,7 @@ const LoginAvatar = () => {
         const userDetails = {
             email : email,
             id : user_name.data.Id,
-        }
+        };
         dispatch({type: "SET_USERDETAILS", payload : userDetails});
     }    
 

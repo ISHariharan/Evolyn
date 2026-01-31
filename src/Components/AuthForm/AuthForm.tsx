@@ -1,6 +1,6 @@
 import "./AuthForm.scss";
 import { useState, useEffect } from "react";
-import { userDetails, verifyUserDetails } from "../../API/AuthForm";
+import { userDetails as storeUserDetailsApi, verifyUserDetails, checkLoggedInUser } from "../../API/AuthForm";
 import { userDetailsType } from "./types";
 import { generateUUID } from "../../Common/UUIDGenerator/UUIDGenerator";
 import SuccessToastMessage from "../../Common/SuccessToastMessage/SuccessToastMessage";
@@ -84,12 +84,8 @@ const AuthForm = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void })
         }
     }, [passWord, authFormType]);
 
-    const triggerToastMessage = (response) => {
+    const triggerToastMessage = (response, user: { email: string; id: string }) => {
       console.log("Response : ", response);
-      const userDetails = {
-        email : email,
-        id: '',
-      }
       const SucessToastHeader = authFormType === 'SignIn' ? "Login Successful" : "Registration Successful";
       const ErrorToastMessage = authFormType === 'SignIn' ? "Login Failed" : "Registration Failed";
       if (response.ok) {
@@ -102,7 +98,7 @@ const AuthForm = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void })
         } else {
           swapAuthForm();
         }
-        dispatch({type: "SET_USERDETAILS", payload : userDetails});
+        dispatch({type: "SET_USERDETAILS", payload : user});
       } else {
         setToastHeader(ErrorToastMessage);
         setToastBody(response.data.error);
@@ -124,15 +120,24 @@ const AuthForm = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void })
                 email,
                 password: passWord,
             };
-            const response = await userDetails(props);
-            triggerToastMessage(response);
+            const response = await storeUserDetailsApi(props);
+            const user = { email, id: uuid };
+            triggerToastMessage(response, user);
         } else {
             const props: userDetailsType = {
                 email,
                 password: passWord,
             };
             const response = await verifyUserDetails(props);
-            triggerToastMessage(response);
+            let id = '';
+            if (response.ok) {
+                const lookup = await checkLoggedInUser(email);
+                if (lookup.ok) {
+                    id = lookup.data?.uuid || lookup.data?.id || '';
+                }
+            }
+            const user = { email, id };
+            triggerToastMessage(response, user);
         }
     };
 
