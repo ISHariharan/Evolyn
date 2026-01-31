@@ -1,13 +1,44 @@
 import "./CreateStrideWorkspaceDialog.scss";
 import { StrideWorkspaceIcons } from "../../Statics/StrideWorkspaceIcons/StrideWorkspaceIcons";
 import { useState } from "react";
+import { CreateWorkspace } from "./types";
+import { generateUUID } from "../../Common/UUIDGenerator/UUIDGenerator";
+import ErrorToastMessage from "../../Common/ErrorToastMessage/ErrorToastMessage";
+import { useStore } from "../../Store/GlobalStore/GlobalStore";
+import { createStrideWorkspace } from "../../API/StrideWorkspace/Creation";
 
 const CreateStrideWorkspaceDialog = ({ onClose }) => {
-  console.log('Stride Workspace Icons : ', StrideWorkspaceIcons);
+  const {state} = useStore();
   const [showIcons, setShowIcons] = useState<Boolean>(false);
+  const [selectedIcon, setSelectedIcon] = useState('bx bx-shape-circle nav__icon');
+  const [workspaceName, setWorkspaceName] = useState("");
+  const [description, setDescription] = useState("");
+  const [triggerErrorMessage, setTriggerErrorMessage] = useState(false);
 
   const handleWorkspaceIcon = () => {
     setShowIcons(!showIcons);
+  }
+
+  const handleIconSelection = (icon) => {
+    setSelectedIcon(icon);
+    setShowIcons(!showIcons);
+  }
+
+  const handleCreateWorkspace = () => {
+    const UUID = generateUUID();
+    const props : CreateWorkspace = {
+      workspaceId: UUID,
+      workspaceName,
+      workspaceDescription : description,
+      workspaceIcon : selectedIcon
+    }
+    console.log('Handle Create Workspace : ', props);
+    try {
+      const response = createStrideWorkspace(props, state.userDetails.id)
+    } catch {
+      setTriggerErrorMessage(true);
+    }
+
   }
 
   return (
@@ -19,7 +50,6 @@ const CreateStrideWorkspaceDialog = ({ onClose }) => {
         className="create-stride-workspace__dialog"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
         <div className="create-stride-workspace__header">
             <div>
                 <h2>Create your Stride Workspace</h2>
@@ -35,14 +65,13 @@ const CreateStrideWorkspaceDialog = ({ onClose }) => {
             </button>
         </div>
 
-        {/* Body */}
         <div className="create-stride-workspace__body">
           <div className="create-stride-workspace__form-group">
             <label>Icon & name</label>
             <div className="IconName-WorkspaceName-Container">
                 <div>
                     <button className="Stride-IconName-Button" onClick={() => handleWorkspaceIcon()}>
-                        <div className="bx bx-shape-circle nav__icon Stride-IconName" />
+                        <div className={`${selectedIcon} Stride-IconName`} />
                     </button>
                 </div>
                 <div className="Stride-WorkspaceName-InputBox-Container">
@@ -50,6 +79,7 @@ const CreateStrideWorkspaceDialog = ({ onClose }) => {
                         className="Stride-WorkspaceName-InputBox"
                         type="text"
                         placeholder="e.g. Daily Focus, Study Stride"
+                        onChange={(event) => setWorkspaceName(event.target.value)}
                     />
                 </div>
             </div>
@@ -58,7 +88,7 @@ const CreateStrideWorkspaceDialog = ({ onClose }) => {
           {showIcons && (
             <div className="Stride-Workspace-Icons-Container">
                 {StrideWorkspaceIcons.map((icon, index) => (
-                    <div className="Stride-Workspace-Icon-Container" key={index}>
+                    <div className="Stride-Workspace-Icon-Container" onClick={() => handleIconSelection(icon)} key={index}>
                         <div className={icon} />
                     </div>
                 ))}
@@ -71,11 +101,11 @@ const CreateStrideWorkspaceDialog = ({ onClose }) => {
               className="Stride-WorkspaceName-Description"
               type="text"
               placeholder="What will you use this workspace for?"
+              onChange={(event) => setDescription(event.target.value)}
             />
           </div>
         </div>
 
-        {/* Footer */}
         <div className="create-stride-workspace__footer">
           <button
             className="create-stride-workspace__btn create-stride-workspace__btn--secondary"
@@ -85,11 +115,15 @@ const CreateStrideWorkspaceDialog = ({ onClose }) => {
           </button>
           <button
             className="create-stride-workspace__btn create-stride-workspace__btn--primary"
+            onClick={handleCreateWorkspace}
           >
             Create Workspace
           </button>
         </div>
       </div>
+      {triggerErrorMessage && (
+        <ErrorToastMessage ToastMessageHeader="Workspace Creation Failed" ToastMessageBody="Workspace Not Created" />
+      )}
     </div>
   );
 };

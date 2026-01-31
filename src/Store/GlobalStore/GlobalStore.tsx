@@ -9,6 +9,7 @@ const initialStoreState: StoreType = {
     authenticated: false,
     userDetails : {
         email : '',
+        id: '',
     },
 }
 

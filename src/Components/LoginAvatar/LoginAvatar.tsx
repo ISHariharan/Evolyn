@@ -5,7 +5,7 @@ import { checkLoggedInUser } from "../../API/AuthForm/index";
 
 
 const LoginAvatar = () => {
-    const { state } = useStore();
+    const { state, dispatch } = useStore();
     const [avatarName, setAvatarName] = useState<string>("");
     const [userFullName, setUserFullName] = useState<string>("");
 
@@ -16,6 +16,11 @@ const LoginAvatar = () => {
         const user_name = await checkLoggedInUser(userEmail);
         setAvatarName(user_name?.data.firstName[0] + user_name?.data.lastName[0]);
         setUserFullName(user_name?.data.firstName + " " + user_name?.data.lastName);
+        const userDetails = {
+            email : email,
+            id : user_name.data.Id,
+        }
+        dispatch({type: "SET_USERDETAILS", payload : userDetails});
     }    
 
     useEffect(() => {

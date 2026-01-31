@@ -62,7 +62,7 @@ const NavBar = () => {
             setShowDialog(false);
             navigate('/');
             dispatch({type : "SET_AUTHENTICATED", payload : false});
-            dispatch({ type: "SET_USERDETAILS", payload: { email: "" } });
+            dispatch({ type: "SET_USERDETAILS", payload: { email: "", id : "" } });
         }
         setShowDialog(true);
     }

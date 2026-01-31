@@ -88,6 +88,7 @@ const AuthForm = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void })
       console.log("Response : ", response);
       const userDetails = {
         email : email,
+        id: '',
       }
       const SucessToastHeader = authFormType === 'SignIn' ? "Login Successful" : "Registration Successful";
       const ErrorToastMessage = authFormType === 'SignIn' ? "Login Failed" : "Registration Failed";
@@ -231,7 +232,6 @@ const AuthForm = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void })
                 <span>Confirm password</span>
               </label>
 
-              {/* Password strength indicator */}
               {passWord && (
                 <div className={`password-strength-container ${passwordsMatch ? "passwords-match" : ""}`}>
                   <div className={`password-strength-bar strength-${strength}`} />
