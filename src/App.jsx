@@ -11,12 +11,12 @@ import { getAllWorkspaces } from "./API/StrideWorkspace/Retrieve/index";
 import { useStore } from './Store/GlobalStore/GlobalStore';
 
 function App() {
-  const {state} = useStore();
+  const {state, dispatch} = useStore();
   
   const getAllWorkspace = async (userId) => {
     try{
       const AllWorkspaces = await getAllWorkspaces(userId);
-      console.log("AllWorkspaces : " , AllWorkspaces);
+      dispatch({type : 'SET_WORKSPACE', payload: AllWorkspaces})
     } catch(err) {
       console.log('Get all errors. : ', err);
     }

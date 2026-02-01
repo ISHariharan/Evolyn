@@ -1,7 +1,7 @@
 import "./NavBar.scss"
 import { NavBarProperty } from "./types"
 import { getNavBarContent } from "../../API/NavBar/api";
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { useNavigate } from "react-router-dom";
 import { useStore } from "../../Store/GlobalStore/GlobalStore";
 import Dialog from "../../Common/DialogBox/DialogBox";
@@ -11,23 +11,30 @@ const NavBar = () => {
     const {state, dispatch} = useStore();
     const [navBarDetails, setNavBarDetails] = useState<any>([]);
     const [showDialog, setShowDialog] = useState<boolean>(false);
-    /*==================== SHOW NAVBAR ====================*/
+    const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+    const navRef = useRef<HTMLDivElement>(null);
     const showMenu = (headerToggle, navbarId) =>{
         const toggleBtn = document.getElementById(headerToggle),
         nav = document.getElementById(navbarId)
-        
-        // Validate that variables exist
         if(headerToggle && navbarId){
             toggleBtn?.addEventListener('click', ()=>{
-                // We add the show-menu className to the div tag with the nav__menu className
                 nav?.classList.toggle('show-menu')
-                // change icon
                 toggleBtn.classList.toggle('bx-x')
             })
         }
     }
     showMenu('header-toggle','navbar')
     const linkColor = document.querySelectorAll('.nav__link')
+
+    function addWorkspaceDropDown(){
+        const workspacesForUser = state.workspace;
+        const workspaces = [];
+        workspacesForUser.forEach(element => {
+            workspaces.push(element);
+        });
+        console.log("Workspaces : ", workspaces);
+        console.log('Nav Stride DropDown : ', getNavBarContent());
+    }
 
     function colorLink(){
         linkColor.forEach(l => l.classList.remove('active'))
@@ -45,7 +52,25 @@ const NavBar = () => {
             else {
                 item.visible = item.order !== "2" && item.order !== "3";
             }
-        })
+        });
+        try {
+            const workspacesRaw = state.workspace;
+            const workspacesArray = Array.isArray(workspacesRaw)
+                ? workspacesRaw
+                : Array.isArray((workspacesRaw as any)?.workspaces)
+                ? (workspacesRaw as any).workspaces
+                : Array.isArray((workspacesRaw as any)?.data)
+                ? (workspacesRaw as any).data
+                : [];
+
+            const strideItem = navBarContent.find((i) => i.name === "Stride");
+            if (strideItem) {
+                strideItem.dropDown = workspacesArray.map((ws: any) => ws?.workspaceName ?? ws?.name ?? String(ws));
+            }
+        } catch (e) {
+            console.log("Workspace Addition Error : ", e);
+        }
+
         navBarContent.sort((a, b) => Number(a.order) - Number(b.order));
 
         setNavBarDetails(navBarContent);
@@ -62,7 +87,9 @@ const NavBar = () => {
             dispatch({type : "SET_AUTHENTICATED", payload : false});
             dispatch({ type: "SET_USERDETAILS", payload: { email: "", id : "" } });
         }
-        setShowDialog(true);
+        else{
+            setShowDialog(true);
+        }
     }
 
     const handleClick = (event, navDataName) => {
@@ -70,16 +97,36 @@ const NavBar = () => {
         navigate(target);
     }
 
+    const handleTopLevelClick = (event, navData, index) => {
+        if (navData?.dropDown?.length > 0) {
+            event.preventDefault();
+            setOpenDropdown(prev => (prev === navData.name ? null : navData.name));
+        } else {
+            handleClick(event, index === 0 ? "" : navData.name);
+        }
+    }
+
     useEffect(() => {
-        console.log('State Authentication : ', state.authenticated);
         getNavBarData();
     }, []);
 
     useEffect(() => {
         getNavBarData();
-    }, [state.authenticated]);
+    }, [state.authenticated, state.workspace]);
+    // Close dropdown on outside click
+    useEffect(() => {
+        const handleOutside = (e: MouseEvent) => {
+            if (!navRef.current) return;
+            if (!navRef.current.contains(e.target as Node)) {
+                setOpenDropdown(null);
+            }
+        };
+        document.addEventListener("mousedown", handleOutside);
+        return () => document.removeEventListener("mousedown", handleOutside);
+    }, []);
+
     return (
-        <div className="nav" id="navbar">
+        <div className="nav" id="navbar" ref={navRef}>
             <nav className="nav__container">
                 <div>
                     <a className="nav__link nav__logo" onClick={(event) => handleClick(event, "")}>
@@ -89,11 +136,11 @@ const NavBar = () => {
                     <div className="nav__list">
                         {navBarDetails.map((navData, index) =>
                             navData.visible && (
-                                <div className="nav__items" key={index}>
+                                <div className={`nav__items ${navData.dropDown?.length > 0 ? "nav__dropdown" : ""} ${openDropdown === navData.name ? "is-open" : ""}`} key={index}>
                                     {index === 0 ? (
                                         <a
                                             className="nav__link active"
-                                            onClick={(event) => handleClick(event, "")}
+                                            onClick={(event) => handleTopLevelClick(event, navData, index)}
                                         >
                                             <i className={navData.icon}></i>
                                             <span className="nav__name">{navData.name}</span>
@@ -104,7 +151,7 @@ const NavBar = () => {
                                     ) : (
                                         <a
                                             className="nav__link"
-                                            onClick={(event) => handleClick(event, navData.name)}
+                                            onClick={(event) => handleTopLevelClick(event, navData, index)}
                                         >
                                             <i className={navData.icon}></i>
                                             <span className="nav__name">{navData.name}</span>
@@ -121,6 +168,7 @@ const NavBar = () => {
                                                     <a
                                                         className="nav__dropdown-item"
                                                         key={index}
+                                                        onClick={() => setOpenDropdown(null)}
                                                     >
                                                         {dropDownContent}
                                                     </a>

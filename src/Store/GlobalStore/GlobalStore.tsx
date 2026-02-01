@@ -11,6 +11,7 @@ const initialStoreState: StoreType = {
         email : '',
         id: '',
     },
+    workspace: {},
 }
 
 const getInitialState = () => {
@@ -29,10 +30,21 @@ const getInitialState = () => {
     }
   }
 
+  const workspace = localStorage.getItem("workspace");
+  let parsedWorkspace: any = {};
+  if(workspace){
+    try {
+        parsedWorkspace = JSON.parse(workspace);
+    }catch {
+        parsedWorkspace = {};
+    }
+  }
+
   return {
     theme: savedTheme,
     authenticated,
     userDetails: parsedUserDetails,
+    workspace: parsedWorkspace,
   };
 };
 
@@ -47,6 +59,8 @@ const reducer = (state, action) => {
             return {...state, authenticated: payload};
         case "SET_USERDETAILS": 
             return {...state, userDetails : action.payload};
+        case "SET_WORKSPACE":
+            return {...state, workspace : action.payload };
         default:
             return state;
     }
@@ -63,7 +77,8 @@ export const StoreProvider = ({children}) => {
         localStorage.setItem("theme", state.theme);
         localStorage.setItem("authenticated", String(state.authenticated));
         localStorage.setItem("userdetails", JSON.stringify(state.userDetails));
-    }, [state.theme, state.authenticated, state.userDetails]);
+        localStorage.setItem("workspace", JSON.stringify(state.workspace));
+    }, [state.theme, state.authenticated, state.userDetails, state.workspace]);
 
     return(
         <StoreContext.Provider value={{state, dispatch}}>

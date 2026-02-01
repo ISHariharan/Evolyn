@@ -6,7 +6,6 @@ import { useStore } from "../../Store/GlobalStore/GlobalStore";
 const ToggleSwitch = () => {
     const {state, dispatch} = useStore();
     let currentTheme;
-    console.log('State : ', state.theme);
     const [theme, setTheme] = useState(state.theme);
 
     useEffect(() => {

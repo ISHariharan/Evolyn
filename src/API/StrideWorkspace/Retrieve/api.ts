@@ -9,7 +9,6 @@ export const getAllWorkspacesForUser = async (userId: string) => {
             Accept: 'application/json',
         },
     });
-    console.log('GET /retrieve/workspaces response:', response);
     if (!response.ok) {
         const text = await response.text().catch(() => '');
         throw new Error(`getAllWorkspacesForUser failed: ${response.status} ${text}`);

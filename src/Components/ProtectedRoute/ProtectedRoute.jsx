@@ -5,7 +5,6 @@ import { useStore } from "../../Store/GlobalStore/GlobalStore";
 const ProtectedRoute = ({ children }) => {
   const { state } = useStore();
   const location = useLocation();
-  console.log("Location : ", location);
 
   if (state?.authenticated) {
     return children;
