@@ -6,6 +6,7 @@ import NavBar from './Components/NavBar/NavBar';
 import Header from './Components/Header/Header';
 import Explore from './Components/Explore/Explore';
 import Stride from "./Pages/Stride/Stride";
+import StrideDashBoard from "./Pages/StrideDashBoard/StrideDashBoard";
 import ProtectedRoute from "./Components/ProtectedRoute/ProtectedRoute";
 import { getAllWorkspaces } from "./API/StrideWorkspace/Retrieve/index";
 import { useStore } from './Store/GlobalStore/GlobalStore';
@@ -36,6 +37,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/stride" element={<ProtectedRoute><Stride /></ProtectedRoute>} />
+          <Route path="/stride/dashboard" element={<ProtectedRoute><StrideDashBoard /></ProtectedRoute>} />
           <Route path="/explore" element={<Explore />} />
         </Routes>
         <Header/>
