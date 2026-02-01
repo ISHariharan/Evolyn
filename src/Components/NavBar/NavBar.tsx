@@ -163,16 +163,19 @@ const NavBar = () => {
 
                                     {navData.dropDown?.length > 0 && (
                                         <div className="nav__dropdown-collapse">
-                                            <div className="nav__dropdown-content">
-                                                {navData.dropDown.map((dropDownContent, index) => (
-                                                    <a
-                                                        className="nav__dropdown-item"
-                                                        key={index}
-                                                        onClick={() => setOpenDropdown(null)}
-                                                    >
-                                                        {dropDownContent}
-                                                    </a>
-                                                ))}
+                                            <div className="nav__dropdown-content nav__dropdown-thread">
+                                            <span className="nav__dropdown-line" />
+
+                                            {navData.dropDown.map((dropDownContent, index) => (
+                                                <a
+                                                className="nav__dropdown-item nav__dropdown-node"
+                                                key={index}
+                                                onClick={(e) => {e.stopPropagation();}}
+                                                >
+                                                <span className="nav__dropdown-dot" />
+                                                {dropDownContent}
+                                                </a>
+                                            ))}
                                             </div>
                                         </div>
                                     )}
