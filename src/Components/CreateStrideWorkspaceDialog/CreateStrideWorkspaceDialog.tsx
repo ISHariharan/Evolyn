@@ -6,14 +6,18 @@ import { generateUUID } from "../../Common/UUIDGenerator/UUIDGenerator";
 import ErrorToastMessage from "../../Common/ErrorToastMessage/ErrorToastMessage";
 import { useStore } from "../../Store/GlobalStore/GlobalStore";
 import { createStrideWorkspace } from "../../API/StrideWorkspace/Creation";
+import { hideLoader, showLoader } from "../../Common/ApplicationLoader/loaderController";
+import SuccessToastMessage from "../../Common/SuccessToastMessage/SuccessToastMessage";
 
 const CreateStrideWorkspaceDialog = ({ onClose }) => {
   const {state} = useStore();
   const [showIcons, setShowIcons] = useState<Boolean>(false);
+  const [showSuccessToastMessage, setShowSuccessToastMessage] = useState<Boolean>(false);
+  const [successToastMessageBody, setSuccessToastMessageBody] = useState("");
   const [selectedIcon, setSelectedIcon] = useState('bx bx-shape-circle nav__icon');
   const [workspaceName, setWorkspaceName] = useState("");
   const [description, setDescription] = useState("");
-  const [triggerErrorMessage, setTriggerErrorMessage] = useState(false);
+  const [showErrorToastMessage, setShowErrorToastMessage] = useState(false);
 
   const handleWorkspaceIcon = () => {
     setShowIcons(!showIcons);
@@ -24,7 +28,8 @@ const CreateStrideWorkspaceDialog = ({ onClose }) => {
     setShowIcons(!showIcons);
   }
 
-  const handleCreateWorkspace = () => {
+  const handleCreateWorkspace = async () => {
+    showLoader();
     const UUID = generateUUID();
     const props : CreateWorkspace = {
       workspaceId: UUID,
@@ -34,11 +39,22 @@ const CreateStrideWorkspaceDialog = ({ onClose }) => {
     }
     console.log('Handle Create Workspace : ', props);
     try {
-      const response = createStrideWorkspace(props, state.userDetails.id)
+      const response = await createStrideWorkspace(props, state.userDetails.id);
+      console.log('Workspace Response : ', response);
+      if(response.status){
+        setShowSuccessToastMessage(true);
+        setSuccessToastMessageBody(`${workspaceName} Created`);
+        setTimeout(() => {
+          onClose();
+        }, 3000);
+      } else{
+        setShowErrorToastMessage(true);
+      }
     } catch {
-      setTriggerErrorMessage(true);
+      setShowErrorToastMessage(true);
     }
 
+    hideLoader();
   }
 
   return (
@@ -121,7 +137,10 @@ const CreateStrideWorkspaceDialog = ({ onClose }) => {
           </button>
         </div>
       </div>
-      {triggerErrorMessage && (
+      {showSuccessToastMessage && (
+        <SuccessToastMessage ToastMessageHeader="Workspace Creation Successful" ToastMessageBody={successToastMessageBody} />
+      )}
+      {showErrorToastMessage && (
         <ErrorToastMessage ToastMessageHeader="Workspace Creation Failed" ToastMessageBody="Workspace Not Created" />
       )}
     </div>

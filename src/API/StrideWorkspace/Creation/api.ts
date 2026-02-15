@@ -3,7 +3,7 @@ import { CreateWorkspace } from "../../../Components/CreateStrideWorkspaceDialog
 const evolynApi = 'evolyn/api';
 
 
-export const workspaceCreation = async (workspaceDetails : CreateWorkspace, userId) => {
+export const workspaceCreation = async (workspaceDetails : CreateWorkspace, userId : any) => {
     const payload = {
         workspaceDetails,
         userId : userId,
@@ -16,5 +16,15 @@ export const workspaceCreation = async (workspaceDetails : CreateWorkspace, user
         },
         body: JSON.stringify(payload),
     });
-    console.log('Response : ', response);
+    let data = null;
+    try {
+        data = await response.json();
+    } catch (err) {
+        data = err;
+    }
+    return {
+        status: response.ok,
+        statusText: response.statusText,
+        data,
+    };
 }
