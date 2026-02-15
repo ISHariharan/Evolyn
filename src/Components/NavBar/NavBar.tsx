@@ -12,8 +12,9 @@ const NavBar = () => {
     const [navBarDetails, setNavBarDetails] = useState<any>([]);
     const [showDialog, setShowDialog] = useState<boolean>(false);
     const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+    const [workspaceQuery, setWorkspaceQuery] = useState<string>("");
     const navRef = useRef<HTMLDivElement>(null);
-    const showMenu = (headerToggle, navbarId) =>{
+    const showMenu = (headerToggle: string, navbarId: string) =>{
         const toggleBtn = document.getElementById(headerToggle),
         nav = document.getElementById(navbarId)
         if(headerToggle && navbarId){
@@ -24,24 +25,15 @@ const NavBar = () => {
         }
     }
     showMenu('header-toggle','navbar')
-    const linkColor = document.querySelectorAll('.nav__link')
+    const linkColor: NodeListOf<Element> = document.querySelectorAll('.nav__link');
 
-    function addWorkspaceDropDown(){
-        const workspacesForUser = state.workspace;
-        const workspaces = [];
-        workspacesForUser.forEach(element => {
-            workspaces.push(element);
-        });
-        console.log("Workspaces : ", workspaces);
-        console.log('Nav Stride DropDown : ', getNavBarContent());
-    }
 
-    function colorLink(){
-        linkColor.forEach(l => l.classList.remove('active'))
-        this.classList.add('active')
-    }
+    const colorLink = (e: Event) => {
+        linkColor.forEach(l => l.classList.remove('active'));
+        (e.currentTarget as Element).classList.add('active');
+    };
 
-    linkColor.forEach(l => l.addEventListener('click', colorLink))
+    linkColor.forEach((l) => l.addEventListener('click', colorLink));
 
     const getNavBarData = () => {
         const navBarContent = getNavBarContent();
@@ -92,12 +84,12 @@ const NavBar = () => {
         }
     }
 
-    const handleClick = (event, navDataName) => {
+    const handleClick = (event: React.MouseEvent, navDataName: string) => {
         const target = "/" + navDataName.toLowerCase();
         navigate(target);
     }
 
-    const handleTopLevelClick = (event, navData, index) => {
+    const handleTopLevelClick = (event: React.MouseEvent, navData: any, index: number) => {
         if (navData?.dropDown?.length > 0) {
             event.preventDefault();
             setOpenDropdown(prev => (prev === navData.name ? null : navData.name));
@@ -134,7 +126,7 @@ const NavBar = () => {
                         <span className="nav__logo-name">Evolyn</span>
                     </a>
                     <div className="nav__list">
-                        {navBarDetails.map((navData, index) =>
+                        {navBarDetails.map((navData: any, index: number) =>
                             navData.visible && (
                                 <div className={`nav__items ${navData.dropDown?.length > 0 ? "nav__dropdown" : ""} ${openDropdown === navData.name ? "is-open" : ""}`} key={index}>
                                     {index === 0 ? (
@@ -162,22 +154,75 @@ const NavBar = () => {
                                     )}
 
                                     {navData.dropDown?.length > 0 && (
-                                        <div className="nav__dropdown-collapse">
-                                            <div className="nav__dropdown-content nav__dropdown-thread">
-                                            <span className="nav__dropdown-line" />
+                                        navData.name === "Stride" ? (
+                                            <div
+                                                className="nav__dropdown-panel"
+                                                role="menu"
+                                                aria-label="Stride workspaces"
+                                                onClick={(e) => e.stopPropagation()}
+                                            >
+                                                <div className="nav__dropdown-panel-header">
+                                                    <span className="nav__dropdown-title">Workspaces</span>
+                                                    <span className="nav__dropdown-count">{navData.dropDown.length}</span>
+                                                </div>
 
-                                            {navData.dropDown.map((dropDownContent, index) => (
-                                                <a
-                                                className="nav__dropdown-item nav__dropdown-node"
-                                                key={index}
-                                                onClick={(e) => {e.stopPropagation();}}
-                                                >
-                                                <span className="nav__dropdown-dot" />
-                                                {dropDownContent}
-                                                </a>
-                                            ))}
+                                                <div className="nav__dropdown-search">
+                                                    <i className="bx bx-search"></i>
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Search workspaces"
+                                                        value={workspaceQuery}
+                                                        onChange={(e) => setWorkspaceQuery(e.target.value)}
+                                                    />
+                                                </div>
+
+                                                <div className="nav__dropdown-list">
+                                                    {(() => {
+                                                        const filtered = workspaceQuery
+                                                            ? navData.dropDown.filter((w: any) =>
+                                                                String(w).toLowerCase().includes(workspaceQuery.toLowerCase())
+                                                              )
+                                                            : navData.dropDown;
+                                                        if (!filtered || filtered.length === 0) {
+                                                            return <div className="nav__dropdown-empty">No workspaces found</div>;
+                                                        }
+                                                        return filtered.map((dropDownContent: any, index: number) => (
+                                                            <button
+                                                                className="nav__dropdown-list-item"
+                                                                key={index}
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    // TODO: Navigate to the selected workspace context if/when route is available.
+                                                                }}
+                                                            >
+                                                                <span className="nav__dropdown-list-bullet" />
+                                                                <span className="nav__dropdown-list-text">
+                                                                    {String(dropDownContent)}
+                                                                </span>
+                                                            </button>
+                                                        ));
+                                                    })()}
+                                                </div>
                                             </div>
-                                        </div>
+                                        ) : (
+                                            <div className="nav__dropdown-collapse">
+                                                <div className="nav__dropdown-content nav__dropdown-thread">
+                                                    <span className="nav__dropdown-line" />
+                                                    {navData.dropDown.map((dropDownContent: any, index: number) => (
+                                                        <a
+                                                            className="nav__dropdown-item nav__dropdown-node"
+                                                            key={index}
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                            }}
+                                                        >
+                                                            <span className="nav__dropdown-dot" />
+                                                            {dropDownContent}
+                                                        </a>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )
                                     )}
                                 </div>
                             )
