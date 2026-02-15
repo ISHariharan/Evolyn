@@ -91,12 +91,25 @@ const NavBar = () => {
     }
 
     const handleTopLevelClick = (event: React.MouseEvent, navData: any, index: number) => {
+        // Robust "Stride" detection: trim + lowercase to avoid name mismatches
+        const name = String(navData?.name ?? "").trim().toLowerCase();
+        const isStride = name === "stride";
+
+        // For Stride, always navigate to /stride on click; use chevron to open/close submenu
+        if (isStride) {
+            event.preventDefault();
+            setOpenDropdown(null);
+            navigate("/stride");
+            return;
+        }
+
         if (navData?.dropDown?.length > 0) {
             event.preventDefault();
             setOpenDropdown(prev => (prev === navData.name ? null : navData.name));
-        } else {
-            handleClick(event, index === 0 ? "" : navData.name);
+            return;
         }
+
+        handleClick(event, index === 0 ? "" : navData.name);
     }
 
     useEffect(() => {
@@ -154,23 +167,73 @@ const NavBar = () => {
                                     {index === 0 ? (
                                         <a
                                             className="nav__link active"
-                                            onClick={(event) => handleTopLevelClick(event, navData, index)}
+                                            onClick={(event) => {
+                                                const name = String(navData?.name ?? "").trim().toLowerCase();
+                                                if (name === "stride") {
+                                                    event.preventDefault();
+                                                    setOpenDropdown(null);
+                                                    navigate("/stride");
+                                                } else {
+                                                    handleTopLevelClick(event, navData, index);
+                                                }
+                                            }}
                                         >
                                             <i className={navData.icon}></i>
                                             <span className="nav__name">{navData.name}</span>
                                             {navData.dropDown?.length > 0 && (
-                                                <i className="bx bx-chevron-down nav__icon nav__dropdown-icon"></i>
+                                                <i
+                                                    className="bx bx-chevron-down nav__icon nav__dropdown-icon"
+                                                    role="button"
+                                                    aria-label={`Toggle ${navData.name} submenu`}
+                                                    tabIndex={0}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        e.preventDefault();
+                                                        setOpenDropdown(prev => (prev === navData.name ? null : navData.name));
+                                                    }}
+                                                    onKeyDown={(e) => {
+                                                        if (e.key === "Enter" || e.key === " ") {
+                                                            e.preventDefault();
+                                                            setOpenDropdown(prev => (prev === navData.name ? null : navData.name));
+                                                        }
+                                                    }}
+                                                ></i>
                                             )}
                                         </a>
                                     ) : (
                                         <a
                                             className="nav__link"
-                                            onClick={(event) => handleTopLevelClick(event, navData, index)}
+                                            onClick={(event) => {
+                                                const name = String(navData?.name ?? "").trim().toLowerCase();
+                                                if (name === "stride") {
+                                                    event.preventDefault();
+                                                    setOpenDropdown(null);
+                                                    navigate("/stride");
+                                                } else {
+                                                    handleTopLevelClick(event, navData, index);
+                                                }
+                                            }}
                                         >
                                             <i className={navData.icon}></i>
                                             <span className="nav__name">{navData.name}</span>
                                             {navData.dropDown?.length > 0 && (
-                                                <i className="bx bx-chevron-down nav__icon nav__dropdown-icon"></i>
+                                                <i
+                                                    className="bx bx-chevron-down nav__icon nav__dropdown-icon"
+                                                    role="button"
+                                                    aria-label={`Toggle ${navData.name} submenu`}
+                                                    tabIndex={0}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        e.preventDefault();
+                                                        setOpenDropdown(prev => (prev === navData.name ? null : navData.name));
+                                                    }}
+                                                    onKeyDown={(e) => {
+                                                        if (e.key === "Enter" || e.key === " ") {
+                                                            e.preventDefault();
+                                                            setOpenDropdown(prev => (prev === navData.name ? null : navData.name));
+                                                        }
+                                                    }}
+                                                ></i>
                                             )}
                                         </a>
                                     )}
