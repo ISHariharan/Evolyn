@@ -43,7 +43,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/stride" element={<ProtectedRoute><Stride /></ProtectedRoute>} />
-          <Route path="/stride/dashboard" element={<ProtectedRoute><StrideDashBoard /></ProtectedRoute>} />
+          <Route path="/stride/dashboard" element={<StrideDashBoard />} />
           <Route path="/explore" element={<Explore />} />
           <Route path="/loader" element={<ApplicationLoader />} />
         </Routes>
