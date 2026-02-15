@@ -10,6 +10,8 @@ import StrideDashBoard from "./Pages/StrideDashBoard/StrideDashBoard";
 import ProtectedRoute from "./Components/ProtectedRoute/ProtectedRoute";
 import { getAllWorkspaces } from "./API/StrideWorkspace/Retrieve/index";
 import { useStore } from './Store/GlobalStore/GlobalStore';
+import ApplicationLoader from './Common/ApplicationLoader/ApplicationLoader';
+import {mountLoader} from "./Common/ApplicationLoader/loaderMount";
 
 function App() {
   const {state, dispatch} = useStore();
@@ -31,6 +33,10 @@ function App() {
       getAllWorkspace(uid);
     }
   }, [state.authenticated, state.userDetails.id]);
+
+  useEffect(() => {
+    mountLoader();
+  }, []);
   return (
     <div className="App">
       <BrowserRouter>
@@ -39,6 +45,7 @@ function App() {
           <Route path="/stride" element={<ProtectedRoute><Stride /></ProtectedRoute>} />
           <Route path="/stride/dashboard" element={<ProtectedRoute><StrideDashBoard /></ProtectedRoute>} />
           <Route path="/explore" element={<Explore />} />
+          <Route path="/loader" element={<ApplicationLoader />} />
         </Routes>
         <Header/>
         <NavBar/>
