@@ -6,11 +6,14 @@ import { generateUUID } from "../../Common/UUIDGenerator/UUIDGenerator";
 import ErrorToastMessage from "../../Common/ErrorToastMessage/ErrorToastMessage";
 import { useStore } from "../../Store/GlobalStore/GlobalStore";
 import { createStrideWorkspace } from "../../API/StrideWorkspace/Creation";
+import { getAllWorkspaces } from "../../API/StrideWorkspace/Retrieve";
 import { hideLoader, showLoader } from "../../Common/ApplicationLoader/loaderController";
 import SuccessToastMessage from "../../Common/SuccessToastMessage/SuccessToastMessage";
 
-const CreateStrideWorkspaceDialog = ({ onClose }) => {
-  const {state} = useStore();
+type CreateStrideWorkspaceDialogProps = { onClose: () => void };
+
+const CreateStrideWorkspaceDialog = ({ onClose }: CreateStrideWorkspaceDialogProps) => {
+  const {state, dispatch} = useStore();
   const [showIcons, setShowIcons] = useState<Boolean>(false);
   const [showSuccessToastMessage, setShowSuccessToastMessage] = useState<Boolean>(false);
   const [successToastMessageBody, setSuccessToastMessageBody] = useState("");
@@ -23,7 +26,7 @@ const CreateStrideWorkspaceDialog = ({ onClose }) => {
     setShowIcons(!showIcons);
   }
 
-  const handleIconSelection = (icon) => {
+  const handleIconSelection = (icon: string) => {
     setSelectedIcon(icon);
     setShowIcons(!showIcons);
   }
@@ -44,6 +47,15 @@ const CreateStrideWorkspaceDialog = ({ onClose }) => {
       if(response.status){
         setShowSuccessToastMessage(true);
         setSuccessToastMessageBody(`${workspaceName} Created`);
+
+        // Refresh user's workspaces so NavBar updates its Stride dropdown
+        try {
+          const allWorkspaces = await getAllWorkspaces(state.userDetails.id);
+          dispatch({ type: "SET_WORKSPACE", payload: allWorkspaces });
+        } catch (e) {
+          console.log("Failed to refresh workspaces after creation:", e);
+        }
+
         setTimeout(() => {
           onClose();
         }, 3000);

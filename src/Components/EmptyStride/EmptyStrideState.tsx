@@ -5,6 +5,11 @@ import { useState } from "react";
 
 const EmptyStrideState = () => {
     const [createWorkspacePopUp, setCreateWorkspacePopUp] = useState<boolean>(false);
+ 
+    const handleStridePopUp = () => {
+        setCreateWorkspacePopUp(false);
+    }
+
     const handleWorkspaceCreation = () => {
         setCreateWorkspacePopUp(true);
     }
@@ -72,7 +77,7 @@ const EmptyStrideState = () => {
                 </button>
             </div>
             {createWorkspacePopUp && (
-                <CreateStrideWorkspaceDialog onClose={() => setCreateWorkspacePopUp(false)} />
+                <CreateStrideWorkspaceDialog onClose={handleStridePopUp} />
             )}
         </div>
     );
