@@ -13,6 +13,7 @@ const NavBar = () => {
     const [showDialog, setShowDialog] = useState<boolean>(false);
     const [openDropdown, setOpenDropdown] = useState<string | null>(null);
     const [workspaceQuery, setWorkspaceQuery] = useState<string>("");
+    const [forceCollapsed, setForceCollapsed] = useState<boolean>(false);
     const navRef = useRef<HTMLDivElement>(null);
     const showMenu = (headerToggle: string, navbarId: string) =>{
         const toggleBtn = document.getElementById(headerToggle),
@@ -117,8 +118,29 @@ const NavBar = () => {
         return () => document.removeEventListener("mousedown", handleOutside);
     }, []);
 
+    const handleNavMouseEnter = () => { setForceCollapsed(false); };
+    const handleNavMouseLeave = () => { setOpenDropdown(null); };
+    const handleNavFocus = () => { setForceCollapsed(false); };
+    const handleNavBlur = (e: React.FocusEvent<HTMLDivElement>) => {
+        // If focus moves outside the nav entirely, close any open dropdown
+        if (!navRef.current) return;
+        const next = e.relatedTarget as Node | null;
+        if (!next || !navRef.current.contains(next)) {
+            setOpenDropdown(null);
+            setForceCollapsed(true);
+        }
+    };
+
     return (
-        <div className="nav" id="navbar" ref={navRef}>
+        <div
+            className={`nav ${forceCollapsed ? 'nav--collapsed' : ''}`}
+            id="navbar"
+            ref={navRef}
+            onMouseEnter={handleNavMouseEnter}
+            onMouseLeave={handleNavMouseLeave}
+            onFocus={handleNavFocus}
+            onBlur={handleNavBlur}
+        >
             <nav className="nav__container">
                 <div>
                     <a className="nav__link nav__logo" onClick={(event) => handleClick(event, "")}>

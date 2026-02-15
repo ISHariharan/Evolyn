@@ -387,3 +387,51 @@
   color: var(--text-color-light);
   text-align: center;
 }
+
+/* Force-collapsed state: icons only when focus leaves the nav; close any open dropdowns */
+@media screen and (min-width: 768px) {
+  .nav.nav--collapsed {
+    width: 68px !important; /* keep compact width even if hovered */
+  }
+  .nav.nav--collapsed .nav__container {
+    align-items: center;
+  }
+  .nav.nav--collapsed .nav__list {
+    row-gap: .8rem;
+  }
+  .nav.nav--collapsed .nav__link {
+    justify-content: center;
+    gap: 0;
+    padding: .5rem;
+    border-radius: .6rem;
+    background: transparent;
+  }
+  .nav.nav--collapsed .nav__logo-name,
+  .nav.nav--collapsed .nav__name,
+  .nav.nav--collapsed .nav__subtitle,
+  .nav.nav--collapsed .nav__dropdown-icon {
+    opacity: 0 !important; /* hide labels and chevrons */
+  }
+  .nav.nav--collapsed .nav__items.is-open .nav__dropdown-panel,
+  .nav.nav--collapsed .nav__items.is-open .nav__dropdown-collapse {
+    margin: 0 !important;
+    padding: 0 !important;
+    max-height: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  /* In collapsed mode: remove active container but keep icon highlighted */
+  .nav.nav--collapsed .nav__items .nav__link.active {
+    background: transparent !important;
+    border-left: 0 !important;
+    padding-left: .5rem !important;
+    color: var(--first-color) !important; /* keeps icon color as selected */
+  }
+  .nav.nav--collapsed .nav__link:hover {
+    background: transparent !important; /* no hover container in collapsed */
+    color: var(--first-color);
+  }
+}
