@@ -34,13 +34,6 @@ const StrideDashBoard = () => {
         progress: 12,
         progress_color : '#EF4444',
     },
-    {
-        value : '6',
-        metric : 'Stale Items',
-        content : '> 10 days',
-        progress: 0,
-        progress_color : "",
-    }
   ]
 
   return (

@@ -122,13 +122,13 @@
 
 .stride-dashboard-overview-container{
     display : flex;
-    justify-content: center;
-    gap: 3%;
+    justify-content: space-between;
+    gap: 1%;
 }
 
 .stride-dashboard-overview{
     margin-top: 2%;
-    width: 15%;
+    width: 300px;
     background-color: var(--container-color);
     border-radius : 5px;
     padding: 15px;
@@ -171,4 +171,13 @@
     height: 100%;
     border-radius: 999px;
     transition: width 0.4s ease;
+}
+
+@media screen and (max-width: 1024px){
+    .stride-dashboard-overview-container{
+        display : flex;
+        justify-content: center;
+        gap: 1%;
+        flex-wrap: wrap;
+    }
 }
