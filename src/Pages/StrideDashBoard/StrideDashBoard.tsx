@@ -34,7 +34,89 @@ const StrideDashBoard = () => {
         progress: 12,
         progress_color : '#EF4444',
     },
-  ]
+  ];
+
+
+  // Type of content expected from stride dashboard table
+  const strideTableContent = [
+    {
+      tableHeader : "System Signals",
+      tableContent : [
+        {
+          contentHeader : "Stalled Flow",
+          contentDescription : "2 strides have items stuck In Progress for over 10 days",
+        },
+        {
+          contentHeader : "High Pruning",
+          contentDescription : "Won't Do increased by 40% this week",
+        },
+        {
+          contentHeader : "Positive Momentum",
+          contentDescription : "Completion rate improved after Todo load dropped",
+        }
+      ],
+    },
+    {
+      workspaceTitle : "DeepWorks",
+      workspaceIcon : "",
+      strides : [
+        {
+          strideName : "Sprint Planning",
+          strideTemplate : "ToDo,InProgress,Won't Do,Done",
+          strideDetails : {
+            ToDo : "7",
+            InProgress : "3",
+            WontDo : "2",
+            Done: "10",
+          },
+          strideAvgCycle : "2.8 days",
+          oldestItem : "9 days",
+        },
+        {
+          strideName : "Research Tasks",
+          strideTemplate : "ToDo,InProgress,Won't Do,Done",
+          strideDetails : {
+            ToDo : "9",
+            InProgress : "5",
+            WontDo : "4",
+            Done: "3",
+          },
+          strideAvgCycle : "1.7 days",
+          oldestItem : "10 days",
+        },
+      ]
+    },
+    {
+      workspaceTitle : "DeepWorks",
+      workspaceIcon : "",
+      strides : [
+        {
+          strideName : "Sprint Planning",
+          strideTemplate : "ToDo,InProgress,Won't Do,Done",
+          strideDetails : {
+            ToDo : "7",
+            InProgress : "3",
+            WontDo : "2",
+            Done: "10",
+          },
+          strideAvgCycle : "2.8 days",
+          oldestItem : "9 days",
+        },
+        {
+          strideName : "Research Tasks",
+          strideTemplate : "ToDo,InProgress,Won't Do,Done",
+          strideDetails : {
+            ToDo : "9",
+            InProgress : "5",
+            WontDo : "4",
+            Done: "3",
+          },
+          strideAvgCycle : "1.7 days",
+          oldestItem : "10 days",
+        },
+      ]
+    }
+  ];
 
   return (
     <div className="stride-dashboard">
@@ -118,6 +200,13 @@ const StrideDashBoard = () => {
             </div>
         ))}
       </div>
+      {strideTableContent.map((item, index) => (
+          <div className="stridedashboard-table-header">
+            {item.tableHeader && (
+              <div>{item.tableHeader}</div>
+            )}
+          </div>
+      ))}
     </div>
   );
 };
