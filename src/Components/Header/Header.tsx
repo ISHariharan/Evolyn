@@ -9,7 +9,8 @@ import { useStore } from "../../Store/GlobalStore/GlobalStore";
 const Header = () => {
     const [theme, setTheme] = useState(document.documentElement.getAttribute("data-theme") || "light");
     const [showAuthForm, setShowAuthForm] = useState<boolean>(false);
-    const { state } = useStore();
+    const { state, dispatch } = useStore();
+    const isSidebarOpen = state.sidebarOpen;
 
 
     const handleLogin = () => {
@@ -39,7 +40,18 @@ const Header = () => {
     return (
         <div className="header">
             <div className="header__container">
-                <a href="#" className="header__logo">Evolyn</a>
+                <div className="header-left-container">
+                    {!isSidebarOpen && (
+                        <button
+                            className="sidebar-toggle-btn"
+                            onClick={() => dispatch({ type: "TOGGLE_SIDEBAR", payload: true })}
+                            aria-label="Open sidebar"
+                        >
+                            <i className="bx bx-chevron-right"></i>
+                        </button>
+                    )}
+                    <a href="#" className="header__logo">Evolyn</a>
+                </div>
 
                 <div className="header__search">
                     <input type="search" placeholder="Search" className="header__input" />

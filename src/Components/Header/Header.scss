@@ -97,6 +97,48 @@
   justify-content: flex-end;
 }
 
+.header-left-container{
+  display: flex;
+  align-items: center;
+
+}
+
+/* Sidebar toggle button in header (visible when sidebar is closed) */
+.sidebar-toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background-color: transparent;
+  border: none;
+  border-radius: 50%;
+  color: var(--title-color);
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-right: 1rem;           /* space from logo or search */
+}
+
+.sidebar-toggle-btn:hover,
+.sidebar-toggle-btn:focus-visible {
+  background-color: var(--first-color-light);
+  color: var(--first-color);
+  transform: scale(1.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-toggle-btn:active {
+  transform: scale(0.96);
+}
+
+/* Make sure it doesn't appear on mobile (if you want to keep bx-menu separate) */
+@media screen and (max-width: 767px) {
+  .sidebar-toggle-btn {
+    display: none;
+  }
+}
+
 @media screen and (max-width: 320px) {
   .header__search {
     width: 70%;

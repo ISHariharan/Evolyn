@@ -12,6 +12,7 @@ const initialStoreState: StoreType = {
         id: '',
     },
     workspace: {},
+    sidebarOpen: false,
 }
 
 const getInitialState = () => {
@@ -49,7 +50,7 @@ const getInitialState = () => {
 };
 
 //Reducer Function
-const reducer = (state, action) => {
+const reducer = (state : any, action : any) => {
     switch(action.type) {
         case "SET_THEME":
             return {...state, theme: action.payload};
@@ -61,15 +62,19 @@ const reducer = (state, action) => {
             return {...state, userDetails : action.payload};
         case "SET_WORKSPACE":
             return {...state, workspace : action.payload };
+        case "TOGGLE_SIDEBAR":
+            return { ...state, sidebarOpen: !state.sidebarOpen };
         default:
             return state;
     }
 }
 
 //Declare Global Store Context
+//@ts-ignore
 const StoreContext = createContext<StoreContextType>(undefined);
 
 //Create Store Provider
+//@ts-ignore
 export const StoreProvider = ({children}) => {
     const [state, dispatch] = useReducer(reducer, undefined, getInitialState);
 

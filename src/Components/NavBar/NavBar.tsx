@@ -9,6 +9,7 @@ import Dialog from "../../Common/DialogBox/DialogBox";
 const NavBar = () => {
     const navigate = useNavigate();
     const {state, dispatch} = useStore();
+    const isOpen = state.sidebarOpen;
     const [navBarDetails, setNavBarDetails] = useState<any>([]);
     const [showDialog, setShowDialog] = useState<boolean>(false);
     const [openDropdown, setOpenDropdown] = useState<string | null>(null);
@@ -113,6 +114,19 @@ const NavBar = () => {
     }
 
     useEffect(() => {
+        const handleOutside = (e: MouseEvent) => {
+        const nav = document.getElementById("navbar");
+        if (nav && !nav.contains(e.target as Node)) {
+            dispatch({ type: "TOGGLE_SIDEBAR", payload: false });
+        }
+        };
+        if (isOpen) {
+        document.addEventListener("mousedown", handleOutside);
+        }
+        return () => document.removeEventListener("mousedown", handleOutside);
+    }, [isOpen]);
+
+    useEffect(() => {
         getNavBarData();
     }, []);
 
@@ -131,28 +145,28 @@ const NavBar = () => {
         return () => document.removeEventListener("mousedown", handleOutside);
     }, []);
 
-    const handleNavMouseEnter = () => { setForceCollapsed(false); };
-    const handleNavMouseLeave = () => { setOpenDropdown(null); };
-    const handleNavFocus = () => { setForceCollapsed(false); };
-    const handleNavBlur = (e: React.FocusEvent<HTMLDivElement>) => {
-        // If focus moves outside the nav entirely, close any open dropdown
-        if (!navRef.current) return;
-        const next = e.relatedTarget as Node | null;
-        if (!next || !navRef.current.contains(next)) {
-            setOpenDropdown(null);
-            setForceCollapsed(true);
-        }
-    };
+    // const handleNavMouseEnter = () => { setForceCollapsed(false); };
+    // const handleNavMouseLeave = () => { setOpenDropdown(null); };
+    // const handleNavFocus = () => { setForceCollapsed(false); };
+    // const handleNavBlur = (e: React.FocusEvent<HTMLDivElement>) => {
+    //     // If focus moves outside the nav entirely, close any open dropdown
+    //     if (!navRef.current) return;
+    //     const next = e.relatedTarget as Node | null;
+    //     if (!next || !navRef.current.contains(next)) {
+    //         setOpenDropdown(null);
+    //         setForceCollapsed(true);
+    //     }
+    // };
 
     return (
         <div
-            className={`nav ${forceCollapsed ? 'nav--collapsed' : ''}`}
+            className={`nav ${isOpen ? "show-menu" : ""}`}
             id="navbar"
             ref={navRef}
-            onMouseEnter={handleNavMouseEnter}
-            onMouseLeave={handleNavMouseLeave}
-            onFocus={handleNavFocus}
-            onBlur={handleNavBlur}
+            // onMouseEnter={handleNavMouseEnter}
+            // onMouseLeave={handleNavMouseLeave}
+            // onFocus={handleNavFocus}
+            // onBlur={handleNavBlur}
         >
             <nav className="nav__container">
                 <div>
@@ -160,6 +174,15 @@ const NavBar = () => {
                         <i className='bx bxs-disc nav__icon' ></i>
                         <span className="nav__logo-name">Evolyn</span>
                     </a>
+                    {isOpen && (
+                        <button
+                        className="nav__toggle-btn"
+                        onClick={() => dispatch({ type: "TOGGLE_SIDEBAR", payload: false })}
+                        aria-label="Close sidebar"
+                        >
+                        <i className="bx bx-chevron-left"></i>
+                        </button>
+                    )}
                     <div className="nav__list">
                         {navBarDetails.map((navData: any, index: number) =>
                             navData.visible && (

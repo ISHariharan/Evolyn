@@ -12,7 +12,7 @@
   backdrop-filter: saturate(140%) blur(6px);
   -webkit-backdrop-filter: saturate(140%) blur(6px);
   z-index: var(--z-fixed);
-  transition: .4s;
+  transition: left 0.4s ease, width 0.4s ease;
 }
 
 .nav__container {
@@ -25,7 +25,7 @@
   scrollbar-width: none; /* For Mozilla */
 }
 
-/* For Google Chrome and others */
+/* Hide scrollbar for Chrome, Safari, Edge */
 .nav__container::-webkit-scrollbar {
   display: none;
 }
@@ -49,7 +49,6 @@
 }
 
 .nav__items.nav__dropdown {
-  /* Remove internal gap between the link and the hidden collapse when closed */
   row-gap: 0;
 }
 
@@ -89,7 +88,7 @@
   margin-top: 5rem;
 }
 
-/* Dropdown */
+/* ─────────────── Dropdown (general) ─────────────── */
 .nav__dropdown {
   position: relative;
 }
@@ -121,14 +120,14 @@
 
 .nav__dropdown-icon {
   margin-left: auto;
-  transition: .4s;
+  transition: transform .4s;
 }
 
-/* Open/close controlled via .is-open */
 .nav__items.is-open .nav__dropdown-collapse {
   margin-top: 1rem;
   max-height: 100rem;
 }
+
 .nav__items.is-open .nav__dropdown-content {
   padding: .75rem 2.5rem .75rem 1.8rem;
 }
@@ -137,17 +136,11 @@
   transform: rotate(180deg);
 }
 
-
-
-/*===== Show menu =====*/
-.show-menu {
-  left: 0;
-}
-
-/*===== Active link =====*/
+/* ─────────────── Active link ─────────────── */
 .active {
   color: var(--first-color);
 }
+
 .nav__items .nav__link.active {
   color: var(--first-color);
   background: var(--first-color-light);
@@ -155,51 +148,85 @@
   padding-left: calc(.65rem - 3px + .3rem);
 }
 
+/* ─────────────── Show menu = sidebar open ─────────────── */
+.show-menu {
+  left: 0;
+}
+
+/* ─────────────── Desktop (min-width 768px) ─────────────── */
 @media screen and (min-width: 768px) {
   .nav {
-    left: 0;
-    padding: 1.2rem 1.5rem 0;
-    width: 68px;
+    left: 0 !important;               /* always visible on desktop */
+    width: 68px;                      /* collapsed width */
+    transition: width 0.4s ease;
   }
+
   .nav__items {
     row-gap: 1.7rem;
   }
+
   .nav__items.nav__dropdown {
     row-gap: 0;
   }
+
   .nav__icon {
     font-size: 1.3rem;
   }
 
-  /* Element opacity */
-  .nav__logo-name,
-  .nav__name,
-  .nav__subtitle,
-  .nav__dropdown-icon {
+  /* Expanded state (controlled only by .show-menu) */
+  .show-menu {
+    width: var(--nav-width) !important;
+  }
+
+  .show-menu .nav__logo-name,
+  .show-menu .nav__name,
+  .show-menu .nav__subtitle,
+  .show-menu .nav__dropdown-icon {
+    opacity: 1;
+    transition: opacity 0.3s ease 0.1s;
+  }
+
+  /* Collapsed state (default) */
+  .nav:not(.show-menu) .nav__logo-name,
+  .nav:not(.show-menu) .nav__name,
+  .nav:not(.show-menu) .nav__subtitle,
+  .nav:not(.show-menu) .nav__dropdown-icon {
     opacity: 0;
-    transition: .3s;
+    transition: opacity 0.25s ease;
   }
 
-  /* Navbar expanded */
-  .nav:hover {
-    width: var(--nav-width);
-  }
-
-  /* Visible elements */
-  .nav:hover .nav__logo-name {
-    opacity: 1;
-  }
-  .nav:hover .nav__subtitle {
-    opacity: 1;
-  }
-  .nav:hover .nav__name {
-    opacity: 1;
-  }
-  .nav:hover .nav__dropdown-icon {
-    opacity: 1;
+  /* Prevent dropdowns from opening when collapsed */
+  .nav:not(.show-menu) .nav__items.is-open .nav__dropdown-panel,
+  .nav:not(.show-menu) .nav__items.is-open .nav__dropdown-collapse {
+    max-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
   }
 }
 
+/* ─────────────── Toggle button (inside navbar when open) ─────────────── */
+.nav__toggle-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.6rem;
+  color: var(--text-color);
+  cursor: pointer;
+  z-index: 10;
+  padding: 0.4rem;
+  border-radius: 0.4rem;
+}
+
+.nav__toggle-btn:hover {
+  background: var(--first-color-light);
+  color: var(--first-color);
+}
+
+/* ─────────────── Stride thread / tree visual ─────────────── */
 .nav__dropdown-thread {
   position: relative;
   padding-left: 1.2rem;
@@ -231,10 +258,7 @@
   z-index: 1;
 }
 
-.nav__dropdown-item:hover .nav__dropdown-dot {
-  background-color: var(--first-color);
-}
-
+.nav__dropdown-item:hover .nav__dropdown-dot,
 .nav__dropdown-item.active .nav__dropdown-dot {
   background-color: var(--first-color);
 }
@@ -249,7 +273,7 @@
   background-color: var(--first-color-light);
 }
 
-/* Redesigned Stride submenu panel */
+/* ─────────────── Redesigned Stride panel ─────────────── */
 .nav__dropdown-panel {
   background: var(--container-color);
   border: 1px solid rgba(0, 0, 0, 0.08);
@@ -337,6 +361,7 @@
 .nav__dropdown-list::-webkit-scrollbar {
   width: 6px;
 }
+
 .nav__dropdown-list::-webkit-scrollbar-thumb {
   background: rgba(0, 0, 0, 0.15);
   border-radius: 10px;
@@ -386,52 +411,4 @@
   font-size: var(--smaller-font-size);
   color: var(--text-color-light);
   text-align: center;
-}
-
-/* Force-collapsed state: icons only when focus leaves the nav; close any open dropdowns */
-@media screen and (min-width: 768px) {
-  .nav.nav--collapsed {
-    width: 68px !important; /* keep compact width even if hovered */
-  }
-  .nav.nav--collapsed .nav__container {
-    align-items: center;
-  }
-  .nav.nav--collapsed .nav__list {
-    row-gap: .8rem;
-  }
-  .nav.nav--collapsed .nav__link {
-    justify-content: center;
-    gap: 0;
-    padding: .5rem;
-    border-radius: .6rem;
-    background: transparent;
-  }
-  .nav.nav--collapsed .nav__logo-name,
-  .nav.nav--collapsed .nav__name,
-  .nav.nav--collapsed .nav__subtitle,
-  .nav.nav--collapsed .nav__dropdown-icon {
-    opacity: 0 !important; /* hide labels and chevrons */
-  }
-  .nav.nav--collapsed .nav__items.is-open .nav__dropdown-panel,
-  .nav.nav--collapsed .nav__items.is-open .nav__dropdown-collapse {
-    margin: 0 !important;
-    padding: 0 !important;
-    max-height: 0 !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
-  }
-}
-
-@media screen and (min-width: 768px) {
-  /* In collapsed mode: remove active container but keep icon highlighted */
-  .nav.nav--collapsed .nav__items .nav__link.active {
-    background: transparent !important;
-    border-left: 0 !important;
-    padding-left: .5rem !important;
-    color: var(--first-color) !important; /* keeps icon color as selected */
-  }
-  .nav.nav--collapsed .nav__link:hover {
-    background: transparent !important; /* no hover container in collapsed */
-    color: var(--first-color);
-  }
 }
