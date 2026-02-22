@@ -129,6 +129,68 @@ const StrideDashBoard = () => {
     }
   ];
 
+  const getWorkspaceTemplateGroups = (strides: any[]) => {
+    const groups = new Map<string, any>();
+
+    strides.forEach((stride) => {
+      const key = stride.strideTemplate?.replace(/\s+/g, "") || "unknown";
+      if (!groups.has(key)) {
+        groups.set(key, {
+          originalTemplate: stride.strideTemplate,
+          strides: [],
+          totalDone: 0,
+          totalItems: 0,
+          maxOldestDays: 0,
+          maxOldestStr: "0 days",
+          cycleTimes: [],
+        });
+      }
+
+      const g = groups.get(key)!;
+      g.strides.push(stride);
+
+      const details = stride.strideDetails || {};
+      const done = Number(details.Done || 0);
+      const total =
+        done +
+        Number(details.InProgress || 0) +
+        Number(details.WontDo || details["Won't Do"] || 0) +
+        Number(details.ToDo || 0);
+
+      g.totalDone += done;
+      g.totalItems += total;
+
+      const oldestDays = parseFloat(stride.oldestItem) || 0;
+      if (oldestDays > g.maxOldestDays) {
+        g.maxOldestDays = oldestDays;
+        g.maxOldestStr = stride.oldestItem;
+      }
+
+      const cycle = parseFloat(stride.strideAvgCycle) || 0;
+      g.cycleTimes.push(cycle);
+    });
+
+    return Array.from(groups.values()).map((group) => {
+      const progress =
+        group.totalItems > 0
+          ? Math.round((group.totalDone / group.totalItems) * 100)
+          : 0;
+
+      const avgCycle =
+        group.cycleTimes.length > 0
+          ? (group.cycleTimes.reduce((a :any, b:any) => a + b, 0) / group.cycleTimes.length).toFixed(1) + " days"
+          : "—";
+
+      return {
+        ...group,
+        progress,
+        avgCycle,
+        oldestItem: group.maxOldestStr,
+        isOldestWarning: group.maxOldestDays > 9,
+      };
+    });
+  };
+
   const nestByWorkspace = (groupedData: any[]) => {
     const workspaceMap = new Map<string, { workspaceId: string; templates: any[] }>();
 
@@ -275,22 +337,6 @@ const StrideDashBoard = () => {
               {item.tableHeader && (
                 <div className="stridedashboard-system-signals-header">{item.tableHeader}</div>
               )}
-              {item.workspaceTitle && (
-                <div className="stridebashboard-workspace-header-container">
-                  <div className="stridedashboard-workspace-header">
-                    <div className={`${item.workspaceIcon}`}></div>
-                    <div>{item.workspaceTitle}</div>
-                  </div>
-                  <div className="stridedashboard-workspace-stride-count">2 Strides</div>
-                  <div className="stridedashboard-workspace-stride-items">18 items</div>
-                  <div className="stridedashboard-workspace-percentage">{percentage}%</div>
-                  {percentage > 60 ? (
-                    <div className="stridedashboard-workspace-status-icon bx bx-check"></div>
-                  ) : (
-                    <div className="stridedashboard-workspace-status-icon bx bx-x"></div>
-                  )}
-                </div>
-              )}
             </div>
             <div className="stridedashboard-table-content">
               {item.tableHeader && (
@@ -306,10 +352,125 @@ const StrideDashBoard = () => {
                   ))}
                 </div>
               )}
-              {item.workspaceTitle && (
-                <div className="stridedashboard-workspace-table-header">
-                  New
-                </div>
+              {item.workspaceTitle && item.strides && (
+                <>
+                  {/* Workspace main header */}
+                  <div className="stridedashboard-table-header">
+                    <div className="stridebashboard-workspace-header-container">
+                      <div className="stridedashboard-workspace-header">
+                        <i className={item.workspaceIcon}></i>
+                        <div>{item.workspaceTitle}</div>
+                      </div>
+
+                      {(() => {
+                        const strideCount = item.strides.length;
+                        const totalItems = item.strides.reduce((sum, s) => {
+                          return sum + Object.values(s.strideDetails || {}).reduce((a, b) => a + Number(b || 0), 0);
+                        }, 0);
+                        const doneItems = item.strides.reduce((sum, s) => sum + Number(s.strideDetails?.Done || 0), 0);
+                        const completion = totalItems > 0 ? Math.round((doneItems / totalItems) * 100) : 0;
+
+                        return (
+                          <>
+                            <div className="stridedashboard-workspace-stride-count">
+                              {strideCount} strides
+                            </div>
+                            <div className="stridedashboard-workspace-stride-items">
+                              {totalItems} items
+                            </div>
+                            <div className="stridedashboard-workspace-percentage">
+                              {completion}%
+                            </div>
+                            {completion >= 65 ? (
+                              <i className="stridedashboard-workspace-status-icon bx bx-check"></i>
+                            ) : (
+                              <i className="stridedashboard-workspace-status-icon bx bx-x"></i>
+                            )}
+                          </>
+                        );
+                      })()}
+                    </div>
+                  </div>
+
+                  {/* Template items + stride rows */}
+                  <div className="stridedashboard-table-content">
+                    {getWorkspaceTemplateGroups(item.strides).map((group, groupIdx) => (
+                      <div className="template-group" key={groupIdx}>
+                        {/* Template summary header */}
+                        <div className="stridedashboard-template-header">
+                          <div className="template-name">
+                            {group.originalTemplate}
+                          </div>
+                          <div className="template-metrics">
+                            <div className="template-progress-container">
+                              <div
+                                className="template-progress-fill"
+                                style={{
+                                  width: `${group.progress}%`,
+                                  backgroundColor:
+                                    group.progress >= 70 ? "#10B981" :
+                                    group.progress >= 40 ? "#F59E0B" :
+                                    "#EF4444",
+                                }}
+                              />
+                            </div>
+                            <span className="template-stat">{group.progress}%</span>
+                            <span className="template-stat">Avg: {group.avgCycle}</span>
+                            <span
+                              className={`template-stat oldest ${group.isOldestWarning ? "warning" : ""}`}
+                            >
+                              Oldest: {group.oldestItem}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Stride detail rows */}
+                        <div className="stride-table">
+                          <div className="stride-table-header">
+                            <div>Stride</div>
+                            <div>Progress</div>
+                            <div>In Progress</div>
+                            <div>Done</div>
+                            <div>Won't Do</div>
+                            <div>Avg Cycle</div>
+                            <div>Oldest Item</div>
+                          </div>
+
+                          {group.strides.map((stride : any) => {
+                            const details = stride.strideDetails || {};
+                            const inProg = Number(details.InProgress || 0);
+                            const done = Number(details.Done || 0);
+                            const wontDo = Number(details.WontDo || details["Won't Do"] || 0);
+                            const todo = Number(details.ToDo || 0);
+                            const total = inProg + done + wontDo + todo;
+                            const progPercent = total > 0 ? Math.round((done / total) * 100) : 0;
+
+                            return (
+                              <div className="stride-row" key={stride.strideId}>
+                                <div className="stride-name">
+                                  <i className="bx bx-task"></i>
+                                  {stride.strideName}
+                                </div>
+                                <div className="progress-cell">
+                                  <div className="mini-progress">
+                                    <div style={{ width: `${progPercent}%` }} />
+                                  </div>
+                                </div>
+                                <div>{inProg}</div>
+                                <div>{done}</div>
+                                <div>{wontDo}</div>
+                                <div>{stride.strideAvgCycle}</div>
+                                <div className={parseFloat(stride.oldestItem) > 9 ? "oldest-warning" : ""}>
+                                  {stride.oldestItem}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </>
               )}
             </div>
           </div>

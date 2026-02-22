@@ -240,6 +240,191 @@
   font-weight: bold;
 }
 
+/*Template Group & Sub-Header*/
+.template-group {
+  margin-top: 1%;
+  margin-bottom: 1%;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--container-color);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.stridedashboard-template-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: #f8fafc;
+  border-bottom: 1px solid #e5e7eb;
+  font-weight: 600;
+  color: var(--first-color);
+}
+
+.template-name {
+  font-size: 17px;
+  color: var(--title-color);
+}
+
+.template-metrics {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  font-size: 14px;
+  color: var(--text-color);
+}
+
+.template-progress-container {
+  width: 140px;
+  height: 8px;
+  background: #e5e7eb;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.template-progress-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+
+.template-stat {
+  min-width: 70px;
+  text-align: right;
+}
+
+.template-stat.oldest.warning {
+  color: #ef4444;
+  font-weight: 600;
+}
+
+/* ──────────────────────────────────────────────────────────────
+   Stride Table
+─────────────────────────────────────────────────────────────── */
+.stride-table {
+  width: 100%;
+}
+
+.stride-table-header {
+  display: grid;
+  grid-template-columns: 2.2fr 1fr 1fr 1fr 1fr 1.1fr 1.1fr;
+  background: #f8fafc;
+  padding: 12px 20px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-color);
+  border-bottom: 1px solid #e5e7eb;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.stride-row {
+  display: grid;
+  grid-template-columns: 2.2fr 1fr 1fr 1fr 1fr 1.1fr 1.1fr;
+  padding: 14px 20px;
+  font-size: 14px;
+  border-bottom: 1px solid #f1f5f9;
+  align-items: center;
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: #f9fafb;
+  }
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.stride-name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+  color: var(--title-color);
+
+  i {
+    font-size: 18px;
+    color: #94a3b8;
+  }
+}
+
+.progress-cell {
+  display: flex;
+  align-items: center;
+}
+
+.mini-progress {
+  width: 90px;
+  height: 6px;
+  background: #e5e7eb;
+  border-radius: 3px;
+  overflow: hidden;
+
+  div {
+    height: 100%;
+    background: #3b82f6;
+    border-radius: 3px;
+    transition: width 0.4s ease;
+  }
+}
+
+.oldest-warning {
+  color: #ef4444;
+  font-weight: 600;
+}
+
+/* ──────────────────────────────────────────────────────────────
+   Responsive adjustments
+─────────────────────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .stridedashboard-template-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+  }
+
+  .template-metrics {
+    width: 100%;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .template-progress-container {
+    width: 100px;
+  }
+
+  .stride-table-header,
+  .stride-row {
+    grid-template-columns: 1.8fr 0.9fr 0.9fr 0.9fr 0.9fr 1fr 1fr;
+    font-size: 13px;
+    padding: 12px 16px;
+  }
+
+  .mini-progress {
+    width: 70px;
+  }
+}
+
+@media (max-width: 768px) {
+  .stride-table-header,
+  .stride-row {
+    grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    font-size: 12.5px;
+  }
+
+  .stride-name {
+    font-size: 13px;
+  }
+
+  .template-stat {
+    font-size: 13px;
+    min-width: auto;
+  }
+}
+
 @media screen and (max-width: 1024px){
     .stride-dashboard-overview-container{
         display : flex;
