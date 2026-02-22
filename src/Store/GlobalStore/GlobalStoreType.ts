@@ -3,6 +3,7 @@ export interface StoreType {
     authenticated : boolean;
     userDetails : any;
     workspace : any;
+    sidebarOpen: boolean;
 }
 
 export interface Action{
