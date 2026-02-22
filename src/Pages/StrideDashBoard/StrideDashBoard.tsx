@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import "./StrideDashBoard.scss";
 
 const StrideDashBoard = () => {
@@ -6,6 +6,7 @@ const StrideDashBoard = () => {
   const color = "#3B82F6";
   const safeValue = Math.min(100, Math.max(0, value));
   const percentage  = 72;
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   const strideWorkspaceOverview = [
     {
@@ -277,7 +278,17 @@ const StrideDashBoard = () => {
         </div>
 
         <div className="stride-dashboard-header-right">
-          <div className="stride-dashboard-filter-dropdown">
+
+          {/* New Filter Button + Side Panel */}
+          <button
+            className="stride-dashboard-filter-button"
+            onClick={() => setIsFilterOpen(true)}
+            aria-label="Open filter options"
+          >
+            <i className="bx bx-filter-alt"></i>
+            <span>Filter</span>
+          </button>
+          {/* <div className="stride-dashboard-filter-dropdown">
             <input
               hidden
               className="stride-dashboard-sr-only"
@@ -311,7 +322,62 @@ const StrideDashBoard = () => {
                 <article className="stride-dashboard-filter-article">Last Year</article>
               </li>
             </ul>
-          </div>
+          </div> */}
+          {isFilterOpen && (
+            <>
+              {/* Backdrop */}
+              <div
+                className="stride-dashboard-filter-backdrop"
+                onClick={() => setIsFilterOpen(false)}
+              />
+
+              {/* Sliding Panel */}
+              <div className={`stride-dashboard-filter-panel ${isFilterOpen ? "open" : ""}`}>
+                <div className="filter-panel-header">
+                  <h3>Filters</h3>
+                  <button
+                    className="filter-panel-close"
+                    onClick={() => setIsFilterOpen(false)}
+                    aria-label="Close filter panel"
+                  >
+                    <i className="bx bx-x"></i>
+                  </button>
+                </div>
+
+                <div className="filter-panel-content">
+                  <div className="filter-option">
+                    <label>Time Period</label>
+                    <select defaultValue="7days">
+                      <option value="7days">Last 7 Days</option>
+                      <option value="30days">Last Month</option>
+                      <option value="180days">Last 6 Months</option>
+                      <option value="365days">Last Year</option>
+                    </select>
+                  </div>
+
+                  {/* Add more filter dropdowns here as needed */}
+                  {/* Example: */}
+                  {/* <div className="filter-option">
+                    <label>Workspace</label>
+                    <select>
+                      <option>All Workspaces</option>
+                      <option>DeepWorks</option>
+                      <option>Fitness</option>
+                    </select>
+                  </div> */}
+
+                  <div className="filter-actions">
+                    <button className="btn-reset" onClick={() => setIsFilterOpen(false)}>
+                      Reset
+                    </button>
+                    <button className="btn-apply" onClick={() => setIsFilterOpen(false)}>
+                      Apply
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
       <div className="stride-dashboard-overview-container">
