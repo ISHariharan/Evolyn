@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import "./StrideDashBoard.scss";
 
 const StrideDashBoard = () => {
@@ -62,9 +63,11 @@ const StrideDashBoard = () => {
     },
     {
       workspaceTitle : "DeepWorks",
-      workspaceIcon : "",
+      workspaceId : "d3b6cbf3-cca6-45d7-a245-f3c194f0176e",
+      workspaceIcon : "bx bx-folder",
       strides : [
         {
+          strideId: "1",
           strideName : "Sprint Planning",
           strideTemplate : "ToDo,InProgress,Won't Do,Done",
           strideDetails : {
@@ -77,6 +80,7 @@ const StrideDashBoard = () => {
           oldestItem : "9 days",
         },
         {
+          strideId: "2",
           strideName : "Research Tasks",
           strideTemplate : "ToDo,InProgress,Won't Do,Done",
           strideDetails : {
@@ -92,11 +96,13 @@ const StrideDashBoard = () => {
     },
     {
       workspaceTitle : "Fitness",
-      workspaceIcon : "",
+      workspaceId : "f9b595cd-0fa6-4045-aaae-fefe54f73238",
+      workspaceIcon : "bx bx-pin",
       strides : [
         {
+          strideId: "3",
           strideName : "Sprint Planning",
-          strideTemplate : "ToDo,InProgress,Won't Do,Done",
+          strideTemplate : "ToDo,InProgress,Done",
           strideDetails : {
             ToDo : "7",
             InProgress : "3",
@@ -107,6 +113,7 @@ const StrideDashBoard = () => {
           oldestItem : "9 days",
         },
         {
+          strideId: "4",
           strideName : "Research Tasks",
           strideTemplate : "ToDo,InProgress,Won't Do,Done",
           strideDetails : {
@@ -121,6 +128,31 @@ const StrideDashBoard = () => {
       ]
     }
   ];
+
+  const findDifferentStrideTemplates = (workspaceId : any, strides: any) => {
+    if(workspaceId === undefined) return;
+    const templates = new Set<Array<any>>();
+    strides?.forEach((stride : any) => {
+      templates.add(stride.strideTemplate.replace(/ /g, ''));
+    })
+    return {
+      workspaceId,
+      templates: templates,
+    };
+  }
+
+  const groupWorkspaceStride = (strideTableContent : any) => {
+    const templates: any = [];
+    strideTableContent.forEach((content : any) => {
+      if(content.tableHeader) return;
+      let template = findDifferentStrideTemplates(content.workspaceId, content.strides);
+      templates.push(template);
+    });
+  }
+
+  useEffect(() => {
+    groupWorkspaceStride(strideTableContent);
+  }, []);
 
   return (
     <div className="stride-dashboard">
@@ -213,7 +245,7 @@ const StrideDashBoard = () => {
               {item.workspaceTitle && (
                 <div className="stridebashboard-workspace-header-container">
                   <div className="stridedashboard-workspace-header">
-                    <div className="bx bx-desktop"></div>
+                    <div className={`${item.workspaceIcon}`}></div>
                     <div>{item.workspaceTitle}</div>
                   </div>
                   <div className="stridedashboard-workspace-stride-count">2 Strides</div>
