@@ -129,29 +129,62 @@ const StrideDashBoard = () => {
     }
   ];
 
-  const findDifferentStrideTemplates = (workspaceId : any, strides: any) => {
-    if(workspaceId === undefined) return;
-    const templates = new Set<Array<any>>();
-    strides?.forEach((stride : any) => {
-      templates.add(stride.strideTemplate.replace(/ /g, ''));
-    })
-    return {
-      workspaceId,
-      templates: templates,
-    };
-  }
+  const nestByWorkspace = (groupedData: any[]) => {
+    const workspaceMap = new Map<string, { workspaceId: string; templates: any[] }>();
 
-  const groupWorkspaceStride = (strideTableContent : any) => {
-    const templates: any = [];
-    strideTableContent.forEach((content : any) => {
-      if(content.tableHeader) return;
-      let template = findDifferentStrideTemplates(content.workspaceId, content.strides);
-      templates.push(template);
+    groupedData.forEach(item => {
+      const wid = item.workspaceId;
+      if (!workspaceMap.has(wid)) {
+        workspaceMap.set(wid, { workspaceId: wid, templates: [] });
+      }
+      workspaceMap.get(wid)!.templates.push({
+        Template: item.Template,
+        strideId: item.strideId
+      });
     });
-  }
+
+    return Array.from(workspaceMap.values());
+  };
+
+  const groupStridesByWorkspaceAndTemplate = (strideTableContent: any[]) => {
+    const result: Array<{
+      workspaceId: string;
+      Template: string;
+      strideId: string[];
+    }> = [];
+
+    strideTableContent.forEach((item) => {
+      if (!item.workspaceId || !item.strides?.length) return;
+      const templateToStrideIds = new Map<string, string[]>();
+
+      item.strides.forEach((stride: any) => {
+        if (!stride?.strideId || !stride?.strideTemplate) return;
+
+        
+        const templateKey = stride.strideTemplate.replace(/\s+/g, '');
+
+        if (!templateToStrideIds.has(templateKey)) {
+          templateToStrideIds.set(templateKey, []);
+        }
+
+        templateToStrideIds.get(templateKey)!.push(stride.strideId);
+      });
+      templateToStrideIds.forEach((strideIds, template) => {
+        result.push({
+          workspaceId: item.workspaceId,
+          Template: template,           
+          strideId: strideIds,
+        });
+      });
+    });
+
+    return result;
+  };
 
   useEffect(() => {
-    groupWorkspaceStride(strideTableContent);
+    const groupedData = groupStridesByWorkspaceAndTemplate(strideTableContent);
+    const nestedWorkspace = nestByWorkspace(groupedData);
+    console.log("Grouped Data and Nested Workspace : ", groupedData, nestedWorkspace);
   }, []);
 
   return (
@@ -274,7 +307,9 @@ const StrideDashBoard = () => {
                 </div>
               )}
               {item.workspaceTitle && (
-                <div>New</div>
+                <div className="stridedashboard-workspace-table-header">
+                  New
+                </div>
               )}
             </div>
           </div>
