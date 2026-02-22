@@ -106,7 +106,6 @@ const StrideDashBoard = () => {
           strideDetails : {
             ToDo : "7",
             InProgress : "3",
-            WontDo : "2",
             Done: "10",
           },
           strideAvgCycle : "2.8 days",
@@ -129,6 +128,24 @@ const StrideDashBoard = () => {
     }
   ];
 
+  const getAllStatuses = (strides: any[]) => {
+    const statusOrder: string[] = [];
+    const seen = new Set<string>();
+
+    strides.forEach((stride) => {
+      if (stride.strideDetails) {
+        Object.keys(stride.strideDetails).forEach((status) => {
+          if (!seen.has(status)) {
+            seen.add(status);
+            statusOrder.push(status);
+          }
+        });
+      }
+    });
+
+    return statusOrder;
+  };
+
   const getWorkspaceTemplateGroups = (strides: any[]) => {
     const groups = new Map<string, any>();
 
@@ -143,6 +160,7 @@ const StrideDashBoard = () => {
           maxOldestDays: 0,
           maxOldestStr: "0 days",
           cycleTimes: [],
+          statusTotals: {} as Record<string, number>,
         });
       }
 
@@ -151,11 +169,7 @@ const StrideDashBoard = () => {
 
       const details = stride.strideDetails || {};
       const done = Number(details.Done || 0);
-      const total =
-        done +
-        Number(details.InProgress || 0) +
-        Number(details.WontDo || details["Won't Do"] || 0) +
-        Number(details.ToDo || 0);
+      const total = Object.values(details).reduce((sum: number, v: any) => sum + Number(v || 0), 0);
 
       g.totalDone += done;
       g.totalItems += total;
@@ -187,6 +201,7 @@ const StrideDashBoard = () => {
         avgCycle,
         oldestItem: group.maxOldestStr,
         isOldestWarning: group.maxOldestDays > 9,
+        statuses: getAllStatuses(group.strides),
       };
     });
   };
@@ -421,14 +436,18 @@ const StrideDashBoard = () => {
                           </div>
                         </div>
 
-                        {/* Stride detail rows */}
                         <div className="stride-table">
                           <div className="stride-table-header">
                             <div>Stride</div>
                             <div>Progress</div>
-                            <div>In Progress</div>
-                            <div>Done</div>
-                            <div>Won't Do</div>
+
+                            {group.statuses.map((status : any) => (
+                              <div key={status} className="status-header">
+                                {status}
+                                {/* <small>{group.statusTotals[status] || 0}</small> */}
+                              </div>
+                            ))}
+
                             <div>Avg Cycle</div>
                             <div>Oldest Item</div>
                           </div>
@@ -453,9 +472,9 @@ const StrideDashBoard = () => {
                                     <div style={{ width: `${progPercent}%` }} />
                                   </div>
                                 </div>
-                                <div>{inProg}</div>
-                                <div>{done}</div>
-                                <div>{wontDo}</div>
+                                {group.statuses.map((status : any) => (
+                                  <div key={status}>{Number(details[status] || 0)}</div>
+                                ))}
                                 <div>{stride.strideAvgCycle}</div>
                                 <div className={parseFloat(stride.oldestItem) > 9 ? "oldest-warning" : ""}>
                                   {stride.oldestItem}
