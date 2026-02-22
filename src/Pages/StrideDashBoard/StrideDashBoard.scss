@@ -433,3 +433,299 @@
         flex-wrap: wrap;
     }
 }
+
+/* ──────────────────────────────────────────────────────────────
+   Global Responsive Adjustments
+─────────────────────────────────────────────────────────────── */
+
+/* Large screens (default) */
+
+/* Medium screens (tablets, <1024px) */
+@media (max-width: 1024px) {
+  .stride-dashboard-header-container {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .stride-dashboard-header-left-upper-section {
+    font-size: 28px;
+  }
+
+  .stride-dashboard-header-left-lower-section {
+    font-size: 16px;
+  }
+
+  .stride-dashboard-filter-dropdown {
+    max-width: 100%;
+    min-width: 100%;
+  }
+
+  .stride-dashboard-overview-container {
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: flex-start;
+  }
+
+  .stride-dashboard-overview {
+    width: calc(50% - 12px);
+    padding: 12px;
+  }
+
+  .stride-dashboard-overview-primary-content,
+  .stride-dashboard-overview-secondary-content {
+    font-size: 28px;
+  }
+
+  .stride-dashboard-overview-lower-primary-content {
+    font-size: 20px;
+  }
+
+  .underline-progress {
+    width: 100%;
+  }
+
+  .stridebashboard-workspace-header-container,
+  .stridedashboard-system-signals-header {
+    font-size: 20px;
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .stridedashboard-system-signals-container {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .stridedashboard-system-signals-board {
+    width: 100%;
+    padding: 16px;
+  }
+
+  .system-signals-icon {
+    font-size: 36px;
+  }
+
+  .stridedashboard-system-signals-content-header {
+    font-size: 28px;
+  }
+
+  .stridedashboard-workspace-stride-count,
+  .stridedashboard-workspace-stride-items,
+  .stridedashboard-workspace-percentage {
+    font-size: 16px;
+  }
+
+  .template-group {
+    margin-bottom: 24px;
+  }
+
+  .stridedashboard-template-header {
+    padding: 14px 16px;
+    font-size: 16px;
+  }
+
+  .template-name {
+    font-size: 16px;
+  }
+
+  .template-metrics {
+    gap: 16px;
+    font-size: 13px;
+  }
+
+  .template-progress-container {
+    width: 120px;
+  }
+
+  .stride-table-header {
+    font-size: 13px;
+    padding: 10px 16px;
+  }
+
+  .stride-row {
+    font-size: 13px;
+    padding: 12px 16px;
+  }
+
+  .mini-progress {
+    width: 80px;
+  }
+}
+
+/* Small screens (mobile, <768px) */
+@media (max-width: 768px) {
+  body {
+    padding: 1rem 1rem 0;
+  }
+
+  .stride-dashboard-header-left-upper-section {
+    font-size: 24px;
+  }
+
+  .stride-dashboard-header-left-lower-section {
+    font-size: 14px;
+  }
+
+  .stride-dashboard-overview-container {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .stride-dashboard-overview {
+    width: 100%;
+    padding: 12px;
+  }
+
+  .stride-dashboard-overview-primary-content,
+  .stride-dashboard-overview-secondary-content {
+    font-size: 24px;
+  }
+
+  .stride-dashboard-overview-lower-primary-content {
+    font-size: 18px;
+  }
+
+  .stridebashboard-workspace-header-container,
+  .stridedashboard-system-signals-header {
+    font-size: 18px;
+    padding: 10px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .stridedashboard-workspace-header {
+    gap: 8px;
+  }
+
+  .stridedashboard-workspace-stride-count,
+  .stridedashboard-workspace-stride-items,
+  .stridedashboard-workspace-percentage {
+    font-size: 14px;
+  }
+
+  .stridedashboard-system-signals-container {
+    gap: 12px;
+  }
+
+  .stridedashboard-system-signals-board {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px;
+  }
+
+  .system-signals-icon {
+    font-size: 32px;
+  }
+
+  .stridedashboard-system-signals-content-header {
+    font-size: 24px;
+  }
+
+  .stridedashboard-template-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 14px;
+  }
+
+  .template-name {
+    font-size: 15px;
+  }
+
+  .template-metrics {
+    width: 100%;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 12px;
+  }
+
+  .template-progress-container {
+    width: 100px;
+    height: 6px;
+  }
+
+  /* Make table scrollable horizontally on small screens */
+  .stride-table {
+    overflow-x: auto;
+  }
+
+  .stride-table-header,
+  .stride-row {
+    min-width: 700px; /* Ensure scrolling if needed */
+    font-size: 12px;
+    padding: 10px 14px;
+  }
+
+  .mini-progress {
+    width: 70px;
+    height: 5px;
+  }
+
+  .stride-name i {
+    font-size: 16px;
+  }
+}
+
+/* Extra small screens (<480px) */
+@media (max-width: 480px) {
+  .stride-dashboard-header-container {
+    gap: 12px;
+  }
+
+  .stride-dashboard-header-left-upper-section {
+    font-size: 22px;
+  }
+
+  .stride-dashboard-header-left-lower-section {
+    font-size: 13px;
+  }
+
+  .stride-dashboard-overview {
+    padding: 10px;
+  }
+
+  .stride-dashboard-overview-primary-content,
+  .stride-dashboard-overview-secondary-content {
+    font-size: 22px;
+  }
+
+  .stride-dashboard-overview-lower-primary-content {
+    font-size: 16px;
+  }
+
+  .stridebashboard-workspace-header-container,
+  .stridedashboard-system-signals-header {
+    font-size: 16px;
+    padding: 8px;
+  }
+
+  .stridedashboard-system-signals-content-header {
+    font-size: 20px;
+  }
+
+  .template-name {
+    font-size: 14px;
+  }
+
+  .template-metrics {
+    gap: 8px;
+    font-size: 11px;
+  }
+
+  .template-progress-container {
+    width: 80px;
+  }
+
+  .stride-table-header,
+  .stride-row {
+    font-size: 11px;
+    padding: 8px 12px;
+  }
+
+  .mini-progress {
+    width: 60px;
+  }
+}
