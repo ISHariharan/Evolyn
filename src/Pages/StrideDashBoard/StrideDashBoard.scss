@@ -173,6 +173,73 @@
     transition: width 0.4s ease;
 }
 
+.stridedashboard-table-header{
+  margin-top: 2%;
+}
+
+.stridebashboard-workspace-header-container,
+.stridedashboard-system-signals-header{
+  background-color : var(--container-color);
+  border-radius: 10px;
+  display: flex;
+  gap: 2%;
+  justify-content: left;
+  align-items: center;
+  font-size: 24px;
+  font-weight: bolder;
+  color : var(--first-color);
+  padding: 1%;
+}
+
+.stridedashboard-system-signals-container{
+  display : flex;
+  justify-content: space-between;
+}
+
+.stridedashboard-system-signals-board{
+  background-color: var(--container-color);
+  padding: 2%;
+  margin-top: 1%;
+  display: flex;
+  gap: 5%;
+  width: 33%;
+  align-items: center;
+  border-radius: 10px;
+}
+
+.system-signals-icon{
+  font-size: 42px;
+  color: var(--title-color);
+}
+
+.stridedashboard-system-signals-content{
+  display: block;
+  text-align: left;
+}
+
+.stridedashboard-system-signals-content-header{
+  font-size: 32px;
+  font-weight: bolder;
+}
+
+.stridedashboard-workspace-header{
+  display: flex;
+  align-items: center;
+  gap: 8%;
+}
+
+.stridedashboard-workspace-stride-items,
+.stridedashboard-workspace-percentage,
+.stridedashboard-workspace-stride-count{
+  font-weight: normal;
+  font-size: 18px; 
+  color: var(--text-color);
+}
+
+.stridedashboard-workspace-status-icon{
+  font-weight: bold;
+}
+
 @media screen and (max-width: 1024px){
     .stride-dashboard-overview-container{
         display : flex;

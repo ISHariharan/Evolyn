@@ -4,6 +4,7 @@ const StrideDashBoard = () => {
   const value = 70;
   const color = "#3B82F6";
   const safeValue = Math.min(100, Math.max(0, value));
+  const percentage  = 72;
 
   const strideWorkspaceOverview = [
     {
@@ -43,14 +44,17 @@ const StrideDashBoard = () => {
       tableHeader : "System Signals",
       tableContent : [
         {
+          contentIcon : "bx bx-error-alt",
           contentHeader : "Stalled Flow",
           contentDescription : "2 strides have items stuck In Progress for over 10 days",
         },
         {
+          contentIcon : "bx bx-cut",
           contentHeader : "High Pruning",
           contentDescription : "Won't Do increased by 40% this week",
         },
         {
+          contentIcon : "bx bx-clipboard",
           contentHeader : "Positive Momentum",
           contentDescription : "Completion rate improved after Todo load dropped",
         }
@@ -87,7 +91,7 @@ const StrideDashBoard = () => {
       ]
     },
     {
-      workspaceTitle : "DeepWorks",
+      workspaceTitle : "Fitness",
       workspaceIcon : "",
       strides : [
         {
@@ -201,10 +205,46 @@ const StrideDashBoard = () => {
         ))}
       </div>
       {strideTableContent.map((item, index) => (
-          <div className="stridedashboard-table-header">
-            {item.tableHeader && (
-              <div>{item.tableHeader}</div>
-            )}
+          <div>
+            <div className="stridedashboard-table-header">
+              {item.tableHeader && (
+                <div className="stridedashboard-system-signals-header">{item.tableHeader}</div>
+              )}
+              {item.workspaceTitle && (
+                <div className="stridebashboard-workspace-header-container">
+                  <div className="stridedashboard-workspace-header">
+                    <div className="bx bx-desktop"></div>
+                    <div>{item.workspaceTitle}</div>
+                  </div>
+                  <div className="stridedashboard-workspace-stride-count">2 Strides</div>
+                  <div className="stridedashboard-workspace-stride-items">18 items</div>
+                  <div className="stridedashboard-workspace-percentage">{percentage}%</div>
+                  {percentage > 60 ? (
+                    <div className="stridedashboard-workspace-status-icon bx bx-check"></div>
+                  ) : (
+                    <div className="stridedashboard-workspace-status-icon bx bx-x"></div>
+                  )}
+                </div>
+              )}
+            </div>
+            <div className="stridedashboard-table-content">
+              {item.tableHeader && (
+                <div className="stridedashboard-system-signals-container">
+                  {item.tableContent.map((row, index) => (
+                    <div className="stridedashboard-system-signals-board" key={index}>
+                      <div className={`${row.contentIcon} system-signals-icon`}></div>
+                      <div className="stridedashboard-system-signals-content">
+                        <div className="stridedashboard-system-signals-content-header">{row.contentHeader}</div>
+                        <div className="stridedashboard-system-signals-content-description">{row.contentDescription}</div>
+                      </div>
+                    </div>  
+                  ))}
+                </div>
+              )}
+              {item.workspaceTitle && (
+                <div>New</div>
+              )}
+            </div>
           </div>
       ))}
     </div>
