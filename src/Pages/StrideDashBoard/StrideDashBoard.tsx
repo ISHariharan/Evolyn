@@ -398,9 +398,6 @@ const StrideDashBoard = () => {
                       <div className="template-group" key={groupIdx}>
                         {/* Template summary header */}
                         <div className="stridedashboard-template-header">
-                          <div className="template-name">
-                            {group.originalTemplate}
-                          </div>
                           <div className="template-metrics">
                             <div className="template-progress-container">
                               <div
