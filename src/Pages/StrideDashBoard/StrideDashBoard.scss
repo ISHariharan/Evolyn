@@ -410,17 +410,18 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1.25rem;
-  background: white;
+  background: var(--button-color);
   border: 1px solid #c1c2c5;
   border-radius: 12px;
   font-weight: 600;
-  color: var(--first-color);
+  color: var(--button-text-color);
   cursor: pointer;
   transition: all 0.2s ease;
 
   &:hover {
-    background: #f8fafc;
+    background: var(--button-color);
     border-color: #a0a4a8;
+    color : var(--button-text-color);
   }
 
   i {
@@ -530,9 +531,9 @@
   }
 
   .btn-reset {
-    background: #f1f5f9;
+    background-color: rgb(255, 73, 66);
     border: 1px solid #cbd5e1;
-    color: var(--text-color);
+    color: white;
   }
 
   .btn-apply {
