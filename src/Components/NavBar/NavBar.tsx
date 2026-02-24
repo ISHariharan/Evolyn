@@ -9,6 +9,7 @@ import Dialog from "../../Common/DialogBox/DialogBox";
 const NavBar = () => {
     const navigate = useNavigate();
     const {state, dispatch} = useStore();
+    const [workspaces, setWorkspaces] = useState(state.workspace);
     const isOpen = state.sidebarOpen;
     const [navBarDetails, setNavBarDetails] = useState<any>([]);
     const [showDialog, setShowDialog] = useState<boolean>(false);
@@ -100,7 +101,12 @@ const NavBar = () => {
         if (isStride) {
             event.preventDefault();
             setOpenDropdown(null);
-            navigate("/stride");
+            if(workspaces.length > 0){
+                navigate("/stride/dashboard");
+            }
+            else{
+                navigate("/stride");
+            }
             return;
         }
 
@@ -195,7 +201,12 @@ const NavBar = () => {
                                                 if (name === "stride") {
                                                     event.preventDefault();
                                                     setOpenDropdown(null);
-                                                    navigate("/stride");
+                                                    if(workspaces.length > 0){
+                                                        navigate("/stride/dashboard");
+                                                    }
+                                                    else{
+                                                        navigate("/stride");
+                                                    }
                                                 } else {
                                                     handleTopLevelClick(event, navData, index);
                                                 }
@@ -231,7 +242,12 @@ const NavBar = () => {
                                                 if (name === "stride") {
                                                     event.preventDefault();
                                                     setOpenDropdown(null);
-                                                    navigate("/stride");
+                                                    if(workspaces.length > 0){
+                                                        navigate("/stride/dashboard");
+                                                    }
+                                                    else{
+                                                        navigate("/stride");
+                                                    }
                                                 } else {
                                                     handleTopLevelClick(event, navData, index);
                                                 }
