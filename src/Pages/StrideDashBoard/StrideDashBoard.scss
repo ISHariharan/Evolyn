@@ -268,7 +268,7 @@
   justify-content: right;
   align-items: center;
   padding: 1rem 1.5rem;
-  background: #f8fafc;
+  background: var(--container-color);
   border-bottom: 1px solid #e5e7eb;
   font-weight: 600;
   color: var(--first-color);
@@ -338,7 +338,7 @@
 .stride-table-header {
   position: sticky;
   top: 0;
-  background: #f8fafc;
+  background: var(--container-color);
   z-index: 10;
   font-weight: 600;
   color: var(--text-color);
