@@ -164,6 +164,10 @@ const NavBar = () => {
     //     }
     // };
 
+    useEffect(() => {
+        setWorkspaces(state.workspace);
+    }, [workspaces, state.workspace]);
+
     return (
         <div
             className={`nav ${isOpen ? "show-menu" : ""}`}

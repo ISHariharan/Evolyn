@@ -137,6 +137,11 @@ const AuthForm = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void })
                 }
             }
             const user = { email, id };
+            dispatch({type: "SET_AUTHENTICATOR", payload: false});
+            dispatch({type: "SET_THEME", payload: "light"});
+            dispatch({type: "SET_USERDETAILS", payload: ""});
+            dispatch({type: "SET_WORKSPACE", payload: {} });
+            dispatch({type: "TOGGLE_SIDEBAR", payload: false });
             triggerToastMessage(response, user);
         }
     };

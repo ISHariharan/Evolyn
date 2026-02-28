@@ -4,7 +4,7 @@ import { userDetails } from "../../API/AuthForm";
 
 
 //Initializing Store
-const initialStoreState: StoreType = {
+export const initialStoreState: StoreType = {
     theme : "light",
     authenticated: false,
     userDetails : {
