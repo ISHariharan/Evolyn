@@ -334,18 +334,29 @@ const NavBar = () => {
                                             </div>
                                         ) : (
                                             <div className="nav__dropdown-collapse">
-                                                <div className="nav__dropdown-content nav__dropdown-thread">
-                                                    <span className="nav__dropdown-line" />
+                                                <div
+                                                    className="nav__dropdown-content nav__dropdown-menu"
+                                                    role="menu"
+                                                    aria-label={`${navData.name} menu`}
+                                                >
                                                     {navData.dropDown.map((dropDownContent: any, index: number) => (
                                                         <a
-                                                            className="nav__dropdown-item nav__dropdown-node"
-                                                            key={dropDownContent.id}
+                                                            className="nav__dropdown-item"
+                                                            key={dropDownContent.id ?? `${dropDownContent.label}-${index}`}
+                                                            role="menuitem"
                                                             onClick={(e) => {
                                                                 e.stopPropagation();
                                                             }}
                                                         >
-                                                            <span className="nav__dropdown-dot" />
-                                                            {dropDownContent.label}
+                                                            <span className="nav__dropdown-item-icon" aria-hidden="true">
+                                                                {dropDownContent.icon ? (
+                                                                    <i className={dropDownContent.icon}></i>
+                                                                ) : (
+                                                                    <span>{index + 1}</span>
+                                                                )}
+                                                            </span>
+                                                            <span className="nav__dropdown-label">{dropDownContent.label}</span>
+                                                            <i className="bx bx-chevron-right nav__dropdown-action-icon" aria-hidden="true"></i>
                                                         </a>
                                                     ))}
                                                 </div>
