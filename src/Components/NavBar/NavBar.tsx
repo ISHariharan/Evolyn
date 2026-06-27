@@ -339,13 +339,13 @@ const NavBar = () => {
                                                     {navData.dropDown.map((dropDownContent: any, index: number) => (
                                                         <a
                                                             className="nav__dropdown-item nav__dropdown-node"
-                                                            key={index}
+                                                            key={dropDownContent.id}
                                                             onClick={(e) => {
                                                                 e.stopPropagation();
                                                             }}
                                                         >
                                                             <span className="nav__dropdown-dot" />
-                                                            {dropDownContent}
+                                                            {dropDownContent.label}
                                                         </a>
                                                     ))}
                                                 </div>

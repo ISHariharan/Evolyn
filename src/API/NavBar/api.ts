@@ -12,14 +12,14 @@ export function getNavBarContent () {
             name : "Explore",
             icon: "bx bx-compass nav__icon",
             dropDown: [],
-            order : "4",
+            order : "5",
             visible: false,
         },
         {
             name : "Messages",
             icon: "bx bx-message-rounded nav__icon",
             dropDown: [],
-            order : "3",
+            order : "4",
             visible: false,
         },
         {
@@ -27,6 +27,49 @@ export function getNavBarContent () {
             icon: "bx bx-trending-up nav__icon",
             dropDown: [],
             order : "2",
+            visible: false,
+        },
+        {
+            name : "Expenses",
+            icon: "bx bx-receipt",
+            dropDown: [
+                {
+                    id: "1",
+                    label : "Transactions",
+                    icon: "",
+                },
+                {
+                    id: "2",
+                    label : "Categories",
+                    icon: "",
+                },
+                {
+                    id: "3",
+                    label : "Budgets",
+                    icon: "",
+                },
+                {
+                    id: "4",
+                    label: "Recurring",
+                    icon: "",
+                },
+                {
+                    label: "Reports",
+                    id: "5",
+                    icon: "",
+                },
+                {
+                    label: "Insights",
+                    id: "6",
+                    icon: "",
+                },
+                {
+                    label: "Accounts",
+                    id: "7",
+                    icon: "",
+                },
+            ],
+            order : "3",
             visible: false,
         }
     ];
