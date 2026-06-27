@@ -1,0 +1,31 @@
+.stride-board {
+  width: 100%;
+}
+
+.stride-board__columns {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(240px, 1fr));
+  gap: 0.9rem;
+  align-items: stretch;
+}
+
+.stride-board--empty {
+  display: grid;
+  place-items: center;
+  min-height: 280px;
+  border: 1px dashed color-mix(in srgb, var(--text-color) 18%, transparent);
+  border-radius: 8px;
+  color: var(--text-color);
+}
+
+@media (max-width: 1180px) {
+  .stride-board__columns {
+    grid-template-columns: repeat(2, minmax(260px, 1fr));
+  }
+}
+
+@media (max-width: 680px) {
+  .stride-board__columns {
+    grid-template-columns: 1fr;
+  }
+}

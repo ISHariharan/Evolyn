@@ -7,11 +7,14 @@ import Header from './Components/Header/Header';
 import Explore from './Components/Explore/Explore';
 import Stride from "./Pages/Stride/Stride";
 import StrideDashBoard from "./Pages/StrideDashBoard/StrideDashBoard";
+import WorkspaceStrideView from "./Pages/WorkspaceStrideView/WorkspaceStrideView";
 import ProtectedRoute from "./Components/ProtectedRoute/ProtectedRoute";
 import { getAllWorkspaces } from "./API/StrideWorkspace/Retrieve/index";
 import { useStore } from './Store/GlobalStore/GlobalStore';
 import ApplicationLoader from './Common/ApplicationLoader/ApplicationLoader';
 import {mountLoader} from "./Common/ApplicationLoader/loaderMount";
+import { ensureDefaultStridesForWorkspaces } from "./API/Stride/localStrideStore";
+import { getWorkspaceArray } from "./Utils/workspaceUtils";
 
 function App() {
   const {state, dispatch} = useStore();
@@ -19,6 +22,7 @@ function App() {
   const getAllWorkspace = async (userId) => {
     try{
       const AllWorkspaces = await getAllWorkspaces(userId);
+      ensureDefaultStridesForWorkspaces(getWorkspaceArray(AllWorkspaces));
       dispatch({type : 'SET_WORKSPACE', payload: AllWorkspaces})
     } catch(err) {
       console.log('Get all errors. : ', err);
@@ -43,7 +47,9 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/stride" element={<ProtectedRoute><Stride /></ProtectedRoute>} />
-          <Route path="/stride/dashboard" element={<StrideDashBoard />} />
+          <Route path="/stride/dashboard" element={<ProtectedRoute><StrideDashBoard /></ProtectedRoute>} />
+          <Route path="/workspace/:workspaceId" element={<ProtectedRoute><WorkspaceStrideView /></ProtectedRoute>} />
+          <Route path="/workspace/:workspaceId/stride" element={<ProtectedRoute><WorkspaceStrideView /></ProtectedRoute>} />
           <Route path="/explore" element={<Explore />} />
           <Route path="/loader" element={<ApplicationLoader />} />
         </Routes>

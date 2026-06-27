@@ -9,11 +9,15 @@ import { createStrideWorkspace } from "../../API/StrideWorkspace/Creation";
 import { getAllWorkspaces } from "../../API/StrideWorkspace/Retrieve";
 import { hideLoader, showLoader } from "../../Common/ApplicationLoader/loaderController";
 import SuccessToastMessage from "../../Common/SuccessToastMessage/SuccessToastMessage";
+import { ensureDefaultStrideForWorkspace, ensureDefaultStridesForWorkspaces } from "../../API/Stride/localStrideStore";
+import { getWorkspaceArray } from "../../Utils/workspaceUtils";
+import { useNavigate } from "react-router-dom";
 
 type CreateStrideWorkspaceDialogProps = { onClose: () => void };
 
 const CreateStrideWorkspaceDialog = ({ onClose }: CreateStrideWorkspaceDialogProps) => {
   const {state, dispatch} = useStore();
+  const navigate = useNavigate();
   const [showIcons, setShowIcons] = useState<Boolean>(false);
   const [showSuccessToastMessage, setShowSuccessToastMessage] = useState<Boolean>(false);
   const [successToastMessageBody, setSuccessToastMessageBody] = useState("");
@@ -45,12 +49,14 @@ const CreateStrideWorkspaceDialog = ({ onClose }: CreateStrideWorkspaceDialogPro
       const response = await createStrideWorkspace(props, state.userDetails.id);
       console.log('Workspace Response : ', response);
       if(response.status){
+        ensureDefaultStrideForWorkspace(props);
         setShowSuccessToastMessage(true);
         setSuccessToastMessageBody(`${workspaceName} Created`);
 
         // Refresh user's workspaces so NavBar updates its Stride dropdown
         try {
           const allWorkspaces = await getAllWorkspaces(state.userDetails.id);
+          ensureDefaultStridesForWorkspaces(getWorkspaceArray(allWorkspaces));
           dispatch({ type: "SET_WORKSPACE", payload: allWorkspaces });
         } catch (e) {
           console.log("Failed to refresh workspaces after creation:", e);
@@ -58,6 +64,7 @@ const CreateStrideWorkspaceDialog = ({ onClose }: CreateStrideWorkspaceDialogPro
 
         setTimeout(() => {
           onClose();
+          navigate(`/workspace/${UUID}/stride`);
         }, 3000);
       } else{
         setShowErrorToastMessage(true);

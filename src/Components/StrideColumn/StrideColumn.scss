@@ -1,0 +1,108 @@
+.stride-column {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 420px;
+  border: 1px solid color-mix(in srgb, var(--text-color) 13%, transparent);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--stride-column-color) 7%, transparent), transparent 110px),
+    color-mix(in srgb, var(--container-color) 88%, var(--body-color));
+}
+
+.stride-column__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-height: 54px;
+  padding: 0.75rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--text-color) 11%, transparent);
+}
+
+.stride-column__title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.stride-column__icon {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--stride-column-color) 14%, transparent);
+  color: var(--stride-column-color);
+}
+
+.stride-column h2 {
+  margin: 0;
+  color: var(--title-color);
+  font-size: 0.95rem;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stride-column__count {
+  min-width: 24px;
+  border-radius: 999px;
+  padding: 0.05rem 0.45rem;
+  background: color-mix(in srgb, var(--text-color) 9%, transparent);
+  color: var(--text-color);
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.stride-column__add {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  border: 1px solid color-mix(in srgb, var(--text-color) 14%, transparent);
+  border-radius: 8px;
+  background: var(--container-color);
+  color: var(--title-color);
+  cursor: pointer;
+  transition: transform 0.16s ease, border-color 0.16s ease, color 0.16s ease;
+}
+
+.stride-column__add:hover {
+  transform: translateY(-1px);
+  border-color: var(--stride-column-color);
+  color: var(--stride-column-color);
+}
+
+.stride-column__tasks {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  overflow-y: auto;
+}
+
+.stride-column__empty {
+  display: grid;
+  place-items: center;
+  min-height: 148px;
+  border: 1px dashed color-mix(in srgb, var(--text-color) 18%, transparent);
+  border-radius: 8px;
+  color: var(--text-color-light);
+  font-size: 0.82rem;
+}
+
+.stride-column__empty i {
+  font-size: 1.3rem;
+}
+
+[data-theme="dark"] .stride-column {
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--stride-column-color) 12%, transparent), transparent 130px),
+    color-mix(in srgb, var(--container-color) 82%, var(--body-color));
+}

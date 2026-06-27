@@ -1,0 +1,53 @@
+.workspace-stride-view {
+  width: 100%;
+  min-height: calc(100vh - var(--header-height) - 2rem);
+  padding: 0.5rem 0 1.5rem;
+}
+
+.workspace-stride-view--centered {
+  display: grid;
+  place-items: center;
+}
+
+.workspace-stride-view__loader {
+  width: 42px;
+  height: 42px;
+  border: 3px solid color-mix(in srgb, var(--text-color) 16%, transparent);
+  border-top-color: var(--first-color);
+  border-radius: 999px;
+  animation: workspaceStrideSpin 0.8s linear infinite;
+}
+
+.workspace-stride-view__missing {
+  display: grid;
+  gap: 0.65rem;
+  justify-items: center;
+  max-width: 420px;
+  border: 1px solid color-mix(in srgb, var(--text-color) 14%, transparent);
+  border-radius: 8px;
+  background: var(--container-color);
+  padding: 2rem;
+  text-align: center;
+}
+
+.workspace-stride-view__missing i {
+  color: var(--first-color);
+  font-size: 2.3rem;
+}
+
+.workspace-stride-view__missing h1 {
+  margin: 0;
+  color: var(--title-color);
+  font-size: 1.35rem;
+}
+
+.workspace-stride-view__missing a {
+  color: var(--first-color);
+  font-weight: 800;
+}
+
+@keyframes workspaceStrideSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}

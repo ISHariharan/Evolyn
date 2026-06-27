@@ -5,11 +5,11 @@ import { useEffect, useState, useRef } from "react"
 import { useNavigate } from "react-router-dom";
 import { useStore } from "../../Store/GlobalStore/GlobalStore";
 import Dialog from "../../Common/DialogBox/DialogBox";
+import { getWorkspaceArray, getWorkspaceIcon, getWorkspaceId, getWorkspaceName } from "../../Utils/workspaceUtils";
 
 const NavBar = () => {
     const navigate = useNavigate();
     const {state, dispatch} = useStore();
-    const [workspaces, setWorkspaces] = useState(state.workspace);
     const isOpen = state.sidebarOpen;
     const [navBarDetails, setNavBarDetails] = useState<any>([]);
     const [showDialog, setShowDialog] = useState<boolean>(false);
@@ -49,18 +49,16 @@ const NavBar = () => {
             }
         });
         try {
-            const workspacesRaw = state.workspace;
-            const workspacesArray = Array.isArray(workspacesRaw)
-                ? workspacesRaw
-                : Array.isArray((workspacesRaw as any)?.workspaces)
-                ? (workspacesRaw as any).workspaces
-                : Array.isArray((workspacesRaw as any)?.data)
-                ? (workspacesRaw as any).data
-                : [];
+            const workspacesArray = getWorkspaceArray(state.workspace);
 
             const strideItem = navBarContent.find((i) => i.name === "Stride");
             if (strideItem) {
-                strideItem.dropDown = workspacesArray.map((ws: any) => ws?.workspaceName ?? ws?.name ?? String(ws));
+                strideItem.dropDown = workspacesArray.map((ws: any) => ({
+                    id: getWorkspaceId(ws),
+                    label: getWorkspaceName(ws),
+                    icon: getWorkspaceIcon(ws),
+                    workspace: ws,
+                }));
             }
         } catch (e) {
             console.log("Workspace Addition Error : ", e);
@@ -92,6 +90,27 @@ const NavBar = () => {
         navigate(target);
     }
 
+    const navigateToWorkspaceStride = (workspace: any) => {
+        const workspaceId = getWorkspaceId(workspace?.workspace || workspace);
+        if (workspaceId) {
+            navigate(`/workspace/${workspaceId}/stride`);
+            setOpenDropdown(null);
+            return;
+        }
+
+        navigate("/stride");
+    }
+
+    const navigateToDefaultStride = () => {
+        const workspaceList = getWorkspaceArray(state.workspace);
+        if (workspaceList.length > 0) {
+            navigateToWorkspaceStride(workspaceList[0]);
+            return;
+        }
+
+        navigate("/stride");
+    }
+
     const handleTopLevelClick = (event: React.MouseEvent, navData: any, index: number) => {
         // Robust "Stride" detection: trim + lowercase to avoid name mismatches
         const name = String(navData?.name ?? "").trim().toLowerCase();
@@ -100,13 +119,7 @@ const NavBar = () => {
         // For Stride, always navigate to /stride on click; use chevron to open/close submenu
         if (isStride) {
             event.preventDefault();
-            setOpenDropdown(null);
-            if(workspaces.length > 0){
-                navigate("/stride/dashboard");
-            }
-            else{
-                navigate("/stride");
-            }
+            navigateToDefaultStride();
             return;
         }
 
@@ -164,10 +177,6 @@ const NavBar = () => {
     //     }
     // };
 
-    useEffect(() => {
-        setWorkspaces(state.workspace);
-    }, [workspaces, state.workspace]);
-
     return (
         <div
             className={`nav ${isOpen ? "show-menu" : ""}`}
@@ -204,13 +213,7 @@ const NavBar = () => {
                                                 const name = String(navData?.name ?? "").trim().toLowerCase();
                                                 if (name === "stride") {
                                                     event.preventDefault();
-                                                    setOpenDropdown(null);
-                                                    if(workspaces.length > 0){
-                                                        navigate("/stride/dashboard");
-                                                    }
-                                                    else{
-                                                        navigate("/stride");
-                                                    }
+                                                    navigateToDefaultStride();
                                                 } else {
                                                     handleTopLevelClick(event, navData, index);
                                                 }
@@ -245,13 +248,7 @@ const NavBar = () => {
                                                 const name = String(navData?.name ?? "").trim().toLowerCase();
                                                 if (name === "stride") {
                                                     event.preventDefault();
-                                                    setOpenDropdown(null);
-                                                    if(workspaces.length > 0){
-                                                        navigate("/stride/dashboard");
-                                                    }
-                                                    else{
-                                                        navigate("/stride");
-                                                    }
+                                                    navigateToDefaultStride();
                                                 } else {
                                                     handleTopLevelClick(event, navData, index);
                                                 }
@@ -308,7 +305,7 @@ const NavBar = () => {
                                                     {(() => {
                                                         const filtered = workspaceQuery
                                                             ? navData.dropDown.filter((w: any) =>
-                                                                String(w).toLowerCase().includes(workspaceQuery.toLowerCase())
+                                                                String(w?.label ?? w).toLowerCase().includes(workspaceQuery.toLowerCase())
                                                               )
                                                             : navData.dropDown;
                                                         if (!filtered || filtered.length === 0) {
@@ -320,12 +317,14 @@ const NavBar = () => {
                                                                 key={index}
                                                                 onClick={(e) => {
                                                                     e.stopPropagation();
-                                                                    // TODO: Navigate to the selected workspace context if/when route is available.
+                                                                    navigateToWorkspaceStride(dropDownContent);
                                                                 }}
                                                             >
-                                                                <span className="nav__dropdown-list-bullet" />
+                                                                <span className="nav__dropdown-list-bullet">
+                                                                    <i className={dropDownContent.icon || "bx bx-folder"} />
+                                                                </span>
                                                                 <span className="nav__dropdown-list-text">
-                                                                    {String(dropDownContent)}
+                                                                    {String(dropDownContent.label ?? dropDownContent)}
                                                                 </span>
                                                             </button>
                                                         ));

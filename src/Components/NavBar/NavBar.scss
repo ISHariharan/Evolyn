@@ -387,16 +387,21 @@
 }
 
 .nav__dropdown-list-bullet {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--text-color-light);
-  margin-right: .6rem;
-  flex: 0 0 8px;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: .35rem;
+  background: var(--first-color-light);
+  color: var(--first-color);
+  margin-right: .55rem;
+  flex: 0 0 24px;
+  font-size: .95rem;
 }
 
 .nav__dropdown-list-item:hover .nav__dropdown-list-bullet {
   background: var(--first-color);
+  color: var(--button-text-color);
 }
 
 .nav__dropdown-list-text {
