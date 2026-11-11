@@ -110,6 +110,14 @@ const NavBar = () => {
             return;
         }
 
+        // Items with their own page (e.g. Expenses -> its dashboard) open that page;
+        // the chevron still opens/closes the submenu
+        if (navData?.path) {
+            event.preventDefault();
+            navigate(navData.path);
+            return;
+        }
+
         if (navData?.dropDown?.length > 0) {
             event.preventDefault();
             setOpenDropdown(prev => (prev === navData.name ? null : navData.name));
@@ -346,6 +354,7 @@ const NavBar = () => {
                                                             role="menuitem"
                                                             onClick={(e) => {
                                                                 e.stopPropagation();
+                                                                if (dropDownContent.path) navigate(dropDownContent.path);
                                                             }}
                                                         >
                                                             <span className="nav__dropdown-item-icon" aria-hidden="true">

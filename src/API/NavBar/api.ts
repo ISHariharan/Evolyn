@@ -32,11 +32,13 @@ export function getNavBarContent () {
         {
             name : "Expenses",
             icon: "bx bx-receipt",
+            path: "/expenses", // clicking "Expenses" opens the expenses dashboard
             dropDown: [
                 {
                     id: "1",
                     label : "Transactions",
                     icon: "bx bx-transfer-alt",
+                    path: "/expenses/transactions",
                 },
                 {
                     id: "2",
@@ -67,6 +69,7 @@ export function getNavBarContent () {
                     label: "Accounts",
                     id: "7",
                     icon: "bx bx-credit-card",
+                    path: "/expenses/accounts",
                 },
             ],
             order : "3",
