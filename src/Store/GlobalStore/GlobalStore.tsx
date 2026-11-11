@@ -63,7 +63,11 @@ const reducer = (state : any, action : any) => {
         case "SET_WORKSPACE":
             return {...state, workspace : action.payload };
         case "TOGGLE_SIDEBAR":
-            return { ...state, sidebarOpen: !state.sidebarOpen };
+            // payload true/false sets it; no payload toggles
+            return {
+                ...state,
+                sidebarOpen: typeof action.payload === "boolean" ? action.payload : !state.sidebarOpen,
+            };
         default:
             return state;
     }

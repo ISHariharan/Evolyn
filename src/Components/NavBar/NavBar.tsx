@@ -1,396 +1,379 @@
-import "./NavBar.scss"
-import { NavBarProperty } from "./types"
+import "./NavBar.scss";
+import { FocusEvent, MouseEvent, useEffect, useMemo, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { getNavBarContent } from "../../API/NavBar/api";
-import { useEffect, useState, useRef } from "react"
-import { useNavigate } from "react-router-dom";
 import { useStore } from "../../Store/GlobalStore/GlobalStore";
 import Dialog from "../../Common/DialogBox/DialogBox";
+import logo from "../../Statics/AppLogo_BGRemoved.png";
+import { NavChild, NavItem, NavSection } from "./types";
+
+/**
+ * Sidebar navigation.
+ *  - Desktop: expanded (icons + labels) or collapsed (icons only, with hover flyouts).
+ *    The choice is remembered in localStorage.
+ *  - Mobile (< 768px): hidden; the header's menu button opens it as a drawer.
+ *  - The highlighted item comes from the current URL, so it's always right.
+ */
+
+const STORAGE_KEY = "evolyn.nav.expanded";
+const MOBILE_QUERY = "(max-width: 767px)";
+
+const readExpanded = () => {
+    try {
+        return localStorage.getItem(STORAGE_KEY) !== "false";
+    } catch {
+        return true; // storage blocked (e.g. private mode): default to expanded
+    }
+};
+
+// The store has held workspaces in a few shapes over time; accept all of them
+const toWorkspaceList = (raw: any): any[] =>
+    Array.isArray(raw) ? raw
+    : Array.isArray(raw?.workspaces) ? raw.workspaces
+    : Array.isArray(raw?.data) ? raw.data
+    : [];
+
+const isPathActive = (pathname: string, path?: string, exact?: boolean) =>
+    !!path && (exact ? pathname === path : pathname === path || pathname.startsWith(`${path}/`));
+
+interface Flyout {
+    label: string;
+    item?: NavItem; // present for real nav items (shows the submenu); absent for plain tooltips
+    top: number;
+}
 
 const NavBar = () => {
     const navigate = useNavigate();
-    const {state, dispatch} = useStore();
-    const [workspaces, setWorkspaces] = useState(state.workspace);
-    const isOpen = state.sidebarOpen;
-    const [navBarDetails, setNavBarDetails] = useState<any>([]);
-    const [showDialog, setShowDialog] = useState<boolean>(false);
-    const [openDropdown, setOpenDropdown] = useState<string | null>(null);
-    const [workspaceQuery, setWorkspaceQuery] = useState<string>("");
-    const [forceCollapsed, setForceCollapsed] = useState<boolean>(false);
-    const navRef = useRef<HTMLDivElement>(null);
-    const showMenu = (headerToggle: string, navbarId: string) =>{
-        const toggleBtn = document.getElementById(headerToggle),
-        nav = document.getElementById(navbarId)
-        if(headerToggle && navbarId){
-            toggleBtn?.addEventListener('click', ()=>{
-                nav?.classList.toggle('show-menu')
-                toggleBtn.classList.toggle('bx-x')
-            })
+    const { pathname } = useLocation();
+    const { state, dispatch } = useStore();
+    const drawerOpen: boolean = state.sidebarOpen;
+
+    const [expanded, setExpanded] = useState<boolean>(readExpanded);
+    const [isMobile, setIsMobile] = useState<boolean>(() => window.matchMedia(MOBILE_QUERY).matches);
+    const [openGroups, setOpenGroups] = useState<Set<string>>(new Set());
+    const [flyout, setFlyout] = useState<Flyout | null>(null);
+    const [showLogout, setShowLogout] = useState(false);
+    const closeTimer = useRef<number | undefined>(undefined);
+
+    // On mobile the drawer always shows labels
+    const showLabels = isMobile || expanded;
+    const workspaces = toWorkspaceList(state.workspace);
+
+    // ── Menu data: hide signed-in-only entries, fill Stride with workspaces ──
+    const sections: NavSection[] = useMemo(() => {
+        return getNavBarContent()
+            .map((section) => ({
+                ...section,
+                items: section.items
+                    .filter((item) => state.authenticated || !item.requiresAuth)
+                    .map((item) =>
+                        item.key === "stride"
+                            ? {
+                                  ...item,
+                                  children: workspaces.map((ws: any, i: number) => ({
+                                      key: String(ws?.workspaceId ?? i),
+                                      label: ws?.workspaceName ?? ws?.name ?? String(ws),
+                                      icon: ws?.workspaceIcon || "bx bx-shape-circle",
+                                      path: "/stride/dashboard",
+                                  })),
+                              }
+                            : item
+                    ),
+            }))
+            .filter((section) => section.items.length > 0);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [state.authenticated, state.workspace]);
+
+    const itemTarget = (item: NavItem) =>
+        item.key === "stride" ? (workspaces.length > 0 ? "/stride/dashboard" : "/stride") : item.path;
+
+    const isItemActive = (item: NavItem) =>
+        item.key === "stride" ? isPathActive(pathname, "/stride") : isPathActive(pathname, item.path, item.exact);
+
+    // Workspaces all open the same page, so don't highlight one of them
+    const isChildActive = (item: NavItem, child: NavChild) =>
+        item.key !== "stride" && isPathActive(pathname, child.path);
+
+    // ── Side effects ─────────────────────────────────────────────────────────
+    // Track the mobile breakpoint
+    useEffect(() => {
+        const media = window.matchMedia(MOBILE_QUERY);
+        const onChange = () => setIsMobile(media.matches);
+        media.addEventListener("change", onChange);
+        return () => media.removeEventListener("change", onChange);
+    }, []);
+
+    // Remember expanded/collapsed, and tell the page layout (index.css) how wide we are
+    useEffect(() => {
+        try {
+            localStorage.setItem(STORAGE_KEY, String(expanded));
+        } catch {
+            // ignore: it's only a convenience
         }
-    }
-    showMenu('header-toggle','navbar')
-    const linkColor: NodeListOf<Element> = document.querySelectorAll('.nav__link');
+        document.documentElement.classList.toggle("nav-expanded", expanded);
+    }, [expanded]);
 
+    // Open the submenu of the section you're in (e.g. Expenses when on /expenses/...)
+    useEffect(() => {
+        const active = sections.flatMap((s) => s.items).find((item) => item.children?.length && isItemActive(item));
+        if (active) setOpenGroups((prev) => (prev.has(active.key) ? prev : new Set(prev).add(active.key)));
+        setFlyout(null);
+        // Close the mobile drawer after navigating
+        if (drawerOpen) dispatch({ type: "TOGGLE_SIDEBAR", payload: false });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [pathname]);
 
-    const colorLink = (e: Event) => {
-        linkColor.forEach(l => l.classList.remove('active'));
-        (e.currentTarget as Element).classList.add('active');
+    // Escape closes the drawer / flyout
+    useEffect(() => {
+        const onKey = (e: KeyboardEvent) => {
+            if (e.key !== "Escape") return;
+            setFlyout(null);
+            if (drawerOpen) dispatch({ type: "TOGGLE_SIDEBAR", payload: false });
+        };
+        document.addEventListener("keydown", onKey);
+        return () => document.removeEventListener("keydown", onKey);
+    }, [drawerOpen, dispatch]);
+
+    // ── Actions ──────────────────────────────────────────────────────────────
+    const go = (path?: string) => {
+        if (!path) return;
+        setFlyout(null);
+        navigate(path);
     };
 
-    linkColor.forEach((l) => l.addEventListener('click', colorLink));
-
-    const getNavBarData = () => {
-        const navBarContent = getNavBarContent();
-        navBarContent.forEach((item) => {
-            if(state.authenticated) {
-                item.visible = true;
-            }
-            else {
-                item.visible = item.order !== "2" && item.order !== "3";
-            }
+    const toggleGroup = (key: string) =>
+        setOpenGroups((prev) => {
+            const next = new Set(prev);
+            if (next.has(key)) next.delete(key);
+            else next.add(key);
+            return next;
         });
-        try {
-            const workspacesRaw = state.workspace;
-            const workspacesArray = Array.isArray(workspacesRaw)
-                ? workspacesRaw
-                : Array.isArray((workspacesRaw as any)?.workspaces)
-                ? (workspacesRaw as any).workspaces
-                : Array.isArray((workspacesRaw as any)?.data)
-                ? (workspacesRaw as any).data
-                : [];
 
-            const strideItem = navBarContent.find((i) => i.name === "Stride");
-            if (strideItem) {
-                strideItem.dropDown = workspacesArray.map((ws: any) => ws?.workspaceName ?? ws?.name ?? String(ws));
-            }
-        } catch (e) {
-            console.log("Workspace Addition Error : ", e);
-        }
+    const handleItemClick = (item: NavItem) => {
+        if (item.soon) return;
+        if (item.children?.length && showLabels) setOpenGroups((prev) => new Set(prev).add(item.key));
+        go(itemTarget(item));
+    };
 
-        navBarContent.sort((a, b) => Number(a.order) - Number(b.order));
+    // Collapsed mode: show a flyout next to the hovered/focused icon
+    const openFlyout = (e: MouseEvent<HTMLElement> | FocusEvent<HTMLElement>, label: string, item?: NavItem) => {
+        if (showLabels) return;
+        window.clearTimeout(closeTimer.current);
+        const rect = e.currentTarget.getBoundingClientRect();
+        setFlyout({ label, item, top: rect.top });
+    };
 
-        setNavBarDetails(navBarContent);
-    }
+    const scheduleCloseFlyout = () => {
+        window.clearTimeout(closeTimer.current);
+        closeTimer.current = window.setTimeout(() => setFlyout(null), 140);
+    };
 
-    const handleLogOut = (result?: string) => {
-        if(result == "cancel") {
-            setShowDialog(false);
-            return;
-        } 
-        if(result == "logout"){
-            setShowDialog(false);
-            navigate('/');
-            dispatch({type : "SET_AUTHENTICATED", payload : false});
-            dispatch({ type: "SET_USERDETAILS", payload: { email: "", id : "" } });
-        }
-        else{
-            setShowDialog(true);
-        }
-    }
+    const handleLogout = (result: "cancel" | "logout") => {
+        setShowLogout(false);
+        if (result !== "logout") return;
+        navigate("/");
+        dispatch({ type: "SET_AUTHENTICATED", payload: false });
+        dispatch({ type: "SET_USERDETAILS", payload: { email: "", id: "" } });
+    };
 
-    const handleClick = (event: React.MouseEvent, navDataName: string) => {
-        const target = "/" + navDataName.toLowerCase();
-        navigate(target);
-    }
+    const email: string = state.userDetails?.email ?? "";
+    const initial = email ? email.charAt(0).toUpperCase() : "?";
 
-    const handleTopLevelClick = (event: React.MouseEvent, navData: any, index: number) => {
-        // Robust "Stride" detection: trim + lowercase to avoid name mismatches
-        const name = String(navData?.name ?? "").trim().toLowerCase();
-        const isStride = name === "stride";
+    // ── Rendering ────────────────────────────────────────────────────────────
+    const renderChild = (item: NavItem, child: NavChild) => {
+        const active = isChildActive(item, child);
+        return (
+            <li key={child.key}>
+                <button
+                    type="button"
+                    className={`nv-sub__link${active ? " is-active" : ""}${child.soon ? " is-soon" : ""}`}
+                    aria-current={active ? "page" : undefined}
+                    aria-disabled={child.soon || undefined}
+                    onClick={() => !child.soon && go(child.path)}
+                >
+                    <i className={`${child.icon} nv-sub__icon`} aria-hidden="true"></i>
+                    <span className="nv-sub__label">{child.label}</span>
+                    {child.soon && <span className="nv-badge">Soon</span>}
+                </button>
+            </li>
+        );
+    };
 
-        // For Stride, always navigate to /stride on click; use chevron to open/close submenu
-        if (isStride) {
-            event.preventDefault();
-            setOpenDropdown(null);
-            if(workspaces.length > 0){
-                navigate("/stride/dashboard");
-            }
-            else{
-                navigate("/stride");
-            }
-            return;
-        }
-
-        // Items with their own page (e.g. Expenses -> its dashboard) open that page;
-        // the chevron still opens/closes the submenu
-        if (navData?.path) {
-            event.preventDefault();
-            navigate(navData.path);
-            return;
-        }
-
-        if (navData?.dropDown?.length > 0) {
-            event.preventDefault();
-            setOpenDropdown(prev => (prev === navData.name ? null : navData.name));
-            return;
-        }
-
-        handleClick(event, index === 0 ? "" : navData.name);
-    }
-
-    useEffect(() => {
-        const handleOutside = (e: MouseEvent) => {
-        const nav = document.getElementById("navbar");
-        if (nav && !nav.contains(e.target as Node)) {
-            dispatch({ type: "TOGGLE_SIDEBAR", payload: false });
-        }
-        };
-        if (isOpen) {
-        document.addEventListener("mousedown", handleOutside);
-        }
-        return () => document.removeEventListener("mousedown", handleOutside);
-    }, [isOpen]);
-
-    useEffect(() => {
-        getNavBarData();
-    }, []);
-
-    useEffect(() => {
-        getNavBarData();
-    }, [state.authenticated, state.workspace]);
-    // Close dropdown on outside click
-    useEffect(() => {
-        const handleOutside = (e: MouseEvent) => {
-            if (!navRef.current) return;
-            if (!navRef.current.contains(e.target as Node)) {
-                setOpenDropdown(null);
-            }
-        };
-        document.addEventListener("mousedown", handleOutside);
-        return () => document.removeEventListener("mousedown", handleOutside);
-    }, []);
-
-    // const handleNavMouseEnter = () => { setForceCollapsed(false); };
-    // const handleNavMouseLeave = () => { setOpenDropdown(null); };
-    // const handleNavFocus = () => { setForceCollapsed(false); };
-    // const handleNavBlur = (e: React.FocusEvent<HTMLDivElement>) => {
-    //     // If focus moves outside the nav entirely, close any open dropdown
-    //     if (!navRef.current) return;
-    //     const next = e.relatedTarget as Node | null;
-    //     if (!next || !navRef.current.contains(next)) {
-    //         setOpenDropdown(null);
-    //         setForceCollapsed(true);
-    //     }
-    // };
-
-    useEffect(() => {
-        setWorkspaces(state.workspace);
-    }, [workspaces, state.workspace]);
-
-    return (
-        <div
-            className={`nav ${isOpen ? "show-menu" : ""}`}
-            id="navbar"
-            ref={navRef}
-            // onMouseEnter={handleNavMouseEnter}
-            // onMouseLeave={handleNavMouseLeave}
-            // onFocus={handleNavFocus}
-            // onBlur={handleNavBlur}
-        >
-            <nav className="nav__container">
-                <div>
-                    <a className="nav__link nav__logo" onClick={(event) => handleClick(event, "")}>
-                        <i className='bx bxs-disc nav__icon' ></i>
-                        <span className="nav__logo-name">Evolyn</span>
-                    </a>
-                    {isOpen && (
+    const renderItem = (item: NavItem) => {
+        const active = isItemActive(item);
+        const hasChildren = !!item.children?.length;
+        const open = openGroups.has(item.key);
+        const subId = `nv-sub-${item.key}`;
+        return (
+            <li key={item.key} className="nv-item">
+                <div className={`nv-link${active ? " is-active" : ""}${item.soon ? " is-soon" : ""}`}>
+                    <button
+                        type="button"
+                        className="nv-link__main"
+                        aria-current={active ? "page" : undefined}
+                        aria-disabled={item.soon || undefined}
+                        aria-label={showLabels ? undefined : item.soon ? `${item.label} (coming soon)` : item.label}
+                        onClick={() => handleItemClick(item)}
+                        onMouseEnter={(e) => openFlyout(e, item.label, item)}
+                        onMouseLeave={scheduleCloseFlyout}
+                        onFocus={(e) => openFlyout(e, item.label, item)}
+                        onBlur={scheduleCloseFlyout}
+                    >
+                        <i className={`${item.icon} nv-link__icon`} aria-hidden="true"></i>
+                        {showLabels && <span className="nv-link__label">{item.label}</span>}
+                        {showLabels && item.soon && <span className="nv-badge">Soon</span>}
+                    </button>
+                    {showLabels && hasChildren && (
                         <button
-                        className="nav__toggle-btn"
-                        onClick={() => dispatch({ type: "TOGGLE_SIDEBAR", payload: false })}
-                        aria-label="Close sidebar"
+                            type="button"
+                            className={`nv-link__toggle${open ? " is-open" : ""}`}
+                            aria-expanded={open}
+                            aria-controls={subId}
+                            aria-label={`${open ? "Hide" : "Show"} ${item.label} pages`}
+                            onClick={() => toggleGroup(item.key)}
                         >
-                        <i className="bx bx-chevron-left"></i>
+                            <i className="bx bx-chevron-down" aria-hidden="true"></i>
                         </button>
                     )}
-                    <div className="nav__list">
-                        {navBarDetails.map((navData: any, index: number) =>
-                            navData.visible && (
-                                <div className={`nav__items ${navData.dropDown?.length > 0 ? "nav__dropdown" : ""} ${openDropdown === navData.name ? "is-open" : ""}`} key={index}>
-                                    {index === 0 ? (
-                                        <a
-                                            className="nav__link active"
-                                            onClick={(event) => {
-                                                const name = String(navData?.name ?? "").trim().toLowerCase();
-                                                if (name === "stride") {
-                                                    event.preventDefault();
-                                                    setOpenDropdown(null);
-                                                    if(workspaces.length > 0){
-                                                        navigate("/stride/dashboard");
-                                                    }
-                                                    else{
-                                                        navigate("/stride");
-                                                    }
-                                                } else {
-                                                    handleTopLevelClick(event, navData, index);
-                                                }
-                                            }}
-                                        >
-                                            <i className={navData.icon}></i>
-                                            <span className="nav__name">{navData.name}</span>
-                                            {navData.dropDown?.length > 0 && (
-                                                <i
-                                                    className="bx bx-chevron-down nav__icon nav__dropdown-icon"
-                                                    role="button"
-                                                    aria-label={`Toggle ${navData.name} submenu`}
-                                                    tabIndex={0}
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        e.preventDefault();
-                                                        setOpenDropdown(prev => (prev === navData.name ? null : navData.name));
-                                                    }}
-                                                    onKeyDown={(e) => {
-                                                        if (e.key === "Enter" || e.key === " ") {
-                                                            e.preventDefault();
-                                                            setOpenDropdown(prev => (prev === navData.name ? null : navData.name));
-                                                        }
-                                                    }}
-                                                ></i>
-                                            )}
-                                        </a>
-                                    ) : (
-                                        <a
-                                            className="nav__link"
-                                            onClick={(event) => {
-                                                const name = String(navData?.name ?? "").trim().toLowerCase();
-                                                if (name === "stride") {
-                                                    event.preventDefault();
-                                                    setOpenDropdown(null);
-                                                    if(workspaces.length > 0){
-                                                        navigate("/stride/dashboard");
-                                                    }
-                                                    else{
-                                                        navigate("/stride");
-                                                    }
-                                                } else {
-                                                    handleTopLevelClick(event, navData, index);
-                                                }
-                                            }}
-                                        >
-                                            <i className={navData.icon}></i>
-                                            <span className="nav__name">{navData.name}</span>
-                                            {navData.dropDown?.length > 0 && (
-                                                <i
-                                                    className="bx bx-chevron-down nav__icon nav__dropdown-icon"
-                                                    role="button"
-                                                    aria-label={`Toggle ${navData.name} submenu`}
-                                                    tabIndex={0}
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        e.preventDefault();
-                                                        setOpenDropdown(prev => (prev === navData.name ? null : navData.name));
-                                                    }}
-                                                    onKeyDown={(e) => {
-                                                        if (e.key === "Enter" || e.key === " ") {
-                                                            e.preventDefault();
-                                                            setOpenDropdown(prev => (prev === navData.name ? null : navData.name));
-                                                        }
-                                                    }}
-                                                ></i>
-                                            )}
-                                        </a>
-                                    )}
-
-                                    {navData.dropDown?.length > 0 && (
-                                        navData.name === "Stride" ? (
-                                            <div
-                                                className="nav__dropdown-panel"
-                                                role="menu"
-                                                aria-label="Stride workspaces"
-                                                onClick={(e) => e.stopPropagation()}
-                                            >
-                                                <div className="nav__dropdown-panel-header">
-                                                    <span className="nav__dropdown-title">Workspaces</span>
-                                                    <span className="nav__dropdown-count">{navData.dropDown.length}</span>
-                                                </div>
-
-                                                <div className="nav__dropdown-search">
-                                                    <i className="bx bx-search"></i>
-                                                    <input
-                                                        type="text"
-                                                        placeholder="Search workspaces"
-                                                        value={workspaceQuery}
-                                                        onChange={(e) => setWorkspaceQuery(e.target.value)}
-                                                    />
-                                                </div>
-
-                                                <div className="nav__dropdown-list">
-                                                    {(() => {
-                                                        const filtered = workspaceQuery
-                                                            ? navData.dropDown.filter((w: any) =>
-                                                                String(w).toLowerCase().includes(workspaceQuery.toLowerCase())
-                                                              )
-                                                            : navData.dropDown;
-                                                        if (!filtered || filtered.length === 0) {
-                                                            return <div className="nav__dropdown-empty">No workspaces found</div>;
-                                                        }
-                                                        return filtered.map((dropDownContent: any, index: number) => (
-                                                            <button
-                                                                className="nav__dropdown-list-item"
-                                                                key={index}
-                                                                onClick={(e) => {
-                                                                    e.stopPropagation();
-                                                                    // TODO: Navigate to the selected workspace context if/when route is available.
-                                                                }}
-                                                            >
-                                                                <span className="nav__dropdown-list-bullet" />
-                                                                <span className="nav__dropdown-list-text">
-                                                                    {String(dropDownContent)}
-                                                                </span>
-                                                            </button>
-                                                        ));
-                                                    })()}
-                                                </div>
-                                            </div>
-                                        ) : (
-                                            <div className="nav__dropdown-collapse">
-                                                <div
-                                                    className="nav__dropdown-content nav__dropdown-menu"
-                                                    role="menu"
-                                                    aria-label={`${navData.name} menu`}
-                                                >
-                                                    {navData.dropDown.map((dropDownContent: any, index: number) => (
-                                                        <a
-                                                            className="nav__dropdown-item"
-                                                            key={dropDownContent.id ?? `${dropDownContent.label}-${index}`}
-                                                            role="menuitem"
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                if (dropDownContent.path) navigate(dropDownContent.path);
-                                                            }}
-                                                        >
-                                                            <span className="nav__dropdown-item-icon" aria-hidden="true">
-                                                                {dropDownContent.icon ? (
-                                                                    <i className={dropDownContent.icon}></i>
-                                                                ) : (
-                                                                    <span>{index + 1}</span>
-                                                                )}
-                                                            </span>
-                                                            <span className="nav__dropdown-label">{dropDownContent.label}</span>
-                                                            <i className="bx bx-chevron-right nav__dropdown-action-icon" aria-hidden="true"></i>
-                                                        </a>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        )
-                                    )}
-                                </div>
-                            )
-                        )}
-                    </div>
                 </div>
-                {state.authenticated && (
-                    <button onClick={() => handleLogOut()}>
-                        <a className="nav__link nav__logout">
-                            <i className='bx bx-log-out nav__icon' ></i>
-                            <span className="nav__name">Log Out</span>
-                        </a>
-                    </button>
+                {showLabels && hasChildren && (
+                    <div className={`nv-sub-wrap${open ? " is-open" : ""}`} inert={!open}>
+                        <ul className="nv-sub" id={subId}>
+                            {item.children!.map((child) => renderChild(item, child))}
+                        </ul>
+                    </div>
                 )}
-            </nav>
-            {showDialog && (
-                <Dialog isOpen={showDialog} onClose={() => setShowDialog(false)} Heading="Leaving already?" Description="Want to log out of Evolyn now?" SecondaryButton="Cancel" PrimaryButton="Logout" onSecondary={() => handleLogOut("cancel")} onPrimary={() => handleLogOut('logout')}/>
+            </li>
+        );
+    };
+
+    return (
+        <>
+            {isMobile && drawerOpen && (
+                <div className="nv-backdrop" onClick={() => dispatch({ type: "TOGGLE_SIDEBAR", payload: false })} />
             )}
-        </div>
+
+            <nav
+                className={`nv${showLabels ? " is-expanded" : " is-collapsed"}${isMobile ? " is-mobile" : ""}${drawerOpen ? " is-drawer-open" : ""}`}
+                aria-label="Main"
+            >
+                <div className="nv-brand">
+                    <button type="button" className="nv-brand__home" onClick={() => go("/")} aria-label="Evolyn home">
+                        <img src={logo} alt="" className="nv-brand__logo" />
+                        {showLabels && <span className="nv-brand__name">Evolyn</span>}
+                    </button>
+                    {isMobile && (
+                        <button
+                            type="button"
+                            className="nv-icon-btn"
+                            aria-label="Close menu"
+                            onClick={() => dispatch({ type: "TOGGLE_SIDEBAR", payload: false })}
+                        >
+                            <i className="bx bx-x" aria-hidden="true"></i>
+                        </button>
+                    )}
+                </div>
+
+                <div className="nv-scroll">
+                    {sections.map((section) => (
+                        <div key={section.key} className="nv-section">
+                            {showLabels ? (
+                                <p className="nv-section__title">{section.title}</p>
+                            ) : (
+                                <hr className="nv-section__divider" />
+                            )}
+                            <ul className="nv-list">{section.items.map(renderItem)}</ul>
+                        </div>
+                    ))}
+                </div>
+
+                <div className="nv-footer">
+                    {state.authenticated && (
+                        <div className="nv-user">
+                            <span className="nv-user__avatar" aria-hidden="true">{initial}</span>
+                            {showLabels && (
+                                <span className="nv-user__text">
+                                    <span className="nv-user__label">Signed in as</span>
+                                    <span className="nv-user__email" title={email}>{email}</span>
+                                </span>
+                            )}
+                            <button
+                                type="button"
+                                className="nv-icon-btn nv-user__logout"
+                                aria-label="Log out"
+                                onClick={() => setShowLogout(true)}
+                                onMouseEnter={(e) => openFlyout(e, "Log out")}
+                                onMouseLeave={scheduleCloseFlyout}
+                            >
+                                <i className="bx bx-log-out" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    )}
+
+                    {!isMobile && (
+                        <button
+                            type="button"
+                            className="nv-collapse"
+                            aria-label={expanded ? "Collapse sidebar" : "Expand sidebar"}
+                            onClick={() => {
+                                setFlyout(null);
+                                setExpanded(!expanded);
+                            }}
+                            onMouseEnter={(e) => openFlyout(e, "Expand sidebar")}
+                            onMouseLeave={scheduleCloseFlyout}
+                        >
+                            <i className={`bx ${expanded ? "bx-chevrons-left" : "bx-chevrons-right"}`} aria-hidden="true"></i>
+                            {showLabels && <span>Collapse</span>}
+                        </button>
+                    )}
+                </div>
+            </nav>
+
+            {/* Collapsed mode: label (and submenu) shown beside the hovered icon */}
+            {flyout && !showLabels && (
+                <div
+                    className="nv-flyout"
+                    style={{ top: flyout.top, maxHeight: window.innerHeight - flyout.top - 12, overflowY: "auto" }}
+                    onMouseEnter={() => window.clearTimeout(closeTimer.current)}
+                    onMouseLeave={scheduleCloseFlyout}
+                    onFocus={() => window.clearTimeout(closeTimer.current)}
+                    onBlur={scheduleCloseFlyout}
+                >
+                    {flyout.item && !flyout.item.soon ? (
+                        <button type="button" className="nv-flyout__title" onClick={() => handleItemClick(flyout.item!)}>
+                            {flyout.item.label}
+                        </button>
+                    ) : (
+                        <span className="nv-flyout__title nv-flyout__title--static">
+                            {flyout.label}
+                            {flyout.item?.soon && <span className="nv-badge">Soon</span>}
+                        </span>
+                    )}
+                    {flyout.item?.children && flyout.item.children.length > 0 && (
+                        <>
+                            {flyout.item.childrenTitle && <p className="nv-flyout__heading">{flyout.item.childrenTitle}</p>}
+                            <ul className="nv-sub nv-sub--flyout">
+                                {flyout.item.children.map((child) => renderChild(flyout.item!, child))}
+                            </ul>
+                        </>
+                    )}
+                </div>
+            )}
+
+            {showLogout && (
+                <Dialog
+                    isOpen={showLogout}
+                    onClose={() => setShowLogout(false)}
+                    Heading="Leaving already?"
+                    Description="Want to log out of Evolyn now?"
+                    SecondaryButton="Cancel"
+                    PrimaryButton="Logout"
+                    onSecondary={() => handleLogout("cancel")}
+                    onPrimary={() => handleLogout("logout")}
+                />
+            )}
+        </>
     );
-}
+};
 
 export default NavBar;

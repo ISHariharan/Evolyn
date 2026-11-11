@@ -155,8 +155,20 @@ img {
   height: auto;
 }
 
+/* Sidebar widths: NavBar adds .nav-expanded to <html> when it's expanded */
+:root {
+  --nav-w-collapsed: 76px;
+  --nav-w-expanded: 256px;
+  --nav-w: var(--nav-w-collapsed);
+}
+
+html.nav-expanded {
+  --nav-w: var(--nav-w-expanded);
+}
+
 @media screen and (min-width: 768px) {
   body {
-    padding: 1rem 3rem 0 6rem;
+    padding: 1rem 3rem 0 calc(var(--nav-w) + 2rem);
+    transition: padding-left 0.22s ease;
   }
 }

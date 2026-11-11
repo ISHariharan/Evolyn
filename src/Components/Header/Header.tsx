@@ -41,16 +41,17 @@ const Header = () => {
         <div className="header">
             <div className="header__container">
                 <div className="header-left-container">
-                    {!isSidebarOpen && (
-                        <button
-                            className="sidebar-toggle-btn"
-                            onClick={() => dispatch({ type: "TOGGLE_SIDEBAR", payload: true })}
-                            aria-label="Open sidebar"
-                        >
-                            <i className="bx bx-chevron-right"></i>
-                        </button>
-                    )}
-                    <a href="#" className="header__logo">Evolyn</a>
+                    {/* Mobile only: opens the sidebar as a drawer (desktop sidebar is always visible) */}
+                    <button
+                        type="button"
+                        className="header__menu-btn"
+                        onClick={() => dispatch({ type: "TOGGLE_SIDEBAR", payload: true })}
+                        aria-label="Open menu"
+                        aria-expanded={isSidebarOpen}
+                    >
+                        <i className="bx bx-menu" aria-hidden="true"></i>
+                    </button>
+                    <span className="header__logo">Evolyn</span>
                 </div>
 
                 <div className="header__search">
@@ -62,12 +63,6 @@ const Header = () => {
                     <div>
                         <div className="toggleSwitch-profile relative z-10">
                             <ToggleSwitch />
-                            {/* <div>
-                                <img src={profileIcon} alt="Profile" className="header__img" />
-                            </div> */}
-                        </div>
-                        <div className="header__toggle">
-                            <i className="bx bx-menu" id="header-toggle"></i>
                         </div>
                     </div>
                     <div>

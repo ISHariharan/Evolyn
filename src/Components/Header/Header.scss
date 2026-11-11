@@ -24,8 +24,7 @@
 
 .header__logo {
   color: var(--title-color);
-  font-weight: var(--font-medium);
-  display: none;
+  font-weight: var(--font-semi-bold);
 }
 
 .header__search {
@@ -103,51 +102,41 @@
 
 }
 
-/* Sidebar toggle button in header (visible when sidebar is closed) */
-.sidebar-toggle-btn {
+/* Menu button: mobile only (the desktop sidebar is always on screen) */
+.header__menu-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
-  background-color: transparent;
+  width: 38px;
+  height: 38px;
+  margin-right: 0.5rem;
   border: none;
-  border-radius: 50%;
+  border-radius: 10px;
+  background: transparent;
   color: var(--title-color);
   font-size: 1.5rem;
   cursor: pointer;
-  transition: all 0.2s ease;
-  margin-right: 1rem;           /* space from logo or search */
 }
 
-.sidebar-toggle-btn:hover,
-.sidebar-toggle-btn:focus-visible {
+.header__menu-btn:hover,
+.header__menu-btn:focus-visible {
   background-color: var(--first-color-light);
-  color: var(--first-color);
-  transform: scale(1.08);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.sidebar-toggle-btn:active {
-  transform: scale(0.96);
-}
-
-/* Make sure it doesn't appear on mobile (if you want to keep bx-menu separate) */
+/* Phones: the search box doesn't do anything yet, so give the space to the logo and controls */
 @media screen and (max-width: 767px) {
-  .sidebar-toggle-btn {
-    display: none;
-  }
-}
-
-@media screen and (max-width: 320px) {
   .header__search {
-    width: 70%;
+    display: none;
   }
 }
 
 @media screen and (min-width: 768px) {
   .header {
-    padding: 0 3rem 0 6rem;
+    padding: 0 3rem 0 calc(var(--nav-w) + 2rem);
+    transition: padding-left 0.22s ease;
+  }
+  .header__menu-btn {
+    display: none;
   }
   .header__container {
     height: calc(var(--header-height) + .5rem);
@@ -160,7 +149,7 @@
     display: none;
   }
   .header__logo {
-    display: block;
+    display: none; /* the sidebar shows the brand on desktop */
   }
   .header__img {
     width: 40px;
