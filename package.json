@@ -3,6 +3,9 @@
   "proxy" : "http://localhost:3001",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "22.x"
+  },
   "dependencies": {
     "@tailwindcss/cli": "^4.1.13",
     "@tailwindcss/postcss": "^4.1.13",

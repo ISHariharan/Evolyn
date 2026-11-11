@@ -1,0 +1,15 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "CI=false npm run build",
+  "outputDirectory": "build",
+  "rewrites": [
+    {
+      "source": "/evolyn/api/:path*",
+      "destination": "https://evolyn-api.onrender.com/evolyn/api/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
