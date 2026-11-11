@@ -113,12 +113,18 @@ You don't set `PORT` anywhere: Render sets it and both apps read it.
 
 ## 4. Frontend: Vercel
 
-1. If your API URL from step 3 is **not** `https://evolyn-api.onrender.com`
-   (Render adds a suffix when a name is taken), edit `vercel.json` in this repo:
+1. Make sure `vercel.json` points at **your** API's URL, copied from the top of its
+   Render page (currently `https://evolyn-api-urbz.onrender.com`):
 
    ```json
    "destination": "https://YOUR-API.onrender.com/evolyn/api/:path*"
    ```
+
+   **Never guess this URL.** Render names are global, so when a name is taken Render
+   adds a suffix (`evolyn-api-urbz`). The plain `evolyn-api.onrender.com` belongs to
+   someone else's app, and pointing the rewrite there sends your users' logins to a
+   stranger's server. Check it's yours: `https://YOUR-API.onrender.com/health` must
+   return `{"status":"UP","checks":[]}`.
 
    Commit and push.
 2. Sign up at vercel.com with GitHub → **Add New → Project** → import `Evolyn`.
@@ -149,6 +155,7 @@ the same job) and in production.
 | API returns 502 "Data service is unavailable" | Data Service is down or `DATA_SERVICE_URL` is wrong |
 | Data Service won't start, logs mention the database | Check `DB_URL` starts with `jdbc:postgresql://` and ends with `?sslmode=require` |
 | Page loads but every API call returns HTML | The rewrite in `vercel.json` points at the wrong API URL |
+| API calls return 404 `Route not found` (not an Evolyn message) | The rewrite points at **someone else's** Render app: use the exact URL from your API's Render page |
 | Refreshing a page like `/expenses` gives 404 | The second rewrite (`/(.*)` → `/index.html`) is missing |
 | Render build fails partway | Open the build log; a failing `mvn package` there fails the same way locally |
 

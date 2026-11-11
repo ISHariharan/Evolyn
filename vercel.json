@@ -5,7 +5,7 @@
   "rewrites": [
     {
       "source": "/evolyn/api/:path*",
-      "destination": "https://evolyn-api.onrender.com/evolyn/api/:path*"
+      "destination": "https://evolyn-api-urbz.onrender.com/evolyn/api/:path*"
     },
     {
       "source": "/(.*)",
