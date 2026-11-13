@@ -4,6 +4,12 @@ export interface AccountInput {
     name: string;
     accountType: AccountType;
     last4?: string;
+    // Balance at the start of openingBalanceDate (for a credit card: amount owed).
+    // Transactions dated on or after that day move it.
+    openingBalance?: number | null;
+    openingBalanceDate?: string | null; // "YYYY-MM-DD"
+    creditLimit?: number | null;       // credit cards only
+    statementDay?: number | null;      // credit cards only, 1-28
 }
 
 export interface Account extends AccountInput {

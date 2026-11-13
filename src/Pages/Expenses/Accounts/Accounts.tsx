@@ -3,8 +3,20 @@ import { FormEvent, useEffect, useState } from "react";
 import { useStore } from "../../../Store/GlobalStore/GlobalStore";
 import { createAccount, deleteAccount, getAccounts, updateAccount } from "../../../API/Expenses/Accounts/api";
 import { ACCOUNT_TYPES, Account, AccountType, accountTypeMeta } from "../../../API/Expenses/Accounts/types";
+import { formatDate, todayLocal } from "../utils";
 
-const emptyForm = { name: "", accountType: "BANK" as AccountType, last4: "" };
+const emptyForm = () => ({
+    name: "",
+    accountType: "BANK" as AccountType,
+    last4: "",
+    openingBalance: "",
+    openingBalanceDate: todayLocal(),
+    creditLimit: "",
+    statementDay: "",
+});
+
+// "" -> null, otherwise a number (form inputs hold strings)
+const numOrNull = (v: string) => (v.trim() === "" ? null : Number(v));
 
 const Accounts = () => {
     const { state } = useStore();
@@ -17,6 +29,7 @@ const Accounts = () => {
     // null = adding a new account; otherwise the account being edited
     const [editing, setEditing] = useState<Account | null>(null);
     const [form, setForm] = useState(emptyForm);
+    const isCard = form.accountType === "CREDIT_CARD";
     const [formErrors, setFormErrors] = useState<string[]>([]);
     const [saving, setSaving] = useState(false);
 
@@ -31,13 +44,21 @@ const Accounts = () => {
 
     const startEdit = (account: Account) => {
         setEditing(account);
-        setForm({ name: account.name, accountType: account.accountType, last4: account.last4 ?? "" });
+        setForm({
+            name: account.name,
+            accountType: account.accountType,
+            last4: account.last4 ?? "",
+            openingBalance: account.openingBalance == null ? "" : String(account.openingBalance),
+            openingBalanceDate: account.openingBalanceDate ?? todayLocal(),
+            creditLimit: account.creditLimit == null ? "" : String(account.creditLimit),
+            statementDay: account.statementDay == null ? "" : String(account.statementDay),
+        });
         setFormErrors([]);
     };
 
     const resetForm = () => {
         setEditing(null);
-        setForm(emptyForm);
+        setForm(emptyForm());
         setFormErrors([]);
     };
 
@@ -49,6 +70,10 @@ const Accounts = () => {
             name: form.name.trim(),
             accountType: form.accountType,
             last4: form.accountType === "CASH" ? "" : form.last4.trim(),
+            openingBalance: numOrNull(form.openingBalance),
+            openingBalanceDate: form.openingBalance.trim() === "" ? null : form.openingBalanceDate,
+            creditLimit: isCard ? numOrNull(form.creditLimit) : null,
+            statementDay: isCard ? numOrNull(form.statementDay) : null,
         };
         const result = editing
             ? await updateAccount(editing.accountId, input, userId)
@@ -110,6 +135,9 @@ const Accounts = () => {
                                         <span className="ex-account__meta">
                                             {meta.label}
                                             {account.last4 ? ` · •••• ${account.last4}` : ""}
+                                            {account.openingBalanceDate
+                                                ? ` · tracked from ${formatDate(account.openingBalanceDate)}`
+                                                : " · no starting balance"}
                                         </span>
                                     </div>
                                     <button
@@ -174,6 +202,66 @@ const Accounts = () => {
                                 onChange={(e) => setForm({ ...form, last4: e.target.value.replace(/\D/g, "") })}
                             />
                         </label>
+                    )}
+
+                    <fieldset className="ex-fieldset">
+                        <legend>{isCard ? "Amount owed" : "Balance"} (optional)</legend>
+                        <p className="ex-muted ex-fieldset__hint">
+                            {isCard
+                                ? "What you owed on the card at the start of this date. Purchases add to it; bill payments and refunds reduce it."
+                                : "What was in the account at the start of this date. Every transaction from that day on updates it."}
+                        </p>
+                        <div className="ex-row">
+                            <label className="ex-field">
+                                <span>{isCard ? "Owed (₹)" : "Balance (₹)"}</span>
+                                <input
+                                    type="number"
+                                    inputMode="decimal"
+                                    step="0.01"
+                                    placeholder="0.00"
+                                    value={form.openingBalance}
+                                    onChange={(e) => setForm({ ...form, openingBalance: e.target.value })}
+                                />
+                            </label>
+                            <label className="ex-field">
+                                <span>On</span>
+                                <input
+                                    type="date"
+                                    max={todayLocal()}
+                                    value={form.openingBalanceDate}
+                                    onChange={(e) => setForm({ ...form, openingBalanceDate: e.target.value })}
+                                />
+                            </label>
+                        </div>
+                    </fieldset>
+
+                    {isCard && (
+                        <div className="ex-row">
+                            <label className="ex-field">
+                                <span>Credit limit (₹, optional)</span>
+                                <input
+                                    type="number"
+                                    inputMode="decimal"
+                                    min="0"
+                                    step="0.01"
+                                    placeholder="100000"
+                                    value={form.creditLimit}
+                                    onChange={(e) => setForm({ ...form, creditLimit: e.target.value })}
+                                />
+                            </label>
+                            <label className="ex-field">
+                                <span>Statement day (optional)</span>
+                                <input
+                                    type="number"
+                                    inputMode="numeric"
+                                    min="1"
+                                    max="28"
+                                    placeholder="e.g. 15"
+                                    value={form.statementDay}
+                                    onChange={(e) => setForm({ ...form, statementDay: e.target.value })}
+                                />
+                            </label>
+                        </div>
                     )}
 
                     {formErrors.length > 0 && (

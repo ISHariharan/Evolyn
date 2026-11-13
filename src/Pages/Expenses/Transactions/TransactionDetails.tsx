@@ -35,6 +35,8 @@ const TransactionDetails = () => {
 
     const t = transaction;
     const isExpense = t?.type === "EXPENSE";
+    const isTransfer = t?.type === "TRANSFER";
+    const typeLabel = isExpense ? "Expense" : isTransfer ? "Transfer" : "Income";
 
     return (
         <div className="ex-page">
@@ -56,10 +58,8 @@ const TransactionDetails = () => {
                     <section className="ex-card ex-hero">
                         <CategoryIcon icon={t.categoryIcon} color={t.categoryColor} />
                         <p className="ex-hero__merchant">{t.merchant}</p>
-                        <span className={`ex-badge ${isExpense ? "ex-badge--expense" : "ex-badge--income"}`}>
-                            {isExpense ? "Expense" : "Income"}
-                        </span>
-                        <p className={`ex-hero__amount ${isExpense ? "" : "ex-amount--income"}`}>{formatInr(t.amount)}</p>
+                        <span className={`ex-badge ex-badge--${t.type.toLowerCase()}`}>{typeLabel}</span>
+                        <p className={`ex-hero__amount ${t.type === "INCOME" ? "ex-amount--income" : ""}`}>{formatInr(t.amount)}</p>
                         <span className="ex-muted">{formatDate(t.transactionDate)}</span>
                         <div className="ex-hero__actions">
                             <button
@@ -78,17 +78,26 @@ const TransactionDetails = () => {
                     <section className="ex-card">
                         <h2 className="ex-card__title">Details</h2>
                         <dl className="ex-dl">
-                            <dt>Account</dt>
+                            <dt>{isTransfer ? "From" : "Account"}</dt>
                             <dd>{accountLabel(t.accountName, t.accountLast4)}</dd>
-                            <dt>Category</dt>
-                            <dd>{t.categoryName}</dd>
+                            {isTransfer ? (
+                                <>
+                                    <dt>To</dt>
+                                    <dd>{t.toAccountName ? accountLabel(t.toAccountName, t.toAccountLast4) : "—"}</dd>
+                                </>
+                            ) : (
+                                <>
+                                    <dt>Category</dt>
+                                    <dd>{t.categoryName}</dd>
+                                </>
+                            )}
                             <dt>Type</dt>
-                            <dd>{isExpense ? "Expense" : "Income"}</dd>
+                            <dd>{typeLabel}</dd>
                             <dt>Payment method</dt>
                             <dd>{paymentMethodLabel(t.paymentMethod)}</dd>
                             <dt>Date</dt>
                             <dd>{formatDate(t.transactionDate)}</dd>
-                            <dt>{isExpense ? "Merchant" : "Source"}</dt>
+                            <dt>{isExpense ? "Merchant" : isTransfer ? "Description" : "Source"}</dt>
                             <dd>{t.merchant}</dd>
                             <dt>Notes</dt>
                             <dd>{t.notes || "—"}</dd>

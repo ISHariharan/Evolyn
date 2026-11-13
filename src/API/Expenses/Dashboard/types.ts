@@ -20,3 +20,18 @@ export interface MonthTotal {
     income: number;
     spent: number;
 }
+
+export interface AccountBalance {
+    accountId: string;
+    name: string;
+    last4: string | null;
+    accountType: "BANK" | "CREDIT_CARD" | "CASH" | "WALLET";
+    openingBalance: number | null;
+    openingBalanceDate: string | null;
+    balance: number | null;           // bank/cash/wallet: what's in it; card: what you owe
+    creditLimit: number | null;
+    statementDay: number | null;
+    cycleStart: string | null;        // cards only
+    nextStatementDate: string | null; // cards only
+    cycleSpent: number | null;        // cards only
+}

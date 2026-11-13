@@ -9,6 +9,7 @@ import { paymentMethodLabel } from "../../../API/Expenses/Transactions/types";
 import { Period, formatDate, formatInrWhole, periodRange, toLocalIsoDate, todayLocal } from "../utils";
 import CategoryIcon from "../Transactions/CategoryIcon";
 import { CHART_COLORS, PaceChart, TrendChart } from "./charts";
+import Balances from "./Balances";
 
 const DASHBOARD_PERIODS: { value: Period; label: string }[] = [
     { value: "THIS_MONTH", label: "This month" },
@@ -211,6 +212,9 @@ const ExpensesDashboard = () => {
                     </button>
                 </div>
             </header>
+
+            {/* Balances are "right now", so they sit above the month-based numbers */}
+            <Balances userId={userId} />
 
             {error && <p className="ex-errors" role="alert">{error}</p>}
             {!error && !s && <p className="ex-muted">Loading…</p>}

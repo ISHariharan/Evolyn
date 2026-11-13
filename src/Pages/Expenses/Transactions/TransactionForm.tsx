@@ -15,7 +15,7 @@ import { Category } from "../../../API/Expenses/Categories/types";
 import {
     PAYMENT_METHODS,
     PaymentMethod,
-    TransactionType,
+    TransactionKind,
 } from "../../../API/Expenses/Transactions/types";
 import { todayLocal } from "../utils";
 
@@ -40,7 +40,8 @@ const TransactionForm = () => {
     const [loadError, setLoadError] = useState("");
 
     // Form fields
-    const [type, setType] = useState<TransactionType>("EXPENSE");
+    const [type, setType] = useState<TransactionKind>("EXPENSE");
+    const [toAccountId, setToAccountId] = useState(""); // TRANSFER only
     const [amount, setAmount] = useState("");
     const [categoryId, setCategoryId] = useState("");
     const [merchant, setMerchant] = useState("");
@@ -89,28 +90,45 @@ const TransactionForm = () => {
             }
             setType(t.data.type);
             setAmount(String(t.data.amount));
-            setCategoryId(t.data.categoryId);
+            setCategoryId(t.data.categoryId ?? "");
             setMerchant(t.data.merchant);
             setNotes(t.data.notes ?? "");
             setAccountId(t.data.accountId);
+            setToAccountId(t.data.toAccountId ?? "");
             setPaymentMethod(t.data.paymentMethod);
             setTransactionDate(t.data.transactionDate);
         };
         load();
     }, [userId, transactionId]);
 
-    // The user's own categories for the chosen type (Expense or Income)
-    const categories = allCategories.filter((c) => c.type === type);
+    const isTransfer = type === "TRANSFER";
 
-    const switchType = (next: TransactionType) => {
+    // The user's own categories for the chosen type (transfers have none)
+    const categories = isTransfer ? [] : allCategories.filter((c) => c.type === type);
+
+    // A sensible "to" account for a transfer: a credit card (paying its bill) if there
+    // is one, otherwise any other account
+    const defaultToAccount = (fromId: string) =>
+        (accounts ?? []).find((a) => a.accountId !== fromId && a.accountType === "CREDIT_CARD")?.accountId ??
+        (accounts ?? []).find((a) => a.accountId !== fromId)?.accountId ??
+        "";
+
+    const switchType = (next: TransactionKind) => {
         setType(next);
-        setCategoryId(allCategories.find((c) => c.type === next)?.categoryId ?? "");
+        if (next === "TRANSFER") {
+            setCategoryId("");
+            if (!toAccountId || toAccountId === accountId) setToAccountId(defaultToAccount(accountId));
+            setPaymentMethod("NET_BANKING");
+        } else {
+            setCategoryId(allCategories.find((c) => c.type === next)?.categoryId ?? "");
+        }
     };
 
     const changeAccount = (id: string) => {
         setAccountId(id);
+        if (isTransfer && id === toAccountId) setToAccountId(defaultToAccount(id));
         const account = accounts?.find((a) => a.accountId === id);
-        if (account) setPaymentMethod(defaultMethodFor(account.accountType));
+        if (account && !isTransfer) setPaymentMethod(defaultMethodFor(account.accountType));
     };
 
     const handleSubmit = async (event: FormEvent) => {
@@ -121,7 +139,8 @@ const TransactionForm = () => {
         const input = {
             type,
             amount: Number(amount),
-            categoryId,
+            categoryId: isTransfer ? undefined : categoryId,
+            toAccountId: isTransfer ? toAccountId : undefined,
             merchant: merchant.trim(),
             notes: notes.trim() || undefined,
             accountId,
@@ -148,7 +167,7 @@ const TransactionForm = () => {
         else setErrors(result.errors);
     };
 
-    const noun = type === "EXPENSE" ? "Expense" : "Income";
+    const noun = type === "EXPENSE" ? "Expense" : type === "INCOME" ? "Income" : "Transfer";
     const title = isEdit ? `Edit ${noun}` : `Add ${noun}`;
 
     return (
@@ -179,8 +198,8 @@ const TransactionForm = () => {
 
             {accounts !== null && accounts.length > 0 && (
                 <form onSubmit={handleSubmit}>
-                    <div className="ex-type-toggle" role="group" aria-label="Transaction type">
-                        {(["EXPENSE", "INCOME"] as TransactionType[]).map((t) => (
+                    <div className="ex-type-toggle ex-type-toggle--three" role="group" aria-label="Transaction type">
+                        {(["EXPENSE", "INCOME", "TRANSFER"] as TransactionKind[]).map((t) => (
                             <button
                                 key={t}
                                 type="button"
@@ -188,16 +207,28 @@ const TransactionForm = () => {
                                 aria-pressed={type === t}
                                 onClick={() => switchType(t)}
                             >
-                                {t === "EXPENSE" ? "Expense" : "Income"}
+                                {t === "EXPENSE" ? "Expense" : t === "INCOME" ? "Income" : "Transfer"}
                             </button>
                         ))}
                     </div>
 
-                    {/* Recording a transfer as an expense counts the same money twice on the dashboard */}
+                    {/* Recording a transfer as an expense would count the same money twice */}
                     <p className="ex-hint">
                         <i className="bx bx-info-circle" aria-hidden="true"></i>
-                        Paying a credit card bill or moving money between your own accounts? Don't add it here.
-                        The card purchases are already counted, so it would count the same spending twice.
+                        {isTransfer ? (
+                            <span>
+                                Money moving between your own accounts: paying a credit card bill, withdrawing cash,
+                                topping up a wallet. Both balances update, and it isn't counted as income or spending.
+                            </span>
+                        ) : (
+                            <span>
+                                Paying a credit card bill or moving money between your own accounts?{" "}
+                                <button type="button" className="ex-link ex-link--inline" onClick={() => switchType("TRANSFER")}>
+                                    Record it as a transfer
+                                </button>{" "}
+                                so the spending isn't counted twice.
+                            </span>
+                        )}
                     </p>
 
                     <div className="ex-two-col">
@@ -221,22 +252,24 @@ const TransactionForm = () => {
                                 </div>
                             </label>
 
-                            <label className="ex-field">
-                                <span>Category <span className="ex-required">*</span></span>
-                                <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)} required>
-                                    {categories.map((c) => (
-                                        <option key={c.categoryId} value={c.categoryId}>{c.name}</option>
-                                    ))}
-                                </select>
-                                <Link className="ex-field__link" to="/expenses/categories">Manage categories</Link>
-                            </label>
+                            {!isTransfer && (
+                                <label className="ex-field">
+                                    <span>Category <span className="ex-required">*</span></span>
+                                    <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)} required>
+                                        {categories.map((c) => (
+                                            <option key={c.categoryId} value={c.categoryId}>{c.name}</option>
+                                        ))}
+                                    </select>
+                                    <Link className="ex-field__link" to="/expenses/categories">Manage categories</Link>
+                                </label>
+                            )}
 
                             <label className="ex-field">
-                                <span>{type === "EXPENSE" ? "Merchant / Description" : "Source / Description"} <span className="ex-required">*</span></span>
+                                <span>{type === "EXPENSE" ? "Merchant / Description" : type === "INCOME" ? "Source / Description" : "Description"} <span className="ex-required">*</span></span>
                                 <input
                                     type="text"
                                     maxLength={100}
-                                    placeholder={type === "EXPENSE" ? "e.g. Swiggy" : "e.g. Acme Corp salary"}
+                                    placeholder={type === "EXPENSE" ? "e.g. Swiggy" : type === "INCOME" ? "e.g. Acme Corp salary" : "e.g. ICICI card bill"}
                                     value={merchant}
                                     onChange={(e) => setMerchant(e.target.value)}
                                     required
@@ -247,7 +280,7 @@ const TransactionForm = () => {
                                 <span>Notes (optional)</span>
                                 <textarea
                                     maxLength={500}
-                                    placeholder={type === "EXPENSE" ? "e.g. Lunch with team" : "e.g. November salary"}
+                                    placeholder={type === "EXPENSE" ? "e.g. Lunch with team" : type === "INCOME" ? "e.g. November salary" : "e.g. October statement"}
                                     value={notes}
                                     onChange={(e) => setNotes(e.target.value)}
                                 />
@@ -258,13 +291,32 @@ const TransactionForm = () => {
                             <h2 className="ex-card__title">Payment details</h2>
 
                             <label className="ex-field">
-                                <span>Account <span className="ex-required">*</span></span>
+                                <span>{isTransfer ? "From account" : "Account"} <span className="ex-required">*</span></span>
                                 <select value={accountId} onChange={(e) => changeAccount(e.target.value)} required>
                                     {accounts.map((a) => (
                                         <option key={a.accountId} value={a.accountId}>{accountLabel(a.name, a.last4)}</option>
                                     ))}
                                 </select>
                             </label>
+
+                            {isTransfer && (
+                                <label className="ex-field">
+                                    <span>To account <span className="ex-required">*</span></span>
+                                    {accounts.length < 2 ? (
+                                        <p className="ex-errors">
+                                            A transfer needs two accounts. <Link to="/expenses/accounts">Add another account</Link>.
+                                        </p>
+                                    ) : (
+                                        <select value={toAccountId} onChange={(e) => setToAccountId(e.target.value)} required>
+                                            {accounts
+                                                .filter((a) => a.accountId !== accountId)
+                                                .map((a) => (
+                                                    <option key={a.accountId} value={a.accountId}>{accountLabel(a.name, a.last4)}</option>
+                                                ))}
+                                        </select>
+                                    )}
+                                </label>
+                            )}
 
                             <label className="ex-field">
                                 <span>Payment method <span className="ex-required">*</span></span>

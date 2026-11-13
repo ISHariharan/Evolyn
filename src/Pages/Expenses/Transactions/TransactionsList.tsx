@@ -10,7 +10,7 @@ import { Category } from "../../../API/Expenses/Categories/types";
 import {
     Page,
     Transaction,
-    TransactionType,
+    TransactionKind,
     paymentMethodLabel,
 } from "../../../API/Expenses/Transactions/types";
 import { PERIODS, Period, formatDate, formatInr, periodRange } from "../utils";
@@ -18,7 +18,7 @@ import CategoryIcon from "./CategoryIcon";
 
 const PAGE_SIZE = 10;
 
-type Tab = "ALL" | TransactionType;
+type Tab = "ALL" | TransactionKind;
 
 const TransactionsList = () => {
     const { state } = useStore();
@@ -91,7 +91,8 @@ const TransactionsList = () => {
     };
 
     // Only the categories that fit the current tab
-    const categoryOptions = tab === "ALL" ? categories : categories.filter((c) => c.type === tab);
+    const categoryOptions =
+        tab === "ALL" ? categories : tab === "TRANSFER" ? [] : categories.filter((c) => c.type === tab);
 
     const handleDelete = async (t: Transaction) => {
         if (!window.confirm(`Delete ${t.merchant} (${formatInr(t.amount)})? This cannot be undone.`)) return;
@@ -127,7 +128,7 @@ const TransactionsList = () => {
 
             <section className="ex-card">
                 <div className="ex-tabs" role="tablist">
-                    {(["ALL", "EXPENSE", "INCOME"] as Tab[]).map((t) => (
+                    {(["ALL", "EXPENSE", "INCOME", "TRANSFER"] as Tab[]).map((t) => (
                         <button
                             key={t}
                             type="button"
@@ -136,7 +137,7 @@ const TransactionsList = () => {
                             className={tab === t ? "is-active" : ""}
                             onClick={() => changeFilter(() => { setTab(t); setCategory(""); })}
                         >
-                            {t === "ALL" ? "All" : t === "EXPENSE" ? "Expense" : "Income"}
+                            {t === "ALL" ? "All" : t === "EXPENSE" ? "Expense" : t === "INCOME" ? "Income" : "Transfer"}
                         </button>
                     ))}
                 </div>
@@ -217,14 +218,19 @@ const TransactionsList = () => {
                                                 {t.categoryName}
                                             </span>
                                         </td>
-                                        <td>{accountLabel(t.accountName, t.accountLast4)}</td>
+                                        <td>
+                                            {accountLabel(t.accountName, t.accountLast4)}
+                                            {t.type === "TRANSFER" && t.toAccountName && (
+                                                <> → {accountLabel(t.toAccountName, t.toAccountLast4)}</>
+                                            )}
+                                        </td>
                                         <td>{paymentMethodLabel(t.paymentMethod)}</td>
-                                        <td className={`ex-num ${t.type === "EXPENSE" ? "ex-amount--expense" : "ex-amount--income"}`}>
+                                        <td className={`ex-num ex-amount--${t.type.toLowerCase()}`}>
                                             {formatInr(t.amount)}
                                         </td>
                                         <td>
-                                            <span className={`ex-badge ${t.type === "EXPENSE" ? "ex-badge--expense" : "ex-badge--income"}`}>
-                                                {t.type === "EXPENSE" ? "Expense" : "Income"}
+                                            <span className={`ex-badge ex-badge--${t.type.toLowerCase()}`}>
+                                                {t.type === "EXPENSE" ? "Expense" : t.type === "INCOME" ? "Income" : "Transfer"}
                                             </span>
                                         </td>
                                         <td onClick={(e) => e.stopPropagation()}>

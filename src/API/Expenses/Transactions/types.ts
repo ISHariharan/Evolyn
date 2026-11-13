@@ -1,14 +1,21 @@
+// Categories are either EXPENSE or INCOME
 export type TransactionType = "EXPENSE" | "INCOME";
+
+// A transaction can also be a TRANSFER between two of your own accounts
+// (paying a card bill, withdrawing cash, topping up a wallet). It has no category
+// and isn't counted as income or spending.
+export type TransactionKind = TransactionType | "TRANSFER";
 
 export type PaymentMethod = "UPI" | "CREDIT_CARD" | "DEBIT_CARD" | "NET_BANKING" | "CASH";
 
 // What the form sends to Evolyn-API
 export interface TransactionInput {
     accountId: string;
-    type: TransactionType;
+    toAccountId?: string; // TRANSFER only
+    type: TransactionKind;
     amount: number;
     transactionDate: string; // "YYYY-MM-DD"
-    categoryId: string;
+    categoryId?: string; // not used for TRANSFER
     merchant: string;
     notes?: string;
     paymentMethod: PaymentMethod;
@@ -22,13 +29,15 @@ export interface Transaction extends TransactionInput {
     categoryColor: string;
     accountName: string;
     accountLast4: string | null;
+    toAccountName: string | null;
+    toAccountLast4: string | null;
     source: "MANUAL" | "SMS" | "STATEMENT";
     createdAt: string;
     updatedAt: string;
 }
 
 export interface TransactionFilters {
-    type?: TransactionType;
+    type?: TransactionKind;
     categoryId?: string;
     accountId?: string;
     from?: string;
