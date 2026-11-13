@@ -146,6 +146,22 @@ the same job) and in production.
 - **Changing a secret**: update it in Render's Environment tab; Render restarts the
   service. `INTERNAL_API_KEY` must always match on both services.
 
+## Shipping a change that touches all three services
+
+Some changes (like editable categories) change what the services send each other.
+Deploy them **in order**, waiting for each to be live before the next:
+
+1. **Back up the database first.** In Neon, open **Branches → Create branch** from
+   `main` (e.g. `backup-2026-11-14`). It's an instant copy you can restore from.
+2. **Data Service.** Push its repo and wait until the Render logs show `Started …`.
+   Database changes (new tables/columns and one-time migrations) run on this start.
+   Check the log for lines like `Category migration: linked N transaction(s)`.
+3. **API.** Push and wait for `Server started`.
+4. **Frontend.** Push; Vercel deploys it.
+
+In between steps the live app may briefly fail on the parts that changed (e.g. adding a
+transaction). That's expected and stops once all three are deployed.
+
 ## Troubleshooting
 
 | Symptom | Likely cause |

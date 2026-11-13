@@ -7,7 +7,7 @@ export interface DashboardSummary {
     expenseCount: number;
     totalIncome: number;
     incomeCount: number;
-    byCategory: { category: string; total: number; count: number }[];
+    byCategory: { categoryId: string; name: string; icon: string; color: string; total: number; count: number }[];
     byAccount: { accountId: string; name: string; last4: string | null; total: number }[];
     byPaymentMethod: { paymentMethod: string; total: number }[];
     topMerchants: { merchant: string; total: number; count: number }[];

@@ -54,7 +54,7 @@ const TransactionDetails = () => {
             {t && (
                 <div className="ex-details">
                     <section className="ex-card ex-hero">
-                        <CategoryIcon category={t.category} type={t.type} />
+                        <CategoryIcon icon={t.categoryIcon} color={t.categoryColor} />
                         <p className="ex-hero__merchant">{t.merchant}</p>
                         <span className={`ex-badge ${isExpense ? "ex-badge--expense" : "ex-badge--income"}`}>
                             {isExpense ? "Expense" : "Income"}
@@ -81,7 +81,7 @@ const TransactionDetails = () => {
                             <dt>Account</dt>
                             <dd>{accountLabel(t.accountName, t.accountLast4)}</dd>
                             <dt>Category</dt>
-                            <dd>{t.category}</dd>
+                            <dd>{t.categoryName}</dd>
                             <dt>Type</dt>
                             <dd>{isExpense ? "Expense" : "Income"}</dd>
                             <dt>Payment method</dt>

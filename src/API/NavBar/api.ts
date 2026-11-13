@@ -38,7 +38,7 @@ export function getNavBarContent(): NavSection[] {
                     children: [
                         { key: "transactions", label: "Transactions", icon: "bx bx-transfer-alt", path: "/expenses/transactions" },
                         { key: "accounts", label: "Accounts", icon: "bx bx-credit-card", path: "/expenses/accounts" },
-                        { key: "categories", label: "Categories", icon: "bx bx-purchase-tag-alt", soon: true },
+                        { key: "categories", label: "Categories", icon: "bx bx-purchase-tag-alt", path: "/expenses/categories" },
                         { key: "budgets", label: "Budgets", icon: "bx bx-target-lock", soon: true },
                         { key: "recurring", label: "Recurring", icon: "bx bx-refresh", soon: true },
                         { key: "reports", label: "Reports", icon: "bx bx-bar-chart-alt-2", soon: true },

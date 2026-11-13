@@ -5,9 +5,9 @@ import { useStore } from "../../../Store/GlobalStore/GlobalStore";
 import { deleteTransaction, getTransactions } from "../../../API/Expenses/Transactions/api";
 import { getAccounts } from "../../../API/Expenses/Accounts/api";
 import { Account, accountLabel } from "../../../API/Expenses/Accounts/types";
+import { getCategories } from "../../../API/Expenses/Categories/api";
+import { Category } from "../../../API/Expenses/Categories/types";
 import {
-    EXPENSE_CATEGORIES,
-    INCOME_CATEGORIES,
     Page,
     Transaction,
     TransactionType,
@@ -33,16 +33,18 @@ const TransactionsList = () => {
     const [page, setPage] = useState(0);
 
     const [accounts, setAccounts] = useState<Account[]>([]);
+    const [categories, setCategories] = useState<Category[]>([]);
     const [result, setResult] = useState<Page<Transaction> | null>(null);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(true);
     const [openMenu, setOpenMenu] = useState<string | null>(null);
     const [reloadKey, setReloadKey] = useState(0);
 
-    // Accounts are needed for the filter dropdown
+    // Accounts and categories are needed for the filter dropdowns
     useEffect(() => {
         if (!userId) return;
         getAccounts(userId).then((r) => r.ok && r.data && setAccounts(r.data));
+        getCategories(userId).then((r) => r.ok && r.data && setCategories(r.data));
     }, [userId]);
 
     // Re-fetch whenever any filter or the page changes.
@@ -54,7 +56,7 @@ const TransactionsList = () => {
         setLoading(true);
         getTransactions(userId, {
             type: tab === "ALL" ? undefined : tab,
-            category: category || undefined,
+            categoryId: category || undefined,
             accountId: accountId || undefined,
             ...periodRange(period),
             page,
@@ -88,10 +90,8 @@ const TransactionsList = () => {
         setPage(0);
     };
 
-    const categoryOptions =
-        tab === "INCOME" ? INCOME_CATEGORIES
-        : tab === "EXPENSE" ? EXPENSE_CATEGORIES
-        : [...EXPENSE_CATEGORIES, ...INCOME_CATEGORIES.filter((c) => c.name !== "Others")];
+    // Only the categories that fit the current tab
+    const categoryOptions = tab === "ALL" ? categories : categories.filter((c) => c.type === tab);
 
     const handleDelete = async (t: Transaction) => {
         if (!window.confirm(`Delete ${t.merchant} (${formatInr(t.amount)})? This cannot be undone.`)) return;
@@ -149,7 +149,9 @@ const TransactionsList = () => {
                     >
                         <option value="">All categories</option>
                         {categoryOptions.map((c) => (
-                            <option key={c.name} value={c.name}>{c.name}</option>
+                            <option key={c.categoryId} value={c.categoryId}>
+                                {c.name}{tab === "ALL" && c.type === "INCOME" ? " (income)" : ""}
+                            </option>
                         ))}
                     </select>
                     <select
@@ -211,8 +213,8 @@ const TransactionsList = () => {
                                         <td>{t.merchant}</td>
                                         <td>
                                             <span className="ex-category">
-                                                <CategoryIcon category={t.category} type={t.type} />
-                                                {t.category}
+                                                <CategoryIcon icon={t.categoryIcon} color={t.categoryColor} />
+                                                {t.categoryName}
                                             </span>
                                         </td>
                                         <td>{accountLabel(t.accountName, t.accountLast4)}</td>

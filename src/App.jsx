@@ -12,6 +12,7 @@ import TransactionForm from "./Pages/Expenses/Transactions/TransactionForm";
 import TransactionDetails from "./Pages/Expenses/Transactions/TransactionDetails";
 import Accounts from "./Pages/Expenses/Accounts/Accounts";
 import ExpensesDashboard from "./Pages/Expenses/Dashboard/ExpensesDashboard";
+import Categories from "./Pages/Expenses/Categories/Categories";
 import ProtectedRoute from "./Components/ProtectedRoute/ProtectedRoute";
 import { getAllWorkspaces } from "./API/StrideWorkspace/Retrieve/index";
 import { useStore } from './Store/GlobalStore/GlobalStore';
@@ -55,6 +56,7 @@ function App() {
           <Route path="/expenses/transactions/:transactionId" element={<ProtectedRoute><TransactionDetails /></ProtectedRoute>} />
           <Route path="/expenses/transactions/:transactionId/edit" element={<ProtectedRoute><TransactionForm key="edit" /></ProtectedRoute>} />
           <Route path="/expenses/accounts" element={<ProtectedRoute><Accounts /></ProtectedRoute>} />
+          <Route path="/expenses/categories" element={<ProtectedRoute><Categories /></ProtectedRoute>} />
           <Route path="/explore" element={<Explore />} />
           <Route path="/loader" element={<ApplicationLoader />} />
         </Routes>

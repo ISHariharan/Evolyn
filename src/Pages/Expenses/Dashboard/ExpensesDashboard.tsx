@@ -274,11 +274,11 @@ const ExpensesDashboard = () => {
                                 <p className="ex-card__sub">Spending by category</p>
                                 {s.byCategory.length === 0 && <p className="ex-muted">No spending in this period.</p>}
                                 {s.byCategory.map((c) => (
-                                    <div key={c.category} className="ex-meter">
+                                    <div key={c.categoryId} className="ex-meter">
                                         <div className="ex-meter__row">
                                             <span className="ex-category">
-                                                <CategoryIcon category={c.category} type="EXPENSE" />
-                                                {c.category}
+                                                <CategoryIcon icon={c.icon} color={c.color} />
+                                                {c.name}
                                             </span>
                                             <span className="ex-meter__value">
                                                 {formatInrWhole(c.total)} <span className="ex-muted-inline">{Math.round((Number(c.total) / spent) * 100)}%</span>

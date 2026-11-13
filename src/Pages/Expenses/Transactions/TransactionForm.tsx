@@ -10,9 +10,9 @@ import {
 } from "../../../API/Expenses/Transactions/api";
 import { getAccounts } from "../../../API/Expenses/Accounts/api";
 import { Account, AccountType, accountLabel } from "../../../API/Expenses/Accounts/types";
+import { getCategories } from "../../../API/Expenses/Categories/api";
+import { Category } from "../../../API/Expenses/Categories/types";
 import {
-    EXPENSE_CATEGORIES,
-    INCOME_CATEGORIES,
     PAYMENT_METHODS,
     PaymentMethod,
     TransactionType,
@@ -36,12 +36,13 @@ const TransactionForm = () => {
     const isEdit = Boolean(transactionId);
 
     const [accounts, setAccounts] = useState<Account[] | null>(null);
+    const [allCategories, setAllCategories] = useState<Category[]>([]);
     const [loadError, setLoadError] = useState("");
 
     // Form fields
     const [type, setType] = useState<TransactionType>("EXPENSE");
     const [amount, setAmount] = useState("");
-    const [category, setCategory] = useState(EXPENSE_CATEGORIES[0].name);
+    const [categoryId, setCategoryId] = useState("");
     const [merchant, setMerchant] = useState("");
     const [notes, setNotes] = useState("");
     const [accountId, setAccountId] = useState("");
@@ -51,16 +52,25 @@ const TransactionForm = () => {
     const [errors, setErrors] = useState<string[]>([]);
     const [saving, setSaving] = useState(false);
 
-    // Load accounts (and, when editing, the transaction itself)
+    // Load accounts and categories (and, when editing, the transaction itself)
     useEffect(() => {
         if (!userId) return;
         const load = async () => {
-            const accountsResult = await getAccounts(userId);
+            const [accountsResult, categoriesResult] = await Promise.all([
+                getAccounts(userId),
+                getCategories(userId),
+            ]);
             if (!accountsResult.ok || !accountsResult.data) {
                 setLoadError(accountsResult.errors.join(", "));
                 return;
             }
+            if (!categoriesResult.ok || !categoriesResult.data) {
+                setLoadError(categoriesResult.errors.join(", "));
+                return;
+            }
             const list = accountsResult.data;
+            const cats = categoriesResult.data;
+            setAllCategories(cats);
             setAccounts(list);
 
             if (!transactionId) {
@@ -68,6 +78,7 @@ const TransactionForm = () => {
                     setAccountId(list[0].accountId);
                     setPaymentMethod(defaultMethodFor(list[0].accountType));
                 }
+                setCategoryId(cats.find((c) => c.type === "EXPENSE")?.categoryId ?? "");
                 return;
             }
 
@@ -78,7 +89,7 @@ const TransactionForm = () => {
             }
             setType(t.data.type);
             setAmount(String(t.data.amount));
-            setCategory(t.data.category);
+            setCategoryId(t.data.categoryId);
             setMerchant(t.data.merchant);
             setNotes(t.data.notes ?? "");
             setAccountId(t.data.accountId);
@@ -88,11 +99,12 @@ const TransactionForm = () => {
         load();
     }, [userId, transactionId]);
 
-    const categories = type === "EXPENSE" ? EXPENSE_CATEGORIES : INCOME_CATEGORIES;
+    // The user's own categories for the chosen type (Expense or Income)
+    const categories = allCategories.filter((c) => c.type === type);
 
     const switchType = (next: TransactionType) => {
         setType(next);
-        setCategory((next === "EXPENSE" ? EXPENSE_CATEGORIES : INCOME_CATEGORIES)[0].name);
+        setCategoryId(allCategories.find((c) => c.type === next)?.categoryId ?? "");
     };
 
     const changeAccount = (id: string) => {
@@ -109,7 +121,7 @@ const TransactionForm = () => {
         const input = {
             type,
             amount: Number(amount),
-            category,
+            categoryId,
             merchant: merchant.trim(),
             notes: notes.trim() || undefined,
             accountId,
@@ -211,13 +223,12 @@ const TransactionForm = () => {
 
                             <label className="ex-field">
                                 <span>Category <span className="ex-required">*</span></span>
-                                <select value={category} onChange={(e) => setCategory(e.target.value)}>
+                                <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)} required>
                                     {categories.map((c) => (
-                                        <option key={c.name} value={c.name}>{c.name}</option>
+                                        <option key={c.categoryId} value={c.categoryId}>{c.name}</option>
                                     ))}
-                                    {/* keep an old/unknown category selectable when editing */}
-                                    {!categories.some((c) => c.name === category) && <option value={category}>{category}</option>}
                                 </select>
+                                <Link className="ex-field__link" to="/expenses/categories">Manage categories</Link>
                             </label>
 
                             <label className="ex-field">
