@@ -1,5 +1,6 @@
 import "../Expenses.scss";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useStore } from "../../../Store/GlobalStore/GlobalStore";
 import { createAccount, deleteAccount, getAccounts, updateAccount } from "../../../API/Expenses/Accounts/api";
 import { ACCOUNT_TYPES, Account, AccountType, accountTypeMeta } from "../../../API/Expenses/Accounts/types";
@@ -33,13 +34,31 @@ const Accounts = () => {
     const [formErrors, setFormErrors] = useState<string[]>([]);
     const [saving, setSaving] = useState(false);
 
+    // ?edit=<accountId> (from the dashboard's "Set actual balance") opens that account
+    const [searchParams, setSearchParams] = useSearchParams();
+    const formRef = useRef<HTMLFormElement>(null);
+
     useEffect(() => {
         if (!userId) return;
         getAccounts(userId).then((result) => {
-            if (result.ok && result.data) setAccounts(result.data);
-            else setListError(result.errors.join(", "));
+            if (result.ok && result.data) {
+                setAccounts(result.data);
+                const target = result.data.find((a) => a.accountId === searchParams.get("edit"));
+                if (target) {
+                    startEdit(target);
+                    setSearchParams({}, { replace: true }); // don't reopen it on refresh
+                    // Bring the form into view and put the cursor in the balance field
+                    setTimeout(() => {
+                        formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+                        formRef.current?.querySelector<HTMLInputElement>("input[name=openingBalance]")?.focus();
+                    }, 50);
+                }
+            } else {
+                setListError(result.errors.join(", "));
+            }
             setLoading(false);
         });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [userId]);
 
     const startEdit = (account: Account) => {
@@ -137,7 +156,7 @@ const Accounts = () => {
                                             {account.last4 ? ` · •••• ${account.last4}` : ""}
                                             {account.openingBalanceDate
                                                 ? ` · tracked from ${formatDate(account.openingBalanceDate)}`
-                                                : " · no starting balance"}
+                                                : " · balance from transactions"}
                                         </span>
                                     </div>
                                     <button
@@ -162,7 +181,7 @@ const Accounts = () => {
                     </ul>
                 </section>
 
-                <form className="ex-card" onSubmit={handleSubmit}>
+                <form className="ex-card" onSubmit={handleSubmit} ref={formRef}>
                     <h2 className="ex-card__title">{editing ? `Edit ${editing.name}` : "Add account"}</h2>
 
                     <label className="ex-field">
@@ -208,13 +227,14 @@ const Accounts = () => {
                         <legend>{isCard ? "Amount owed" : "Balance"} (optional)</legend>
                         <p className="ex-muted ex-fieldset__hint">
                             {isCard
-                                ? "What you owed on the card at the start of this date. Purchases add to it; bill payments and refunds reduce it."
-                                : "What was in the account at the start of this date. Every transaction from that day on updates it."}
+                                ? "Leave empty to calculate it from your transactions. Or enter what you owed at the start of a date: purchases from then on add to it, bill payments and refunds reduce it."
+                                : "Leave empty to calculate it from your transactions. Or enter the real balance at the start of a date: every transaction from that day on updates it."}
                         </p>
                         <div className="ex-row">
                             <label className="ex-field">
                                 <span>{isCard ? "Owed (₹)" : "Balance (₹)"}</span>
                                 <input
+                                    name="openingBalance"
                                     type="number"
                                     inputMode="decimal"
                                     step="0.01"

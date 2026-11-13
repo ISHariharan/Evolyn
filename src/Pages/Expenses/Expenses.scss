@@ -947,3 +947,5 @@
 @media screen and (max-width: 600px) {
   .ex-balances__totals > div { align-items: flex-start; }
 }
+
+.ex-balance__meta a { color: var(--title-color); text-decoration: underline; }

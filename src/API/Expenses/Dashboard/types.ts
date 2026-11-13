@@ -28,7 +28,11 @@ export interface AccountBalance {
     accountType: "BANK" | "CREDIT_CARD" | "CASH" | "WALLET";
     openingBalance: number | null;
     openingBalanceDate: string | null;
-    balance: number | null;           // bank/cash/wallet: what's in it; card: what you owe
+    balance: number;                  // bank/cash/wallet: what's in it; card: what you owe
+    // OPENING_BALANCE: starting balance + transactions since its date
+    // TRANSACTIONS:    no starting balance, calculated from all recorded transactions
+    // NONE:            nothing recorded yet
+    balanceSource: "OPENING_BALANCE" | "TRANSACTIONS" | "NONE";
     creditLimit: number | null;
     statementDay: number | null;
     cycleStart: string | null;        // cards only

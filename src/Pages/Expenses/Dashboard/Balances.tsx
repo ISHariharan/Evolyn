@@ -5,10 +5,28 @@ import { AccountBalance } from "../../../API/Expenses/Dashboard/types";
 import { accountLabel, accountTypeMeta } from "../../../API/Expenses/Accounts/types";
 import { formatDate, formatInrWhole, todayLocal } from "../utils";
 
+// Opens the Accounts page with this account's edit form already open
+const setBalanceLink = (accountId: string) => `/expenses/accounts?edit=${accountId}`;
+
+/** Small line under a balance saying where the number comes from. */
+const Source = ({ account }: { account: AccountBalance }) => {
+    const isCard = account.accountType === "CREDIT_CARD";
+    if (account.balanceSource === "OPENING_BALANCE") {
+        return <span className="ex-balance__meta">Tracked from {formatDate(account.openingBalanceDate!)}</span>;
+    }
+    return (
+        <span className="ex-balance__meta">
+            {account.balanceSource === "TRANSACTIONS" ? "Calculated from your transactions · " : "No transactions yet · "}
+            <Link to={setBalanceLink(account.accountId)}>{isCard ? "Set amount owed" : "Set actual balance"}</Link>
+        </span>
+    );
+};
+
 /**
  * "Where do I stand right now?" — independent of the month picker.
  * Bank / cash / wallet: current balance. Credit cards: what you owe, what you've spent
  * this billing cycle, and how much of the limit is used.
+ * Accounts without a starting balance are calculated from all their transactions.
  */
 const Balances = ({ userId }: { userId: string }) => {
     const [accounts, setAccounts] = useState<AccountBalance[] | null>(null);
@@ -33,29 +51,34 @@ const Balances = ({ userId }: { userId: string }) => {
 
     const money = accounts.filter((a) => a.accountType !== "CREDIT_CARD");
     const cards = accounts.filter((a) => a.accountType === "CREDIT_CARD");
-    const tracked = money.filter((a) => a.balance !== null);
-    const totalAvailable = tracked.reduce((sum, a) => sum + Math.round(Number(a.balance) * 100), 0) / 100;
-    const totalOwed = cards.reduce((sum, a) => sum + (a.balance === null ? 0 : Math.round(Number(a.balance) * 100)), 0) / 100;
-    const missing = accounts.filter((a) => a.balance === null).length;
+    const sum = (list: AccountBalance[]) =>
+        list.reduce((paise, a) => paise + Math.round(Number(a.balance) * 100), 0) / 100;
+    const totalAvailable = sum(money);
+    const totalOwed = sum(cards);
+    const calculated = accounts.filter((a) => a.balanceSource === "TRANSACTIONS").length;
 
     return (
         <section className="ex-card ex-balances" aria-labelledby="balances-title">
             <div className="ex-balances__head">
                 <div>
                     <h2 className="ex-card__title" id="balances-title">Balances</h2>
-                    <p className="ex-card__sub">Right now, across all your accounts — not tied to the month above</p>
+                    <p className="ex-card__sub">Right now, across all your accounts — not tied to the month below</p>
                 </div>
                 <div className="ex-balances__totals">
-                    {tracked.length > 0 && (
+                    {money.length > 0 && (
                         <div>
                             <span className="ex-kpi__label">Available</span>
-                            <span className="ex-balances__big">{formatInrWhole(totalAvailable)}</span>
+                            <span className={`ex-balances__big ${totalAvailable < 0 ? "ex-text--worse" : ""}`}>
+                                {formatInrWhole(totalAvailable)}
+                            </span>
                         </div>
                     )}
-                    {cards.some((c) => c.balance !== null) && (
+                    {cards.length > 0 && (
                         <div>
                             <span className="ex-kpi__label">Card dues</span>
-                            <span className="ex-balances__big ex-text--worse">{formatInrWhole(totalOwed)}</span>
+                            <span className={`ex-balances__big ${totalOwed > 0 ? "ex-text--worse" : ""}`}>
+                                {formatInrWhole(totalOwed)}
+                            </span>
                         </div>
                     )}
                 </div>
@@ -68,21 +91,16 @@ const Balances = ({ userId }: { userId: string }) => {
                             <i className={accountTypeMeta(a.accountType).icon} aria-hidden="true"></i>
                             {accountLabel(a.name, a.last4)}
                         </span>
-                        {a.balance === null ? (
-                            <Link className="ex-balance__set" to="/expenses/accounts">Set a starting balance</Link>
-                        ) : (
-                            <>
-                                <span className={`ex-balance__value ${Number(a.balance) < 0 ? "ex-text--worse" : ""}`}>
-                                    {formatInrWhole(a.balance)}
-                                </span>
-                                <span className="ex-balance__meta">Tracked from {formatDate(a.openingBalanceDate!)}</span>
-                            </>
-                        )}
+                        <span className={`ex-balance__value ${Number(a.balance) < 0 ? "ex-text--worse" : ""}`}>
+                            {formatInrWhole(a.balance)}
+                        </span>
+                        <Source account={a} />
                     </div>
                 ))}
 
                 {cards.map((c) => {
-                    const used = c.balance !== null && c.creditLimit ? Math.min(Number(c.balance) / Number(c.creditLimit), 1) : null;
+                    const owed = Number(c.balance);
+                    const used = c.creditLimit ? Math.min(Math.max(owed, 0) / Number(c.creditLimit), 1) : null;
                     return (
                         <div key={c.accountId} className="ex-balance ex-balance--card">
                             <span className="ex-balance__name">
@@ -98,40 +116,41 @@ const Balances = ({ userId }: { userId: string }) => {
                                 </div>
                                 <div>
                                     <span className="ex-balance__meta">Owed</span>
-                                    {c.balance === null ? (
-                                        <Link className="ex-balance__set" to="/expenses/accounts">Set amount owed</Link>
-                                    ) : (
-                                        <span className="ex-balance__value ex-text--worse">{formatInrWhole(c.balance)}</span>
-                                    )}
+                                    <span className={`ex-balance__value ${owed > 0 ? "ex-text--worse" : ""}`}>
+                                        {formatInrWhole(owed)}
+                                    </span>
                                 </div>
                             </div>
                             {used !== null && (
                                 <>
                                     <div className="ex-meter__track ex-meter__track--limit" aria-hidden="true">
-                                        <span
-                                            className={used >= 0.8 ? "is-high" : ""}
-                                            style={{ width: `${Math.max(used, 0) * 100}%` }}
-                                        ></span>
+                                        <span className={used >= 0.8 ? "is-high" : ""} style={{ width: `${used * 100}%` }}></span>
                                     </div>
                                     <span className="ex-balance__meta">
-                                        {Math.round(Math.max(used, 0) * 100)}% of {formatInrWhole(c.creditLimit!)} limit used
+                                        {Math.round(used * 100)}% of {formatInrWhole(c.creditLimit!)} limit used
                                     </span>
                                 </>
                             )}
                             <span className="ex-balance__meta">
-                                {c.statementDay
-                                    ? `Cycle ${formatDate(c.cycleStart!)} – ${formatDate(c.nextStatementDate!)} · next statement ${formatDate(c.nextStatementDate!)}`
-                                    : "Add a statement day to see your billing cycle"}
+                                {c.statementDay ? (
+                                    `Cycle ${formatDate(c.cycleStart!)} – ${formatDate(c.nextStatementDate!)} · next statement ${formatDate(c.nextStatementDate!)}`
+                                ) : (
+                                    <>
+                                        <Link to={setBalanceLink(c.accountId)}>Add a statement day</Link> to see your billing cycle
+                                    </>
+                                )}
                             </span>
+                            <Source account={c} />
                         </div>
                     );
                 })}
             </div>
 
-            {missing > 0 && (
+            {calculated > 0 && (
                 <p className="ex-balances__note">
-                    {missing} account{missing === 1 ? " has" : "s have"} no starting balance, so {missing === 1 ? "its" : "their"} balance
-                    can't be shown. <Link to="/expenses/accounts">Set it on the Accounts page</Link>.
+                    {calculated === 1 ? "One balance is" : `${calculated} balances are`} calculated only from the transactions
+                    you've recorded. If {calculated === 1 ? "it doesn't" : "they don't"} match your bank or card app, use
+                    “Set actual balance” to enter the real figure once; transactions from that day on keep it up to date.
                 </p>
             )}
         </section>
