@@ -5,6 +5,7 @@ import { createCategory, deleteCategory, getCategories, updateCategory } from ".
 import { Category, CategoryInput } from "../../../API/Expenses/Categories/types";
 import { TransactionType } from "../../../API/Expenses/Transactions/types";
 import CategoryIcon from "../Transactions/CategoryIcon";
+import { TableSkeleton } from "../Skeletons";
 import { CategoryFormDialog, DeleteCategoryDialog } from "./CategoryDialogs";
 
 type Dialog =
@@ -92,7 +93,7 @@ const Categories = () => {
                     ))}
                 </div>
 
-                {loading && <p className="ex-muted">Loading…</p>}
+                {loading && <TableSkeleton rows={6} cols={["45%", "70%", "30%", "50%"]} icon />}
                 {error && <p className="ex-errors" role="alert">{error}</p>}
 
                 {!loading && !error && (

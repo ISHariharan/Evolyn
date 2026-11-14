@@ -949,3 +949,86 @@
 }
 
 .ex-balance__meta a { color: var(--title-color); text-decoration: underline; }
+
+/* ── Loading skeletons ("glass" shimmer) ────────────── */
+.ex-bone {
+  position: relative;
+  display: block;
+  flex-shrink: 0;
+  max-width: 100%;
+  overflow: hidden;
+  border-radius: 6px;
+  background: var(--divider);
+
+  // A soft band of light sweeping across, like light over glass
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(90deg, transparent 0%, var(--shine) 50%, transparent 100%);
+    animation: ex-shimmer 1.4s ease-in-out infinite;
+  }
+}
+
+.ex-bone--round { border-radius: 50%; }
+
+@keyframes ex-shimmer {
+  100% { transform: translateX(100%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ex-bone::after { animation: none; }
+  .ex-bone { animation: ex-pulse 1.6s ease-in-out infinite; }
+  @keyframes ex-pulse { 50% { opacity: 0.55; } }
+}
+
+.ex-skel__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.ex-skel__inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  width: 100%;
+}
+
+.ex-skel__meter {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.ex-skel__list-row {
+  padding: 0.625rem 0;
+  border-bottom: 1px solid var(--divider);
+
+  &:last-child { border-bottom: none; }
+}
+
+.ex-skel__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.ex-skel__table td { padding-top: 0.875rem; padding-bottom: 0.875rem; }
+
+// Visually hidden, still read by screen readers
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

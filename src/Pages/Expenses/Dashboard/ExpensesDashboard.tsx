@@ -10,6 +10,7 @@ import { Period, formatDate, formatInrWhole, periodRange, toLocalIsoDate, todayL
 import CategoryIcon from "../Transactions/CategoryIcon";
 import { CHART_COLORS, PaceChart, TrendChart } from "./charts";
 import Balances from "./Balances";
+import { DashboardSkeleton } from "../Skeletons";
 
 const DASHBOARD_PERIODS: { value: Period; label: string }[] = [
     { value: "THIS_MONTH", label: "This month" },
@@ -217,7 +218,7 @@ const ExpensesDashboard = () => {
             <Balances userId={userId} />
 
             {error && <p className="ex-errors" role="alert">{error}</p>}
-            {!error && !s && <p className="ex-muted">Loading…</p>}
+            {!error && !s && <DashboardSkeleton />}
 
             {s && (
                 <>

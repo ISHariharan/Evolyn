@@ -5,6 +5,7 @@ import { useStore } from "../../../Store/GlobalStore/GlobalStore";
 import { createAccount, deleteAccount, getAccounts, updateAccount } from "../../../API/Expenses/Accounts/api";
 import { ACCOUNT_TYPES, Account, AccountType, accountTypeMeta } from "../../../API/Expenses/Accounts/types";
 import { formatDate, todayLocal } from "../utils";
+import { AccountListSkeleton } from "../Skeletons";
 
 const emptyForm = () => ({
     name: "",
@@ -136,7 +137,7 @@ const Accounts = () => {
             <div className="ex-two-col">
                 <section className="ex-card">
                     <h2 className="ex-card__title">Your accounts</h2>
-                    {loading && <p className="ex-muted">Loading…</p>}
+                    {loading && <AccountListSkeleton />}
                     {!loading && listError && <p className="ex-errors" role="alert">{listError}</p>}
                     {!loading && !listError && accounts.length === 0 && (
                         <p className="ex-muted">No accounts yet. Add your first one using the form.</p>

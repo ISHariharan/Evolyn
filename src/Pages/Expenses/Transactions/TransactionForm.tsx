@@ -18,6 +18,7 @@ import {
     TransactionKind,
 } from "../../../API/Expenses/Transactions/types";
 import { todayLocal } from "../utils";
+import { FormSkeleton } from "../Skeletons";
 
 // A sensible payment method when the user picks an account
 const defaultMethodFor = (accountType: AccountType): PaymentMethod =>
@@ -185,7 +186,7 @@ const TransactionForm = () => {
             </header>
 
             {loadError && <p className="ex-errors" role="alert">{loadError}</p>}
-            {!loadError && accounts === null && <p className="ex-muted">Loading…</p>}
+            {!loadError && accounts === null && <FormSkeleton />}
 
             {/* Every transaction needs an account, so ask for one first */}
             {accounts !== null && accounts.length === 0 && (

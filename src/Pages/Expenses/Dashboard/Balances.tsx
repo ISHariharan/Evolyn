@@ -4,6 +4,7 @@ import { getAccountBalances } from "../../../API/Expenses/Dashboard/api";
 import { AccountBalance } from "../../../API/Expenses/Dashboard/types";
 import { accountLabel, accountTypeMeta } from "../../../API/Expenses/Accounts/types";
 import { formatDate, formatInrWhole, todayLocal } from "../utils";
+import { BalancesSkeleton } from "../Skeletons";
 
 // Opens the Accounts page with this account's edit form already open
 const setBalanceLink = (accountId: string) => `/expenses/accounts?edit=${accountId}`;
@@ -46,7 +47,7 @@ const Balances = ({ userId }: { userId: string }) => {
     }, [userId]);
 
     if (error) return <p className="ex-errors" role="alert">{error}</p>;
-    if (!accounts) return <p className="ex-muted">Loading balances…</p>;
+    if (!accounts) return <BalancesSkeleton />;
     if (accounts.length === 0) return null;
 
     const money = accounts.filter((a) => a.accountType !== "CREDIT_CARD");

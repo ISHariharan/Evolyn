@@ -7,6 +7,7 @@ import { Transaction, paymentMethodLabel } from "../../../API/Expenses/Transacti
 import { accountLabel } from "../../../API/Expenses/Accounts/types";
 import { formatDate, formatDateTime, formatInr } from "../utils";
 import CategoryIcon from "./CategoryIcon";
+import { DetailsSkeleton } from "../Skeletons";
 
 const TransactionDetails = () => {
     const { state } = useStore();
@@ -51,7 +52,7 @@ const TransactionDetails = () => {
             </header>
 
             {error && <p className="ex-errors" role="alert">{error}</p>}
-            {!error && !t && <p className="ex-muted">Loading…</p>}
+            {!error && !t && <DetailsSkeleton />}
 
             {t && (
                 <div className="ex-details">

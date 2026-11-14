@@ -15,6 +15,7 @@ import {
 } from "../../../API/Expenses/Transactions/types";
 import { PERIODS, Period, formatDate, formatInr, periodRange } from "../utils";
 import CategoryIcon from "./CategoryIcon";
+import { TableSkeleton } from "../Skeletons";
 
 const PAGE_SIZE = 10;
 
@@ -192,7 +193,11 @@ const TransactionsList = () => {
                     </div>
                 )}
 
-                {items.length > 0 && (
+                {!error && loading && (
+                    <TableSkeleton rows={8} cols={["70%", "80%", "75%", "70%", "60%", "60%", "70%", "30%"]} />
+                )}
+
+                {!loading && items.length > 0 && (
                     <div className="ex-table-wrap">
                         <table className="ex-table">
                             <thead>
