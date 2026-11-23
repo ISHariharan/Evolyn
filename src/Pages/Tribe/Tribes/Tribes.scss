@@ -245,3 +245,43 @@
   border-radius: 999px;
   background: var(--info-icon);
 }
+
+/* ── Streaks ────────────────────────────────────────── */
+.st-big {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: var(--font-semi-bold);
+  color: var(--title-color);
+
+  i { font-size: 1.6rem; align-self: center; color: var(--text-color-light); }
+  .st-flame { color: var(--warning-icon); }
+  span { font-size: 13px; font-weight: 400; color: var(--text-color); }
+}
+
+.st-today {
+  margin: 0;
+  font-size: 13px;
+  color: var(--warning-title);
+
+  &.is-done { color: var(--success-title); }
+}
+
+.st-strip {
+  display: flex;
+  gap: 4px;
+}
+
+.st-dot {
+  flex: 1 1 0;
+  max-width: 22px;
+  height: 10px;
+  border-radius: 3px;
+  background: var(--first-color-light);
+  border: 1px solid var(--divider);
+
+  &.is-on { background: var(--warning-icon); border-color: var(--warning-icon); }
+  &.is-today { outline: 2px solid var(--title-color); outline-offset: 1px; }
+}

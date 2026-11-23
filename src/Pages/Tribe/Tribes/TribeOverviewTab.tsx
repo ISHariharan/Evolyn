@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getTribeDashboard } from "../../../API/Tribe/Goals/api";
 import { TribeDashboard } from "../../../API/Tribe/Goals/types";
+import { getTribeStreaks } from "../../../API/Tribe/Streaks/api";
+import { TribeStreaks } from "../../../API/Tribe/Streaks/types";
+import StreakCards from "./StreakCards";
 import { Bone } from "../../Expenses/Skeletons";
 import { todayLocal } from "../../Expenses/utils";
 import GoalCard from "./GoalCard";
@@ -30,6 +33,12 @@ const TribeOverviewTab = ({ tribeId, archived }: { tribeId: string; archived: bo
     const [month, setMonth] = useState(thisMonth);
     const [data, setData] = useState<TribeDashboard | null>(null);
     const [error, setError] = useState("");
+    const [streaks, setStreaks] = useState<TribeStreaks | null>(null);
+
+    // Streaks are about today, so they're loaded once, whatever month is shown
+    useEffect(() => {
+        getTribeStreaks(tribeId).then((r) => setStreaks(r.ok && r.data ? r.data : null));
+    }, [tribeId]);
 
     useEffect(() => {
         let stale = false;
@@ -97,8 +106,9 @@ const TribeOverviewTab = ({ tribeId, archived }: { tribeId: string; archived: bo
                         </section>
                     </div>
 
+                    {month === thisMonth && streaks && <StreakCards data={streaks} />}
                     <DailyChart data={data} />
-                    <Leaderboard entries={data.leaderboard} />
+                    <Leaderboard entries={data.leaderboard} streaks={month === thisMonth ? streaks?.members : undefined} />
 
                     <p className="tr-note" style={{ margin: 0 }}>
                         What counts: activities of current members dated in {monthName(month)} (India time), for activity types

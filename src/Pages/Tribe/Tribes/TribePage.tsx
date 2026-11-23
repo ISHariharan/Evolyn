@@ -12,6 +12,7 @@ import { tribeInitials } from "./MyTribes";
 import TribeMembers from "./TribeMembers";
 import TribeFeed from "./TribeFeed";
 import TribeOverviewTab from "./TribeOverviewTab";
+import StreakRulesForm from "./StreakRulesForm";
 
 type Tab = "overview" | "activity" | "members";
 
@@ -168,6 +169,7 @@ const TribePage = () => {
                                     <button type="button" className="ex-btn ex-btn--danger" onClick={() => setConfirm("archive")}>Archive tribe</button>
                                 </div>
                             )}
+                            <StreakRulesForm tribeId={tribe.tribeId} />
                             <p className="tr-note" style={{ marginTop: "0.75rem" }}>Every member can change these settings.</p>
                         </section>
                     )}
