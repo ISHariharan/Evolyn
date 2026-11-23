@@ -8,18 +8,20 @@ export interface ApiResult<T> {
     status: number;
     data?: T;
     errors: string[];
+    code?: string; // machine-readable reason some errors carry, e.g. "OVERLAP"
 }
 
-// Turns the API's error JSON ({ message, errors: [...] }) into a list of messages
-const readErrors = async (response: Response): Promise<string[]> => {
+// Turns the API's error JSON ({ message, errors: [...], code? }) into a list of messages
+const readErrors = async (response: Response): Promise<{ errors: string[]; code?: string }> => {
     try {
         const body = await response.json();
-        if (Array.isArray(body?.errors) && body.errors.length > 0) return body.errors;
-        if (body?.message) return [body.message];
+        const code = typeof body?.code === "string" ? body.code : undefined;
+        if (Array.isArray(body?.errors) && body.errors.length > 0) return { errors: body.errors, code };
+        if (body?.message) return { errors: [body.message], code };
     } catch {
         // body was not JSON
     }
-    return [`Request failed (${response.status})`];
+    return { errors: [`Request failed (${response.status})`] };
 };
 
 export const request = async <T>(path: string, init?: RequestInit): Promise<ApiResult<T>> => {
@@ -29,7 +31,8 @@ export const request = async <T>(path: string, init?: RequestInit): Promise<ApiR
             headers: { "Content-Type": "application/json", ...(init?.headers ?? {}) },
         });
         if (!response.ok) {
-            return { ok: false, status: response.status, errors: await readErrors(response) };
+            const { errors, code } = await readErrors(response);
+            return { ok: false, status: response.status, errors, code };
         }
         // 204 No Content (e.g. after DELETE) has no body to parse
         const data = response.status === 204 ? undefined : ((await response.json()) as T);

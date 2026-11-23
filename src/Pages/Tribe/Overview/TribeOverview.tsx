@@ -1,6 +1,7 @@
 import "../../Expenses/Expenses.scss";
 import "../Tribe.scss";
 import { useCallback, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { useStore } from "../../../Store/GlobalStore/GlobalStore";
 import { WEIGHT_SAVED_EVENT, getWeightHistory } from "../../../API/Tribe/Weight/api";
 import { WeightEntry } from "../../../API/Tribe/Weight/types";
@@ -30,6 +31,11 @@ const TribeOverview = () => {
                 <div>
                     <h1 className="ex-title">Tribe</h1>
                     <p className="ex-subtitle">Your workouts and estimated calories</p>
+                </div>
+                <div className="ex-header__actions">
+                    <Link to="/tribe/activities/new" className="ex-btn ex-btn--primary">
+                        <i className="bx bx-plus" aria-hidden="true"></i>Log activity
+                    </Link>
                 </div>
             </header>
 

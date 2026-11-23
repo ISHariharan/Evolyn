@@ -14,6 +14,7 @@ import Accounts from "./Pages/Expenses/Accounts/Accounts";
 import ExpensesDashboard from "./Pages/Expenses/Dashboard/ExpensesDashboard";
 import Categories from "./Pages/Expenses/Categories/Categories";
 import TribeOverview from "./Pages/Tribe/Overview/TribeOverview";
+import LogActivity from "./Pages/Tribe/Activities/LogActivity";
 import WeightPrompt from "./Pages/Tribe/Weight/WeightPrompt";
 import ProtectedRoute from "./Components/ProtectedRoute/ProtectedRoute";
 import { getAllWorkspaces } from "./API/StrideWorkspace/Retrieve/index";
@@ -60,6 +61,8 @@ function App() {
           <Route path="/expenses/accounts" element={<ProtectedRoute><Accounts /></ProtectedRoute>} />
           <Route path="/expenses/categories" element={<ProtectedRoute><Categories /></ProtectedRoute>} />
           <Route path="/tribe" element={<ProtectedRoute><TribeOverview /></ProtectedRoute>} />
+          <Route path="/tribe/activities/new" element={<ProtectedRoute><LogActivity /></ProtectedRoute>} />
+          <Route path="/tribe/activities/:activityId/edit" element={<ProtectedRoute><LogActivity key="edit" /></ProtectedRoute>} />
           <Route path="/explore" element={<Explore />} />
           <Route path="/loader" element={<ApplicationLoader />} />
         </Routes>
