@@ -9,6 +9,8 @@ import { WeightEntry } from "../../../API/Tribe/Weight/types";
 import { deleteActivity, getActivities } from "../../../API/Tribe/Activities/api";
 import { Activity, ActivityList } from "../../../API/Tribe/Activities/types";
 import { getCatalogue } from "../../../API/Tribe/Activities/catalogue";
+import { getMyStreak } from "../../../API/Tribe/Streaks/api";
+import { MyStreak } from "../../../API/Tribe/Streaks/types";
 import { Catalogue } from "../../../API/Tribe/Activities/catalogueTypes";
 import { formatDate, periodRange, Period } from "../../Expenses/utils";
 import { Bone } from "../../Expenses/Skeletons";
@@ -48,6 +50,7 @@ const TribeOverview = () => {
     const [list, setList] = useState<ActivityList | null>(null);
     const [listError, setListError] = useState("");
     const [catalogue, setCatalogue] = useState<Catalogue | null>(null);
+    const [streak, setStreak] = useState<MyStreak | null>(null);
     const [weights, setWeights] = useState<WeightEntry[] | null>(null);
     const [toDelete, setToDelete] = useState<Activity | null>(null);
     const [flash, setFlash] = useState<string>((location.state as { flash?: string } | null)?.flash ?? "");
@@ -84,6 +87,10 @@ const TribeOverview = () => {
     useEffect(() => {
         getCatalogue().then((r) => r.ok && r.data && setCatalogue(r.data));
     }, []);
+    // Streaks are about today; reload after an activity is added or deleted
+    useEffect(() => {
+        getMyStreak().then((r) => setStreak(r.ok && r.data ? r.data : null));
+    }, [list]);
 
     const countsByHeading = useMemo(
         () => new Map((catalogue?.headings ?? []).map((h) => [h.code, h.countsForGoals])),
@@ -157,6 +164,18 @@ const TribeOverview = () => {
                 <section className="ex-card">
                     <span className="tr-stat__label">Time active</span>
                     {list ? <span className="tr-stat__value">{duration(list.totalMinutes)}</span> : <Bone w="50%" h={26} />}
+                </section>
+                <section className="ex-card">
+                    <span className="tr-stat__label">Your streak</span>
+                    {streak ? (
+                        <>
+                            <span className="tr-stat__value">{streak.current} {streak.current === 1 ? "day" : "days"}</span>
+                            <span className="tr-note">
+                                best {streak.best}
+                                {streak.activeToday ? " · kept today" : streak.atRisk ? ` · log ${streak.minMinutes}+ min today to keep it` : ""}
+                            </span>
+                        </>
+                    ) : <Bone w="40%" h={26} />}
                 </section>
                 <section className="ex-card">
                     <span className="tr-stat__label">Activities</span>
