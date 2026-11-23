@@ -28,7 +28,7 @@ const readExpanded = () => {
 };
 
 // The store has held workspaces in a few shapes over time; accept all of them
-const toWorkspaceList = (raw: any): any[] =>
+export const toWorkspaceList = (raw: any): any[] =>
     Array.isArray(raw) ? raw
     : Array.isArray(raw?.workspaces) ? raw.workspaces
     : Array.isArray(raw?.data) ? raw.data
