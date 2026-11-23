@@ -1,9 +1,12 @@
 import { authHeaders, handleUnauthorized } from "../auth";
 
 // Shared fetch helper for the Expenses and Tribe modules.
-// Leading slash matters: "/evolyn/api" always resolves from the site root.
-// The dev server's "proxy" setting (package.json) forwards it to Evolyn-API on :3001.
-export const evolynApi = "/evolyn/api";
+// Where Evolyn-API lives.
+// Production (.env.production): the browser calls Render directly. Going through Vercel's
+// rewrite made Render's Cloudflare see bursts from Vercel's shared servers and answer 429.
+// Locally REACT_APP_API_ORIGIN is unset, so it's "/evolyn/api" and the dev server's
+// "proxy" setting (package.json) forwards it to Evolyn-API on :3001.
+export const evolynApi = `${process.env.REACT_APP_API_ORIGIN ?? ""}/evolyn/api`;
 
 export interface ApiResult<T> {
     ok: boolean;

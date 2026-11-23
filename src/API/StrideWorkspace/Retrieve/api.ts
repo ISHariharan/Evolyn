@@ -1,7 +1,7 @@
 
 import { authHeaders, handleUnauthorized } from "../../auth";
 
-const evolynAPI = '/evolyn/api'
+import { evolynApi as evolynAPI } from "../../Expenses/http";
 
 export const getAllWorkspacesForUser = async (userId: string) => {
     const url = `${evolynAPI}/retrieve/workspaces?userId=${encodeURIComponent(userId)}`;

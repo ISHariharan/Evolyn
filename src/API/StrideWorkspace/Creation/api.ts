@@ -1,7 +1,7 @@
 import { CreateWorkspace } from "../../../Components/CreateStrideWorkspaceDialog/types"
 import { authHeaders, handleUnauthorized } from "../../auth";
 
-const evolynApi = '/evolyn/api';
+import { evolynApi } from "../../Expenses/http";
 
 
 export const workspaceCreation = async (workspaceDetails : CreateWorkspace, userId : any) => {

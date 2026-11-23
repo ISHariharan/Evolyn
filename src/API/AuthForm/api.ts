@@ -1,7 +1,5 @@
 import { userDetailsType } from "../../Components/AuthForm/types";
-import { request } from "../Expenses/http";
-
-const evolynApi = '/evolyn/api';
+import { evolynApi, request } from "../Expenses/http";
 
 export const storeUserDetails = async (storeUserDetails : userDetailsType) => {
     const url = `${evolynApi}/store/userdetails`;
