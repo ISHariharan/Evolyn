@@ -1,0 +1,100 @@
+/* Challenge pages. Cards, buttons and fields come from Expenses.scss (ex-*),
+   Tribe.scss (tr-*) and Tribes.scss (tb-*, gl-*). */
+
+.ch-tags { display: flex; flex-wrap: wrap; gap: 0.375rem; }
+
+.ch-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem 0.5rem;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: var(--font-medium);
+  background: var(--first-color-light);
+  color: var(--title-color);
+
+  &--active { background: var(--success-bg); color: var(--success-title); }
+  &--upcoming { background: var(--info-bg); color: var(--info-title); }
+  &--review { background: var(--warning-bg); color: var(--warning-title); }
+  &--draft, &--done { background: var(--first-color-light); color: var(--text-color); }
+}
+
+.ch-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-decoration: none;
+  color: inherit;
+  &:hover { border-color: var(--first-color); }
+}
+
+.ch-card__name { margin: 0; font-size: 16px; font-weight: var(--font-semi-bold); color: var(--title-color); }
+
+.ch-types {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.625rem;
+}
+
+.ch-type {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+  padding: 0.75rem;
+  border: 1px solid var(--divider);
+  border-radius: 10px;
+  background: var(--container-color);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+
+  strong { font-size: 14px; color: var(--title-color); }
+  span { font-size: 12px; color: var(--text-color); }
+
+  &.is-active { border: 2px solid var(--first-color); background: var(--first-color-light); padding: calc(0.75rem - 1px); }
+  &:disabled { cursor: not-allowed; opacity: 0.6; }
+}
+
+.ch-steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 13px;
+  color: var(--text-color-light);
+
+  li { display: flex; align-items: center; gap: 0.375rem; }
+  li::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--divider); }
+  li.is-done { color: var(--text-color); }
+  li.is-done::before { background: var(--success-icon); }
+  li.is-now { color: var(--title-color); font-weight: var(--font-semi-bold); }
+  li.is-now::before { background: var(--button-color); box-shadow: 0 0 0 3px var(--first-color-light); }
+}
+
+.ch-kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+
+  > div { display: flex; flex-direction: column; gap: 0.125rem; }
+}
+
+.ch-teams {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+
+  > div {
+    padding: 1rem;
+    border: 1px solid var(--divider);
+    border-radius: 10px;
+    text-align: center;
+  }
+  > div.is-ahead { border-color: var(--success-icon); background: var(--success-bg); }
+  strong { display: block; font-size: 1.5rem; color: var(--title-color); font-variant-numeric: tabular-nums; }
+}
+
+.ch-done { color: var(--success-title); font-weight: var(--font-medium); }

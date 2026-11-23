@@ -19,6 +19,8 @@ import MyTribes from "./Pages/Tribe/Tribes/MyTribes";
 import CreateTribe from "./Pages/Tribe/Tribes/CreateTribe";
 import JoinTribe from "./Pages/Tribe/Tribes/JoinTribe";
 import TribePage from "./Pages/Tribe/Tribes/TribePage";
+import ChallengeForm from "./Pages/Tribe/Challenges/ChallengeForm";
+import ChallengePage from "./Pages/Tribe/Challenges/ChallengePage";
 import WeightPrompt from "./Pages/Tribe/Weight/WeightPrompt";
 import ProfileIdPrompt from "./Components/ProfileId/ProfileIdPrompt";
 import ProtectedRoute from "./Components/ProtectedRoute/ProtectedRoute";
@@ -83,6 +85,9 @@ function App() {
           <Route path="/tribe/tribes/new" element={<ProtectedRoute><CreateTribe /></ProtectedRoute>} />
           <Route path="/tribe/join/:code" element={<JoinTribe />} />
           <Route path="/tribe/tribes/:tribeId" element={<ProtectedRoute><TribePage /></ProtectedRoute>} />
+          <Route path="/tribe/tribes/:tribeId/challenges/new" element={<ProtectedRoute><ChallengeForm /></ProtectedRoute>} />
+          <Route path="/tribe/challenges/:challengeId" element={<ProtectedRoute><ChallengePage /></ProtectedRoute>} />
+          <Route path="/tribe/challenges/:challengeId/edit" element={<ProtectedRoute><ChallengeForm key="edit" /></ProtectedRoute>} />
           <Route path="/explore" element={<Explore />} />
           <Route path="/loader" element={<ApplicationLoader />} />
         </Routes>

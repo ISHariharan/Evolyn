@@ -54,7 +54,7 @@ export function getNavBarContent(): NavSection[] {
                     children: [
                         { key: "log-activity", label: "Log activity", icon: "bx bx-plus-circle", path: "/tribe/activities/new" },
                         { key: "my-tribes", label: "My tribes", icon: "bx bx-group", path: "/tribe/tribes" },
-                        { key: "challenges", label: "Challenges", icon: "bx bx-trophy", soon: true },
+                        { key: "challenges", label: "Challenges", icon: "bx bx-trophy", path: "/tribe/tribes" },
                     ],
                 },
             ],
