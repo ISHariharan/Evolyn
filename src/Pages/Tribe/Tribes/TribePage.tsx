@@ -11,8 +11,9 @@ import { Bone } from "../../Expenses/Skeletons";
 import { tribeInitials } from "./MyTribes";
 import TribeMembers from "./TribeMembers";
 import TribeFeed from "./TribeFeed";
+import TribeOverviewTab from "./TribeOverviewTab";
 
-type Tab = "activity" | "members";
+type Tab = "overview" | "activity" | "members";
 
 /** /tribe/tribes/:tribeId - one tribe. Members only (the server checks). */
 const TribePage = () => {
@@ -21,8 +22,9 @@ const TribePage = () => {
     const location = useLocation();
     // The tab is in the address (?tab=members) so a refresh or shared link keeps it
     const [params, setParams] = useSearchParams();
-    const tab: Tab = params.get("tab") === "members" ? "members" : "activity";
-    const showTab = (t: Tab) => setParams(t === "activity" ? {} : { tab: t }, { replace: true });
+    const tabParam = params.get("tab");
+    const tab: Tab = tabParam === "members" || tabParam === "activity" ? tabParam : "overview";
+    const showTab = (t: Tab) => setParams(t === "overview" ? {} : { tab: t }, { replace: true });
 
     const [tribe, setTribe] = useState<TribeDetail | null>(null);
     const [loadError, setLoadError] = useState("");
@@ -122,6 +124,10 @@ const TribePage = () => {
             {tribe && (
                 <>
                     <div className="ex-tabs" role="tablist" aria-label="Tribe sections">
+                        <button type="button" role="tab" aria-selected={tab === "overview"}
+                                className={tab === "overview" ? "is-active" : ""} onClick={() => showTab("overview")}>
+                            Overview
+                        </button>
                         <button type="button" role="tab" aria-selected={tab === "activity"}
                                 className={tab === "activity" ? "is-active" : ""} onClick={() => showTab("activity")}>
                             Activity
@@ -132,6 +138,7 @@ const TribePage = () => {
                         </button>
                     </div>
 
+                    {tab === "overview" && <TribeOverviewTab tribeId={tribe.tribeId} archived={tribe.archived} />}
                     {tab === "activity" && <TribeFeed tribeId={tribe.tribeId} />}
                     {tab === "members" && <TribeMembers tribe={tribe} onChange={setTribe} />}
 
