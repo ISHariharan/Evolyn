@@ -1,0 +1,89 @@
+/* Tribes pages. Cards, buttons and fields come from Expenses.scss (ex-*) and
+   Tribe.scss (tr-*); only tribe-specific pieces live here. */
+
+.tb-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.tb-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s;
+
+  &:hover { border-color: var(--first-color); }
+}
+
+.tb-card__head {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.tb-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border-radius: 12px;
+  background: var(--first-color-light);
+  color: var(--title-color);
+  font-weight: var(--font-semi-bold);
+}
+
+.tb-card__name {
+  margin: 0;
+  font-size: 16px;
+  font-weight: var(--font-semi-bold);
+  color: var(--title-color);
+  overflow-wrap: anywhere;
+}
+
+.tb-meta { font-size: 12px; color: var(--text-color); }
+
+.tb-new {
+  align-items: center;
+  justify-content: center;
+  min-height: 150px;
+  border-style: dashed;
+  text-align: center;
+
+  i { font-size: 1.75rem; color: var(--text-color-light); }
+}
+
+.tb-invite {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border-color: var(--first-color);
+}
+
+.tb-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.tb-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-end;
+  flex-wrap: wrap;
+
+  .ex-field { flex: 1 1 220px; margin-bottom: 0; }
+}
+
+.tb-section-title {
+  margin: 0 0 0.75rem;
+  font-size: 15px;
+  font-weight: var(--font-semi-bold);
+  color: var(--title-color);
+}
