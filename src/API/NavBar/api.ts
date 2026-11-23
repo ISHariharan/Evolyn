@@ -45,6 +45,18 @@ export function getNavBarContent(): NavSection[] {
                         { key: "insights", label: "Insights", icon: "bx bx-bulb", soon: true },
                     ],
                 },
+                {
+                    key: "tribe",
+                    label: "Tribe",
+                    icon: "bx bx-run",
+                    path: "/tribe", // your activity and weight
+                    requiresAuth: true,
+                    children: [
+                        { key: "log-activity", label: "Log activity", icon: "bx bx-plus-circle", soon: true },
+                        { key: "my-tribes", label: "My tribes", icon: "bx bx-group", soon: true },
+                        { key: "challenges", label: "Challenges", icon: "bx bx-trophy", soon: true },
+                    ],
+                },
             ],
         },
     ];
