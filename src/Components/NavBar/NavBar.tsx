@@ -296,7 +296,9 @@ const NavBar = () => {
                             {showLabels && (
                                 <span className="nv-user__text">
                                     <span className="nv-user__label">Signed in as</span>
-                                    <span className="nv-user__email" title={email}>{email}</span>
+                                    <span className="nv-user__email" title={email}>
+                                        {state.userDetails?.profileId ? `@${state.userDetails.profileId}` : email}
+                                    </span>
                                 </span>
                             )}
                             <button

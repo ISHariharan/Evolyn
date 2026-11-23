@@ -2,6 +2,8 @@ import "./AuthForm.scss";
 import { useState, useEffect } from "react";
 import { userDetails as storeUserDetailsApi, verifyUserDetails } from "../../API/AuthForm";
 import { setToken } from "../../API/auth";
+import "../ProfileId/ProfileId.scss";
+import { useProfileIdCheck } from "../ProfileId/useProfileIdCheck";
 import { userDetailsType } from "./types";
 import { generateUUID } from "../../Common/UUIDGenerator/UUIDGenerator";
 import SuccessToastMessage from "../../Common/SuccessToastMessage/SuccessToastMessage";
@@ -15,6 +17,8 @@ const AuthForm = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void })
     const [email, setEmail] = useState<string>("");
     const [passWord, setPassword] = useState<string>("");
     const [confirmPassword, setConfirmPassword] = useState<string>("");
+    const [profileId, setProfileId] = useState<string>("");
+    const profileCheck = useProfileIdCheck(profileId);
     const [isDisabled, setIsDisabled] = useState<boolean>(true);
     const [showSuccessToast, setShowSuccesToast] = useState(false);
     const [showErrorToast, setShowErrorToast] = useState(false);
@@ -64,13 +68,14 @@ const AuthForm = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void })
             !!email.trim() &&
             !!passWord &&
             passWord === confirmPassword &&
-            strength === "strong" 
+            strength === "strong" &&
+            profileCheck.status === "available"
         );
     };
 
     useEffect(() => {
         setIsDisabled(!isFormValid());
-    }, [firstName, lastName, email, passWord, confirmPassword, authFormType, strength]);
+    }, [firstName, lastName, email, passWord, confirmPassword, authFormType, strength, profileCheck.status]);
 
     useEffect(() => {
         console.log("Authenticated : ", state.authenticated);
@@ -102,7 +107,9 @@ const AuthForm = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void })
         }
       } else {
         setToastHeader(ErrorToastMessage);
-        setToastBody(response.data.error);
+        // The API answers { error } or { message, errors: [...] }
+        const d = response.data ?? {};
+        setToastBody(d.error ?? (Array.isArray(d.errors) ? d.errors.join(", ") : d.message) ?? "Something went wrong");
         setShowErrorToast(true);
         dispatch({type: "SET_AUTHENTICATED", payload : "false"});
       }
@@ -120,6 +127,7 @@ const AuthForm = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void })
                 lastName,
                 email,
                 password: passWord,
+                profileId: profileCheck.value,
             };
             const response = await storeUserDetailsApi(props);
             triggerToastMessage(response);
@@ -151,6 +159,7 @@ const AuthForm = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void })
         setEmail("");
         setPassword("");
         setConfirmPassword("");
+        setProfileId("");
     };
 
   if (!isOpen) return null;
@@ -200,6 +209,35 @@ const AuthForm = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void })
                 <span>Lastname</span>
               </label>
             </div>
+          )}
+
+          {authFormType === "SignUp" && (
+            <>
+              <label>
+                <input
+                  className="input"
+                  type="text"
+                  value={profileId}
+                  placeholder=""
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck={false}
+                  maxLength={21}
+                  onChange={(e) => setProfileId(e.target.value)}
+                  aria-describedby="signup-pid-status"
+                  required
+                />
+                <span>Profile ID (e.g. arun_k)</span>
+              </label>
+              <div
+                id="signup-pid-status"
+                className={`pid-status pid-status--${profileCheck.status}`}
+                aria-live="polite"
+                style={{ marginTop: -4 }}
+              >
+                {profileCheck.message || "Friends find you by this. Letters, numbers and _"}
+              </div>
+            </>
           )}
 
           <label>

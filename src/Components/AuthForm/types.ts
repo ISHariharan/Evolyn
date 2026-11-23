@@ -4,4 +4,5 @@ export interface userDetailsType{
     lastName? : string;
     email : string;
     password : string;
+    profileId? : string;
 };

@@ -21,14 +21,17 @@ const WeightPrompt = () => {
     const [errors, setErrors] = useState<string[]>([]);
     const [saving, setSaving] = useState(false);
 
+    // Asked after the Profile ID prompt, so the two never show at once
+    const hasProfileId = Boolean(state.userDetails?.profileId);
+
     useEffect(() => {
-        if (!state.authenticated || !userId) return;
+        if (!state.authenticated || !userId || !hasProfileId) return;
         let skipped = false;
         try { skipped = sessionStorage.getItem(SKIPPED_KEY) === "1"; } catch { /* storage blocked */ }
         if (skipped) return;
         // Only a clear "no weight yet" (404) opens it; a network error doesn't
         getLatestWeight(userId).then((r) => setOpen(!r.ok && r.status === 404));
-    }, [state.authenticated, userId]);
+    }, [state.authenticated, userId, hasProfileId]);
 
     if (!open) return null;
 

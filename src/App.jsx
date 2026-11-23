@@ -16,6 +16,7 @@ import Categories from "./Pages/Expenses/Categories/Categories";
 import TribeOverview from "./Pages/Tribe/Overview/TribeOverview";
 import LogActivity from "./Pages/Tribe/Activities/LogActivity";
 import WeightPrompt from "./Pages/Tribe/Weight/WeightPrompt";
+import ProfileIdPrompt from "./Components/ProfileId/ProfileIdPrompt";
 import ProtectedRoute from "./Components/ProtectedRoute/ProtectedRoute";
 import { getAllWorkspaces } from "./API/StrideWorkspace/Retrieve/index";
 import { useStore } from './Store/GlobalStore/GlobalStore';
@@ -79,6 +80,7 @@ function App() {
         </Routes>
         <Header/>
         <NavBar/>
+        <ProfileIdPrompt/>
         <WeightPrompt/>
       </BrowserRouter>
     </div>
