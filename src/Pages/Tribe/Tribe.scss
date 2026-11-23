@@ -86,3 +86,124 @@
   li:last-child { border-bottom: none; }
   span { color: var(--text-color); }
 }
+
+/* ── Activity picker ────────────────────────────────── */
+.tr-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.tr-picker__group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.tr-picker__label {
+  font-size: 13px;
+  font-weight: var(--font-medium);
+  color: var(--title-color);
+}
+
+.tr-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tr-chip {
+  min-height: 36px;
+  padding: 0 0.875rem;
+  border: 1px solid var(--divider);
+  border-radius: 999px;
+  background: var(--container-color);
+  color: var(--title-color);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+
+  &:hover { background: var(--first-color-light); }
+  &.is-active {
+    border-color: var(--first-color);
+    background: var(--first-color-light);
+    font-weight: var(--font-medium);
+  }
+  &--muted { color: var(--text-color); }
+}
+
+.tr-results {
+  ul {
+    max-height: 360px;
+    overflow-y: auto;
+    margin: 0.5rem 0;
+    padding: 0;
+    list-style: none;
+    border: 1px solid var(--divider);
+    border-radius: 10px;
+  }
+
+  li + li { border-top: 1px solid var(--divider); }
+}
+
+.tr-result {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  width: 100%;
+  padding: 0.625rem 0.75rem;
+  border: none;
+  background: none;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+
+  &:hover, &:focus-visible { background: var(--first-color-light); }
+}
+
+.tr-result__name { font-size: 14px; color: var(--title-color); }
+.tr-result__meta { font-size: 12px; color: var(--text-color); }
+
+.tr-picked {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.875rem 1rem;
+  border: 1px solid var(--first-color);
+  border-radius: 10px;
+  background: var(--first-color-light);
+}
+
+.tr-picked__main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.tr-picked__name { font-weight: var(--font-semi-bold); color: var(--title-color); }
+.tr-picked__meta { font-size: 13px; color: var(--text-color); }
+
+.tr-tag {
+  align-self: flex-start;
+  padding: 0.125rem 0.5rem;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: var(--font-medium);
+  background: var(--first-color-light);
+  color: var(--title-color);
+
+  &--muted { background: var(--warning-bg); color: var(--warning-title); }
+}
+
+/* The formula under the estimate */
+.tr-calc {
+  margin: 0.25rem 0 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  background: var(--first-color-light);
+  color: var(--title-color);
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 13px;
+}
