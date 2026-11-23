@@ -15,6 +15,10 @@ import ExpensesDashboard from "./Pages/Expenses/Dashboard/ExpensesDashboard";
 import Categories from "./Pages/Expenses/Categories/Categories";
 import TribeOverview from "./Pages/Tribe/Overview/TribeOverview";
 import LogActivity from "./Pages/Tribe/Activities/LogActivity";
+import MyTribes from "./Pages/Tribe/Tribes/MyTribes";
+import CreateTribe from "./Pages/Tribe/Tribes/CreateTribe";
+import JoinTribe from "./Pages/Tribe/Tribes/JoinTribe";
+import TribePage from "./Pages/Tribe/Tribes/TribePage";
 import WeightPrompt from "./Pages/Tribe/Weight/WeightPrompt";
 import ProfileIdPrompt from "./Components/ProfileId/ProfileIdPrompt";
 import ProtectedRoute from "./Components/ProtectedRoute/ProtectedRoute";
@@ -75,6 +79,10 @@ function App() {
           <Route path="/tribe" element={<ProtectedRoute><TribeOverview /></ProtectedRoute>} />
           <Route path="/tribe/activities/new" element={<ProtectedRoute><LogActivity /></ProtectedRoute>} />
           <Route path="/tribe/activities/:activityId/edit" element={<ProtectedRoute><LogActivity key="edit" /></ProtectedRoute>} />
+          <Route path="/tribe/tribes" element={<ProtectedRoute><MyTribes /></ProtectedRoute>} />
+          <Route path="/tribe/tribes/new" element={<ProtectedRoute><CreateTribe /></ProtectedRoute>} />
+          <Route path="/tribe/join/:code" element={<JoinTribe />} />
+          <Route path="/tribe/tribes/:tribeId" element={<ProtectedRoute><TribePage /></ProtectedRoute>} />
           <Route path="/explore" element={<Explore />} />
           <Route path="/loader" element={<ApplicationLoader />} />
         </Routes>
