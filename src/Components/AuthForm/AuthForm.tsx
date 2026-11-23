@@ -1,6 +1,7 @@
 import "./AuthForm.scss";
 import { useState, useEffect } from "react";
-import { userDetails as storeUserDetailsApi, verifyUserDetails, checkLoggedInUser } from "../../API/AuthForm";
+import { userDetails as storeUserDetailsApi, verifyUserDetails } from "../../API/AuthForm";
+import { setToken } from "../../API/auth";
 import { userDetailsType } from "./types";
 import { generateUUID } from "../../Common/UUIDGenerator/UUIDGenerator";
 import SuccessToastMessage from "../../Common/SuccessToastMessage/SuccessToastMessage";
@@ -84,21 +85,21 @@ const AuthForm = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void })
         }
     }, [passWord, authFormType]);
 
-    const triggerToastMessage = (response, user: { email: string; id: string }) => {
-      console.log("Response : ", response);
+    const triggerToastMessage = (response, user?: { email: string; id: string; firstName?: string; lastName?: string }) => {
       const SucessToastHeader = authFormType === 'SignIn' ? "Login Successful" : "Registration Successful";
       const ErrorToastMessage = authFormType === 'SignIn' ? "Login Failed" : "Registration Failed";
       if (response.ok) {
         setToastHeader(SucessToastHeader);
-        setToastBody(response.data.message);
+        setToastBody(authFormType === 'SignIn' ? response.data.message : "Account created. Log in to continue.");
         setShowSuccesToast(true);
-        dispatch({type: "SET_AUTHENTICATED", payload : "true"});
-        if(authFormType === 'SignIn') {
+        if (authFormType === 'SignIn' && user) {
+          // Logged in only with a token from the API (saved before this is called)
+          dispatch({type: "SET_USERDETAILS", payload : user});
+          dispatch({type: "SET_AUTHENTICATED", payload : "true"});
           onClose();
         } else {
-          swapAuthForm();
+          swapAuthForm(); // after registering, log in to get a token
         }
-        dispatch({type: "SET_USERDETAILS", payload : user});
       } else {
         setToastHeader(ErrorToastMessage);
         setToastBody(response.data.error);
@@ -121,22 +122,19 @@ const AuthForm = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void })
                 password: passWord,
             };
             const response = await storeUserDetailsApi(props);
-            const user = { email, id: uuid };
-            triggerToastMessage(response, user);
+            triggerToastMessage(response);
         } else {
             const props: userDetailsType = {
                 email,
                 password: passWord,
             };
+            // On success the API answers { token, user: { id, email, firstName, lastName } }
             const response = await verifyUserDetails(props);
-            let id = '';
-            if (response.ok) {
-                const lookup = await checkLoggedInUser(email);
-                if (lookup.ok) {
-                    id = lookup.data?.uuid || lookup.data?.id || '';
-                }
+            let user;
+            if (response.ok && response.data?.token) {
+                setToken(response.data.token);
+                user = response.data.user;
             }
-            const user = { email, id };
             dispatch({type: "SET_AUTHENTICATOR", payload: false});
             dispatch({type: "SET_THEME", payload: "light"});
             dispatch({type: "SET_USERDETAILS", payload: ""});

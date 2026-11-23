@@ -1,4 +1,5 @@
 import { userDetailsType } from "../../Components/AuthForm/types";
+import { request } from "../Expenses/http";
 
 const evolynApi = '/evolyn/api';
 
@@ -49,26 +50,6 @@ export const verifyUser = async (userDetails : userDetailsType) => {
     };
 }
 
-export const checkLoggedInUserDetails = async (email : string) => {
-    const url = `${evolynApi}/verify/loggedin/user`;
-    const response = await fetch(url, {
-        method : 'POST',
-        headers : {
-            "Content-Type": "application/json",
-        },
-        body : JSON.stringify({"email" : email}),
-    })
-    let data = null;
-    try {
-        data = await response.json();
-    } catch (err) {
-        data = err;
-    }
-   
-    return {
-        ok: response.ok,
-        status: response.status,
-        statusText: response.statusText,
-        data,
-    };
-}
+// Your own details, from the login token (replaces the old look-up-anyone-by-email call)
+export const getMe = () =>
+    request<{ id: string; email: string; firstName: string; lastName: string }>("/me");

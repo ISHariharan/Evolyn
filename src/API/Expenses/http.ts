@@ -1,4 +1,6 @@
-// Shared fetch helper for the Expenses module.
+import { authHeaders, handleUnauthorized } from "../auth";
+
+// Shared fetch helper for the Expenses and Tribe modules.
 // Leading slash matters: "/evolyn/api" always resolves from the site root.
 // The dev server's "proxy" setting (package.json) forwards it to Evolyn-API on :3001.
 export const evolynApi = "/evolyn/api";
@@ -28,8 +30,9 @@ export const request = async <T>(path: string, init?: RequestInit): Promise<ApiR
     try {
         const response = await fetch(`${evolynApi}${path}`, {
             ...init,
-            headers: { "Content-Type": "application/json", ...(init?.headers ?? {}) },
+            headers: { "Content-Type": "application/json", ...authHeaders(), ...(init?.headers ?? {}) },
         });
+        if (response.status === 401) handleUnauthorized(); // token missing or expired: log out
         if (!response.ok) {
             const { errors, code } = await readErrors(response);
             return { ok: false, status: response.status, errors, code };

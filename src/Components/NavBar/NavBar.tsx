@@ -1,4 +1,5 @@
 import "./NavBar.scss";
+import { clearToken } from "../../API/auth";
 import { FocusEvent, MouseEvent, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getNavBarContent } from "../../API/NavBar/api";
@@ -172,6 +173,7 @@ const NavBar = () => {
         setShowLogout(false);
         if (result !== "logout") return;
         navigate("/");
+        clearToken();
         dispatch({ type: "SET_AUTHENTICATED", payload: false });
         dispatch({ type: "SET_USERDETAILS", payload: { email: "", id: "" } });
     };

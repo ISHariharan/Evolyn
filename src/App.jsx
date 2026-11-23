@@ -21,6 +21,7 @@ import { getAllWorkspaces } from "./API/StrideWorkspace/Retrieve/index";
 import { useStore } from './Store/GlobalStore/GlobalStore';
 import ApplicationLoader from './Common/ApplicationLoader/ApplicationLoader';
 import {mountLoader} from "./Common/ApplicationLoader/loaderMount";
+import { LOGGED_OUT_EVENT } from "./API/auth";
 
 function App() {
   const {state, dispatch} = useStore();
@@ -46,6 +47,16 @@ function App() {
   useEffect(() => {
     mountLoader();
   }, []);
+
+  // The API rejected the login token (expired or invalid): log out
+  useEffect(() => {
+    const loggedOut = () => {
+      dispatch({ type: "SET_AUTHENTICATED", payload: false });
+      dispatch({ type: "SET_USERDETAILS", payload: { email: "", id: "" } });
+    };
+    window.addEventListener(LOGGED_OUT_EVENT, loggedOut);
+    return () => window.removeEventListener(LOGGED_OUT_EVENT, loggedOut);
+  }, [dispatch]);
   return (
     <div className="App">
       <BrowserRouter>

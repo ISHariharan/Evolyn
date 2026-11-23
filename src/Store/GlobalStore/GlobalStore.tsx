@@ -1,6 +1,6 @@
 import { createContext, useContext, useReducer, useEffect } from "react";
 import { StoreType, StoreContextType } from "./GlobalStoreType"
-import { userDetails } from "../../API/AuthForm";
+import { getToken } from "../../API/auth";
 
 
 //Initializing Store
@@ -18,8 +18,9 @@ export const initialStoreState: StoreType = {
 const getInitialState = () => {
   const savedTheme = localStorage.getItem("theme") || "light";
 
+  // Logged in only if there's also a login token (older sessions without one log in again)
   const authenticatedRaw = localStorage.getItem("authenticated");
-  const authenticated = authenticatedRaw === "true";
+  const authenticated = authenticatedRaw === "true" && !!getToken();
 
   const userDetailsRaw = localStorage.getItem("userdetails");
   let parsedUserDetails: any = { email: "", id: "" };

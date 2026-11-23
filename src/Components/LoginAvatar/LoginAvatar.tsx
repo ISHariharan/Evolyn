@@ -1,41 +1,38 @@
 import "./LoginAvatar.scss";
 import { useStore } from "../../Store/GlobalStore/GlobalStore";
-import { useEffect, useState } from "react";
-import { checkLoggedInUser } from "../../API/AuthForm/index";
+import { useEffect } from "react";
+import { getMe } from "../../API/AuthForm/index";
 
-
+/**
+ * Shows your initials and name. The details come from GET /evolyn/api/me,
+ * which knows who you are from your login token.
+ */
 const LoginAvatar = () => {
     const { state, dispatch } = useStore();
-    const [avatarName, setAvatarName] = useState<string>("");
-    const [userFullName, setUserFullName] = useState<string>("");
-
-    const userDetails = state?.userDetails;
-    const email = userDetails?.email;
-
-    const loginStatus = async (userEmail: string) => {
-        const user_name = await checkLoggedInUser(userEmail);
-        setAvatarName(user_name?.data.firstName[0] + user_name?.data.lastName[0]);
-        setUserFullName(user_name?.data.firstName + " " + user_name?.data.lastName);
-        const userDetails = {
-            email : email,
-            id : user_name.data.Id,
-        };
-        dispatch({type: "SET_USERDETAILS", payload : userDetails});
-    }    
+    const user = state?.userDetails ?? {};
+    const firstName: string = user.firstName ?? "";
+    const lastName: string = user.lastName ?? "";
 
     useEffect(() => {
-        loginStatus(email);
-    }, [])
+        let stale = false;
+        getMe().then((r) => {
+            if (stale || !r.ok || !r.data) return; // a 401 logs out on its own
+            dispatch({ type: "SET_USERDETAILS", payload: { ...r.data } });
+        });
+        return () => { stale = true; };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
-    const initial = email ? email.charAt(0).toUpperCase() : "U";
+    const initials = `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+    const fullName = `${firstName} ${lastName}`.trim();
 
     return (
        <div className="LoginAvatar">
-            {avatarName && (
+            {initials && (
                 <ul className="LoginAvatar__menu">
                 <li style={{ '--i': '#a555ff', '--j': '#ea51ff' } as any}>
-                    <span className="icon">{avatarName}</span>
-                    <span className="title">{userFullName}</span>
+                    <span className="icon">{initials}</span>
+                    <span className="title">{fullName}</span>
                 </li>
                 </ul>
             )}
