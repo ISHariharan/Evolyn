@@ -1,14 +1,17 @@
 // A tribe's month: goal, progress, daily totals and leaderboard.
 // Everything is added up on the server from the activities (estimated kcal).
 
+// The tribe's goal is never typed in: it's the members' daily goals added up over the month
 export interface TribeGoal {
-    goalId: string;
     metricType: "CALORIES_BURNED";
     unit: "kcal";
-    target: number;
-    updatedAt: string;
-    updatedByName: string;
-    updatedByProfileId: string | null;
+    source: "MEMBERS";
+    target: number;            // the month's target
+    total: number;             // calories burned on days members had a goal (what progress counts)
+    startsOn: string;          // first day anyone had a goal this month
+    dailyTarget: number;       // today's daily goals added up
+    membersWithGoal: number;
+    memberCount: number;
 }
 
 export interface GoalProgress {
@@ -38,6 +41,10 @@ export interface LeaderboardEntry {
     rankByKcal: number;    // ties share a rank
     rankByDays: number;
     sharePercent: number;  // of the tribe's total
+    dailyGoal: number | null;    // their daily goal (null: not set)
+    monthTarget: number | null;  // their daily goals added up over the month
+    goalKcal: number;            // their calories on days they had a goal
+    goalPercent: number | null;  // of their own month target
 }
 
 export interface TribeDashboard {
@@ -48,11 +55,24 @@ export interface TribeDashboard {
     memberCount: number;
     total: number;
     averagePerDay: number | null;
-    goal: TribeGoal | null;
+    goal: TribeGoal | null;          // null until a member sets a daily goal
     progress: GoalProgress | null;
-    suggestedTarget: number | null;   // last month's target, to start from
-    canSetGoal: boolean;              // false for past months
+    membersWithGoal: number;
     daily: { date: string; kcal: number }[];
     leaderboard: LeaderboardEntry[];
     me: LeaderboardEntry | null;
+}
+
+// Your own daily goal and progress
+export interface DailyGoal {
+    today: string;
+    kcal: number | null;           // null: not set yet
+    effectiveFrom: string | null;
+    todayKcal: number;             // counted calories today
+    todayPercent: number | null;
+    month: string;
+    monthKcal: number;
+    monthTarget: number | null;    // your daily goals added up over the month
+    min: number;
+    max: number;
 }
