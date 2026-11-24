@@ -22,6 +22,7 @@ import TribePage from "./Pages/Tribe/Tribes/TribePage";
 import ChallengeForm from "./Pages/Tribe/Challenges/ChallengeForm";
 import ChallengePage from "./Pages/Tribe/Challenges/ChallengePage";
 import WeightPrompt from "./Pages/Tribe/Weight/WeightPrompt";
+import DailyGoalPrompt from "./Pages/Tribe/DailyGoal/DailyGoalPrompt";
 import ProfileIdPrompt from "./Components/ProfileId/ProfileIdPrompt";
 import ProtectedRoute from "./Components/ProtectedRoute/ProtectedRoute";
 import { getAllWorkspaces } from "./API/StrideWorkspace/Retrieve/index";
@@ -95,6 +96,7 @@ function App() {
         <NavBar/>
         <ProfileIdPrompt/>
         <WeightPrompt/>
+        <DailyGoalPrompt/>
       </BrowserRouter>
     </div>
   );

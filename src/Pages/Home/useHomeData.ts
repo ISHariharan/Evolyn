@@ -9,8 +9,8 @@ import { getMyStreak } from "../../API/Tribe/Streaks/api";
 import { MyStreak } from "../../API/Tribe/Streaks/types";
 import { getMyTribes } from "../../API/Tribe/Tribes/api";
 import { TribeSummary } from "../../API/Tribe/Tribes/types";
-import { getTribeDashboard } from "../../API/Tribe/Goals/api";
-import { TribeDashboard } from "../../API/Tribe/Goals/types";
+import { DAILY_GOAL_SAVED_EVENT, getDailyGoal, getTribeDashboard } from "../../API/Tribe/Goals/api";
+import { DailyGoal, TribeDashboard } from "../../API/Tribe/Goals/types";
 import { getChallenges } from "../../API/Tribe/Challenges/api";
 import { ChallengeSummary } from "../../API/Tribe/Challenges/types";
 import { toLocalIsoDate, todayLocal } from "../Expenses/utils";
@@ -25,6 +25,7 @@ export interface HomeData {
     transactions: Loadable<Transaction[]>;
     activities: Loadable<ActivityList>;
     streak: Loadable<MyStreak>;
+    dailyGoal: Loadable<DailyGoal>;
     tribe: Loadable<TribeSummary | false>;       // false = not in a tribe
     tribeDashboard: Loadable<TribeDashboard>;
     challenge: Loadable<ChallengeSummary | false>; // false = nothing running or coming up
@@ -40,7 +41,7 @@ const pickChallenge = (list: ChallengeSummary[]): ChallengeSummary | false =>
 export const useHomeData = (userId: string | undefined): HomeData => {
     const [data, setData] = useState<HomeData>({
         month: undefined, lastMonthSoFar: undefined, balances: undefined, transactions: undefined,
-        activities: undefined, streak: undefined, tribe: undefined, tribeDashboard: undefined, challenge: undefined,
+        activities: undefined, streak: undefined, dailyGoal: undefined, tribe: undefined, tribeDashboard: undefined, challenge: undefined,
     });
 
     useEffect(() => {
@@ -62,12 +63,22 @@ export const useHomeData = (userId: string | undefined): HomeData => {
         getTransactions(userId, { size: 6 }).then((r) => put({ transactions: r.ok && r.data ? r.data.items : null }));
         getActivities(userId).then((r) => put({ activities: r.ok ? r.data ?? null : null }));
         getMyStreak().then((r) => put({ streak: r.ok ? r.data ?? null : null }));
+        let tribeId: string | null = null;
+        const loadGoal = () => getDailyGoal().then((r) => put({ dailyGoal: r.ok ? r.data ?? null : null }));
+        // A new daily goal changes your tribe's target too
+        const goalSaved = () => {
+            loadGoal();
+            if (tribeId) getTribeDashboard(tribeId).then((r) => put({ tribeDashboard: r.ok ? r.data ?? null : null }));
+        };
+        loadGoal();
+        window.addEventListener(DAILY_GOAL_SAVED_EVENT, goalSaved);
 
         getMyTribes().then(async (r) => {
             if (!r.ok || !r.data) return put({ tribe: null, tribeDashboard: null, challenge: null });
             // Your oldest tribe is the one shown here; the Tribe pages have the rest
             const tribe = [...r.data].sort((a, b) => a.joinedAt.localeCompare(b.joinedAt))[0];
             if (!tribe) return put({ tribe: false, tribeDashboard: null, challenge: false });
+            tribeId = tribe.tribeId;
             put({ tribe });
             const [dash, challenges] = await Promise.all([getTribeDashboard(tribe.tribeId), getChallenges(tribe.tribeId)]);
             put({
@@ -76,7 +87,10 @@ export const useHomeData = (userId: string | undefined): HomeData => {
             });
         });
 
-        return () => { live = false; };
+        return () => {
+            live = false;
+            window.removeEventListener(DAILY_GOAL_SAVED_EVENT, goalSaved);
+        };
     }, [userId]);
 
     return data;

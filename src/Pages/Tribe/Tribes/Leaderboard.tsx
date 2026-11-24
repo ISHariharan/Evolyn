@@ -78,6 +78,13 @@ const Leaderboard = ({ entries, streaks }: { entries: LeaderboardEntry[]; streak
                                     </span>
                                 </div>
                                 <div className="gl-board__bar" style={{ width: `${(value / top) * 100}%` }}></div>
+                                {by === "kcal" && (
+                                    <span className="tr-note">
+                                        {e.dailyGoal != null
+                                            ? `Goal ${e.dailyGoal.toLocaleString("en-IN")} kcal/day${e.goalPercent != null ? ` · ${e.goalPercent}% of their month` : ""}`
+                                            : "No daily goal yet"}
+                                    </span>
+                                )}
                             </div>
                         </li>
                     );

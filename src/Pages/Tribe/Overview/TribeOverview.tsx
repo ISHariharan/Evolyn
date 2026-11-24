@@ -15,6 +15,7 @@ import { Catalogue } from "../../../API/Tribe/Activities/catalogueTypes";
 import { formatDate, periodRange, Period } from "../../Expenses/utils";
 import { Bone } from "../../Expenses/Skeletons";
 import TodayWeightCard from "../Weight/TodayWeightCard";
+import DailyGoalCard from "../DailyGoal/DailyGoalCard";
 
 const PERIODS: { value: Period; label: string }[] = [
     { value: "THIS_MONTH", label: "This month" },
@@ -254,6 +255,7 @@ const TribeOverview = () => {
                 </section>
 
                 <div className="tr-side">
+                    <DailyGoalCard />
                     <TodayWeightCard userId={userId} />
                     <section className="ex-card">
                         <h2 className="ex-card__title">Recent weights</h2>

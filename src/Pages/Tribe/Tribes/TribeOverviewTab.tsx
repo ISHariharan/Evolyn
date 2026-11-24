@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getTribeDashboard } from "../../../API/Tribe/Goals/api";
+import { DAILY_GOAL_SAVED_EVENT, getTribeDashboard } from "../../../API/Tribe/Goals/api";
 import { TribeDashboard } from "../../../API/Tribe/Goals/types";
 import { getTribeStreaks } from "../../../API/Tribe/Streaks/api";
 import { TribeStreaks } from "../../../API/Tribe/Streaks/types";
@@ -25,8 +25,8 @@ const monthName = (month: string) =>
 
 /**
  * Overview tab: the month's goal and progress, your share, the tribe's daily
- * calories and the leaderboard. Earlier months can be looked back on; next
- * month can be opened to set its goal in advance.
+ * calories and the leaderboard. Earlier months can be looked back on, and next
+ * month shows the target from everyone's current daily goals.
  */
 const TribeOverviewTab = ({ tribeId, archived }: { tribeId: string; archived: boolean }) => {
     const thisMonth = todayLocal().slice(0, 7);
@@ -34,6 +34,14 @@ const TribeOverviewTab = ({ tribeId, archived }: { tribeId: string; archived: bo
     const [data, setData] = useState<TribeDashboard | null>(null);
     const [error, setError] = useState("");
     const [streaks, setStreaks] = useState<TribeStreaks | null>(null);
+    // Bumped when someone saves a daily goal here, so the tribe's target is reloaded
+    const [goalVersion, setGoalVersion] = useState(0);
+
+    useEffect(() => {
+        const bump = () => setGoalVersion((v) => v + 1);
+        window.addEventListener(DAILY_GOAL_SAVED_EVENT, bump);
+        return () => window.removeEventListener(DAILY_GOAL_SAVED_EVENT, bump);
+    }, []);
 
     // Streaks are about today, so they're loaded once, whatever month is shown
     useEffect(() => {
@@ -50,7 +58,7 @@ const TribeOverviewTab = ({ tribeId, archived }: { tribeId: string; archived: bo
             else setData(r.data);
         });
         return () => { stale = true; };
-    }, [tribeId, month]);
+    }, [tribeId, month, goalVersion]);
 
     const me = data?.me;
 
@@ -84,7 +92,7 @@ const TribeOverviewTab = ({ tribeId, archived }: { tribeId: string; archived: bo
             {data && (
                 <>
                     <div className="tr-layout">
-                        <GoalCard tribeId={tribeId} data={data} readOnly={archived} onChange={setData} />
+                        <GoalCard data={data} readOnly={archived} />
                         <section className="ex-card" style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
                             <h2 className="tb-section-title" style={{ margin: 0 }}>{month === thisMonth ? "You this month" : `You in ${monthName(month)}`}</h2>
                             {me ? (
@@ -94,6 +102,9 @@ const TribeOverviewTab = ({ tribeId, archived }: { tribeId: string; archived: bo
                                     <div><span className="tr-stat__label">Rank</span><span className="gl-stat">#{me.rankByKcal} <small>of {data.memberCount}</small></span></div>
                                     <div><span className="tr-stat__label">Active days</span><span className="gl-stat">{me.activeDays}</span></div>
                                     <div><span className="tr-stat__label">Activities</span><span className="gl-stat">{me.sessions}</span></div>
+                                    <div><span className="tr-stat__label">Your goal</span>
+                                        <span className="gl-stat">{me.dailyGoal != null ? <>{kcal(me.dailyGoal)} <small>kcal/day</small></> : "Not set"}</span>
+                                        {me.goalPercent != null && <span className="tr-note">{me.goalPercent}% of your {kcal(me.monthTarget)} kcal</span>}</div>
                                 </div>
                             ) : (
                                 <p className="ex-muted">You're not counted in this month.</p>
@@ -113,7 +124,8 @@ const TribeOverviewTab = ({ tribeId, archived }: { tribeId: string; archived: bo
                     <p className="tr-note" style={{ margin: 0 }}>
                         What counts: activities of current members dated in {monthName(month)} (India time), for activity types
                         that count for goals (not sleeping, driving and similar). Activities marked "Only me" add to totals but are
-                        never shown in the feed. Calories are estimates: MET × weight × time.
+                        never shown in the feed. Calories are estimates: MET × weight × time. The goal is everyone's daily
+                        goal added up over the month's days, counted from the day each was set.
                     </p>
                 </>
             )}

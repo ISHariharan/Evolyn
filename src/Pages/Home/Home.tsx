@@ -79,7 +79,10 @@ const TodayStrip = ({ d }: { d: HomeData }) => {
             <div className="hm-today__grid">
                 {item("expenses", "bx-wallet", spentToday !== undefined ? formatInrWhole(spentToday) : undefined, "spent", d.month === null)}
                 {item("tribe", "bx-run", kcalToday !== undefined ? `${kcal(kcalToday)} kcal` : undefined,
-                    todays?.length ? todays.map((a) => shortName(a.description)).slice(0, 2).join(", ") : "burned", d.activities === null)}
+                    d.dailyGoal?.kcal != null
+                        ? `of your ${kcal(d.dailyGoal.kcal)} kcal goal${kcalToday !== undefined && kcalToday >= d.dailyGoal.kcal ? " · done" : ""}`
+                        : todays?.length ? todays.map((a) => shortName(a.description)).slice(0, 2).join(", ") : "burned",
+                    d.activities === null)}
                 {item("stride", "bx-time-five", minutesToday !== undefined ? duration(minutesToday) : undefined, "active", d.activities === null)}
                 {item("streak", "bxs-flame", d.streak ? `${d.streak.current} ${d.streak.current === 1 ? "day" : "days"}` : undefined,
                     d.streak ? `streak · best ${d.streak.best}` : "streak", d.streak === null)}
@@ -210,7 +213,7 @@ const TribeCard = ({ d }: { d: HomeData }) => {
                         <>
                             <div className="hm-big">
                                 <span className="hm-big__label">{t.name} · {monthName()} goal</span>
-                                <span className="hm-big__value">{kcal(dash.total)} <span className="hm-big__unit">of {kcal(dash.goal.target)} kcal</span></span>
+                                <span className="hm-big__value">{kcal(dash.goal.total)} <span className="hm-big__unit">of {kcal(dash.goal.target)} kcal</span></span>
                             </div>
                             <div className="hm-progress">
                                 <div className="hm-bar" role="img" aria-label={`${Math.round(dash.progress.percent)}% of the tribe goal reached`}>
@@ -218,7 +221,7 @@ const TribeCard = ({ d }: { d: HomeData }) => {
                                 </div>
                                 <span className="hm-small">
                                     {Math.round(dash.progress.percent)}%
-                                    {dash.me ? ` · you added ${kcal(dash.me.kcal)} kcal · rank ${dash.me.rankByKcal} of ${dash.memberCount}` : ""}
+                                    {dash.me ? ` · you added ${kcal(dash.me.goalKcal)} kcal · rank ${dash.me.rankByKcal} of ${dash.memberCount}` : ""}
                                 </span>
                             </div>
                         </>
@@ -226,7 +229,7 @@ const TribeCard = ({ d }: { d: HomeData }) => {
                         <div className="hm-big">
                             <span className="hm-big__label">{t.name} · {monthName()}</span>
                             <span className="hm-big__value">{kcal(dash.total)} <span className="hm-big__unit">kcal together</span></span>
-                            <span className="hm-big__sub">No goal for this month yet. <Link to={`/tribe/tribes/${t.tribeId}`}>Set one</Link></span>
+                            <span className="hm-big__sub">No goal yet: it's everyone's daily goals added up. <Link to="/tribe">Set yours</Link></span>
                         </div>
                     )}
 
