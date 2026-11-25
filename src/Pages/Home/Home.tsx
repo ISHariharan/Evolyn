@@ -9,6 +9,7 @@ import { TYPE_INFO, PHASE_LABEL, ChallengeSummary } from "../../API/Tribe/Challe
 import { formatInrWhole, todayLocal } from "../Expenses/utils";
 import { Bone } from "../Expenses/Skeletons";
 import { HomeData, useHomeData } from "./useHomeData";
+import { openLogin } from "../../API/Password/api";
 
 const kcal = (n: number) => Math.round(n).toLocaleString("en-IN");
 
@@ -36,6 +37,10 @@ const Welcome = () => (
         <header className="hm-hero">
             <h1 className="hm-hero__title">One place for your money, your workouts and your work</h1>
             <p className="ex-subtitle">Log in to see your day across every Evolyn module.</p>
+            <div className="hm-actions" style={{ marginTop: "1.25rem" }}>
+                <button type="button" className="ex-btn ex-btn--primary hm-btn" onClick={() => openLogin("signup")}>Create an account</button>
+                <button type="button" className="ex-btn ex-btn--secondary hm-btn" onClick={() => openLogin("login")}>Log in</button>
+            </div>
         </header>
         <div className="hm-modules">
             <section className="ex-card hm-card">
