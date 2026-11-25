@@ -30,6 +30,7 @@ export const changePassword = (currentPassword: string, newPassword: string) =>
         body: JSON.stringify({ currentPassword, newPassword }),
     });
 
-// Asks the header to open the login dialog (after a reset)
+// Asks the header to open the log in / sign up dialog, on a given view
 export const OPEN_LOGIN_EVENT = "evolyn:open-login";
-export const openLogin = () => window.dispatchEvent(new Event(OPEN_LOGIN_EVENT));
+export const openLogin = (view: "login" | "signup" | "forgot" = "login") =>
+    window.dispatchEvent(new CustomEvent(OPEN_LOGIN_EVENT, { detail: view }));

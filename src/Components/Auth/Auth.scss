@@ -1,0 +1,335 @@
+/* Log in / sign up / forgot password dialog.
+   Uses the theme tokens from index.css, so dark mode follows the app.
+   The brand panel stays dark in both themes. */
+
+.au-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(20, 16, 28, 0.55);
+  backdrop-filter: blur(3px);
+  font-family: var(--body-font);
+}
+
+.au-dialog {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 300px) minmax(0, 1fr);
+  width: min(880px, 100%);
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
+  border-radius: 18px;
+  background: var(--container-color);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.25);
+  text-align: left;
+}
+
+/* ── Brand panel ── */
+.au-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 2.25rem 2rem;
+  background: #221e28;
+  color: #e9e5f0;
+  border-radius: 18px 0 0 18px;
+}
+
+.au-brand__logo {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #ffffff;
+
+  img { width: 34px; height: 34px; object-fit: contain; }
+}
+
+.au-brand__line {
+  margin: 0;
+  font-size: 1.375rem;
+  line-height: 1.35;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.au-brand__list {
+  list-style: none;
+  margin: auto 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #c9c3d4;
+
+  li { display: grid; grid-template-columns: 10px 1fr; column-gap: 0.75rem; }
+  b { display: block; color: #ffffff; font-weight: 600; }
+}
+
+.au-dot {
+  width: 10px;
+  height: 10px;
+  margin-top: 5px;
+  border-radius: 3px;
+  grid-row: span 2;
+
+  &--expenses { background: #34d399; }
+  &--tribe { background: #b49aff; }
+  &--stride { background: #60a5fa; }
+}
+
+/* ── Form side ── */
+.au-main {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 2.25rem 1.75rem;
+  min-width: 0;
+}
+
+.au-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text-color);
+  font-size: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  &:hover { background: var(--first-color-light); color: var(--title-color); }
+}
+
+.au-tabs {
+  display: inline-flex;
+  align-self: flex-start;
+  gap: 4px;
+  padding: 4px;
+  margin-bottom: 1.5rem;
+  border-radius: 12px;
+  background: var(--first-color-light);
+
+  button {
+    min-height: 36px;
+    padding: 0 1rem;
+    border: none;
+    border-radius: 9px;
+    background: transparent;
+    color: var(--text-color);
+    font: inherit;
+    font-size: 14px;
+    font-weight: var(--font-medium);
+    cursor: pointer;
+  }
+  button.is-active { background: var(--container-color); color: var(--title-color); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); }
+}
+
+.au-back {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  min-height: 36px;
+  margin: 0 0 1rem -6px;
+  padding: 0 6px;
+  border: none;
+  background: none;
+  color: var(--text-color);
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+
+  &:hover { color: var(--title-color); }
+  i { font-size: 20px; }
+}
+
+.au-title { margin: 0; font-size: 1.5rem; font-weight: 600; color: var(--title-color); }
+.au-sub { margin: 0.25rem 0 1.25rem; font-size: 14px; color: var(--text-color); }
+
+.au-form { display: flex; flex-direction: column; gap: 1rem; }
+
+.au-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem; }
+
+.au-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+
+  label { font-size: 13px; font-weight: var(--font-medium); color: var(--title-color); }
+
+  input {
+    width: 100%;
+    min-height: 44px;
+    box-sizing: border-box;
+    padding: 0 0.875rem;
+    border: 1px solid var(--divider);
+    border-radius: 10px;
+    background: var(--body-color);
+    color: var(--title-color);
+    font: inherit;
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+
+    &:focus { border-color: var(--card-color); box-shadow: 0 0 0 3px rgba(163, 112, 255, 0.2); }
+    &[aria-invalid="true"] { border-color: var(--error-icon); }
+    &::placeholder { color: var(--text-color-light); }
+  }
+}
+
+.au-field__row { display: flex; justify-content: space-between; align-items: baseline; gap: 0.5rem; }
+
+.au-password {
+  position: relative;
+
+  input { padding-right: 48px; }
+}
+
+.au-password__toggle {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-color);
+  font-size: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  &:hover { color: var(--title-color); }
+}
+
+.au-prefix {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--divider);
+  border-radius: 10px;
+  background: var(--body-color);
+  transition: border-color 0.15s, box-shadow 0.15s;
+
+  span { display: flex; align-items: center; padding-left: 0.875rem; color: var(--text-color); font-size: 15px; }
+  input { border: none; background: transparent; padding-left: 2px; box-shadow: none !important; }
+  &:focus-within { border-color: var(--card-color); box-shadow: 0 0 0 3px rgba(163, 112, 255, 0.2); }
+}
+
+.au-mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace !important; letter-spacing: 0.04em; }
+
+.au-hint {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-color);
+
+  &--available { color: var(--success-title); }
+  &--taken, &--invalid { color: var(--error-icon); }
+}
+
+.au-link {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--title-color);
+  font: inherit;
+  font-size: 13px;
+  font-weight: var(--font-medium);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+
+  &:hover { color: var(--card-color); }
+}
+
+.au-submit {
+  min-height: 46px;
+  margin-top: 0.25rem;
+  border: none;
+  border-radius: 10px;
+  background: var(--button-color);
+  color: var(--button-text-color);
+  font: inherit;
+  font-size: 15px;
+  font-weight: var(--font-semi-bold);
+  cursor: pointer;
+  transition: opacity 0.15s;
+
+  &:hover:not(:disabled) { opacity: 0.9; }
+  &:disabled { opacity: 0.45; cursor: not-allowed; }
+}
+
+.au-error {
+  margin: 0;
+  padding: 0.625rem 0.75rem;
+  border-radius: 8px;
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--error-icon);
+  font-size: 13px;
+}
+
+.au-notice {
+  margin: 0;
+  padding: 0.625rem 0.75rem;
+  border-radius: 8px;
+  background: var(--success-bg);
+  color: var(--success-title);
+  font-size: 13px;
+}
+
+.au-fineprint { margin: 0; font-size: 12px; color: var(--text-color); line-height: 1.5; }
+
+.au-switch {
+  margin: 1.25rem 0 0;
+  padding-top: 1rem;
+  border-top: 1px solid var(--divider);
+  font-size: 13px;
+  color: var(--text-color);
+  text-align: center;
+}
+
+/* The password rules checklist (from the Account page) inside the dialog */
+.au-form .ac-rules { margin-top: 0.125rem; }
+
+/* ── Phones and small windows: one column, no brand panel ── */
+.au-mobile-logo { display: none; }
+@media (max-width: 760px) {
+  .au-overlay { padding: 0; align-items: stretch; }
+  .au-dialog {
+    grid-template-columns: minmax(0, 1fr);
+    width: 100%;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+  .au-brand { display: none; }
+  .au-mobile-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+    font-weight: 600;
+    font-size: 1.125rem;
+    color: var(--title-color);
+    img { width: 28px; height: 28px; object-fit: contain; }
+  }
+  .au-main { padding: 1.25rem 16px 2rem; }
+  .au-row { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* The /forgot-password page shows the same form in a card */
+.au-page-card { max-width: 520px; padding: 2rem; }
+@media (max-width: 760px) { .au-page-card { padding: 1.25rem 16px; } }
