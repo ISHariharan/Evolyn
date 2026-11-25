@@ -1,5 +1,6 @@
 import "./AuthForm.scss";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { userDetails as storeUserDetailsApi, verifyUserDetails } from "../../API/AuthForm";
 import { setToken } from "../../API/auth";
 import "../ProfileId/ProfileId.scss";
@@ -10,8 +11,9 @@ import SuccessToastMessage from "../../Common/SuccessToastMessage/SuccessToastMe
 import ErrorToastMessage from "../../Common/ErrorToastMessage/ErrorToastMessage";
 import { useStore } from "../../Store/GlobalStore/GlobalStore";
 
-const AuthForm = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
-    const [authFormType, setAuthFormType] = useState<"SignUp" | "SignIn">("SignUp");
+const AuthForm = ({ isOpen, onClose, initialMode = "SignUp" }: { isOpen: boolean; onClose: () => void; initialMode?: "SignUp" | "SignIn" }) => {
+    const navigate = useNavigate();
+    const [authFormType, setAuthFormType] = useState<"SignUp" | "SignIn">(initialMode);
     const [firstName, setFirstName] = useState<string>("");
     const [lastName, setLastName] = useState<string>("");
     const [email, setEmail] = useState<string>("");
@@ -263,6 +265,16 @@ const AuthForm = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void })
             />
             <span>Password</span>
           </label>
+
+          {authFormType === "SignIn" && (
+            <button
+              type="button"
+              className="AuthForm-forgot"
+              onClick={() => { onClose(); navigate("/forgot-password"); }}
+            >
+              Forgot password?
+            </button>
+          )}
 
           {authFormType === "SignUp" && (
             <>

@@ -13,6 +13,7 @@ import { DAILY_GOAL_SAVED_EVENT, getDailyGoal, getTribeDashboard } from "../../A
 import { DailyGoal, TribeDashboard } from "../../API/Tribe/Goals/types";
 import { getChallenges } from "../../API/Tribe/Challenges/api";
 import { ChallengeSummary } from "../../API/Tribe/Challenges/types";
+import { getRecoveryStatus, RecoveryStatus } from "../../API/Password/api";
 import { toLocalIsoDate, todayLocal } from "../Expenses/utils";
 
 // undefined = still loading, null = couldn't load
@@ -26,6 +27,7 @@ export interface HomeData {
     activities: Loadable<ActivityList>;
     streak: Loadable<MyStreak>;
     dailyGoal: Loadable<DailyGoal>;
+    recovery: Loadable<RecoveryStatus>;
     tribe: Loadable<TribeSummary | false>;       // false = not in a tribe
     tribeDashboard: Loadable<TribeDashboard>;
     challenge: Loadable<ChallengeSummary | false>; // false = nothing running or coming up
@@ -41,7 +43,7 @@ const pickChallenge = (list: ChallengeSummary[]): ChallengeSummary | false =>
 export const useHomeData = (userId: string | undefined): HomeData => {
     const [data, setData] = useState<HomeData>({
         month: undefined, lastMonthSoFar: undefined, balances: undefined, transactions: undefined,
-        activities: undefined, streak: undefined, dailyGoal: undefined, tribe: undefined, tribeDashboard: undefined, challenge: undefined,
+        activities: undefined, streak: undefined, dailyGoal: undefined, recovery: undefined, tribe: undefined, tribeDashboard: undefined, challenge: undefined,
     });
 
     useEffect(() => {
@@ -63,6 +65,7 @@ export const useHomeData = (userId: string | undefined): HomeData => {
         getTransactions(userId, { size: 6 }).then((r) => put({ transactions: r.ok && r.data ? r.data.items : null }));
         getActivities(userId).then((r) => put({ activities: r.ok ? r.data ?? null : null }));
         getMyStreak().then((r) => put({ streak: r.ok ? r.data ?? null : null }));
+        getRecoveryStatus().then((r) => put({ recovery: r.ok ? r.data ?? null : null }));
         let tribeId: string | null = null;
         const loadGoal = () => getDailyGoal().then((r) => put({ dailyGoal: r.ok ? r.data ?? null : null }));
         // A new daily goal changes your tribe's target too

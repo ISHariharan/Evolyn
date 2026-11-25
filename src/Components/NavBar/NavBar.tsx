@@ -304,6 +304,16 @@ const NavBar = () => {
                             <button
                                 type="button"
                                 className="nv-icon-btn nv-user__logout"
+                                aria-label="Account and password"
+                                onClick={() => navigate("/account")}
+                                onMouseEnter={(e) => openFlyout(e, "Account and password")}
+                                onMouseLeave={scheduleCloseFlyout}
+                            >
+                                <i className="bx bx-key" aria-hidden="true"></i>
+                            </button>
+                            <button
+                                type="button"
+                                className="nv-icon-btn nv-user__logout"
                                 aria-label="Log out"
                                 onClick={() => setShowLogout(true)}
                                 onMouseEnter={(e) => openFlyout(e, "Log out")}

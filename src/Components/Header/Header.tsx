@@ -5,17 +5,28 @@ import ToggleSwitch from "../ToggleSwitch/toggleSwitch";
 import AuthForm from "../AuthForm/AuthForm";
 import LoginAvatar from "../LoginAvatar/LoginAvatar";
 import { useStore } from "../../Store/GlobalStore/GlobalStore";
+import { OPEN_LOGIN_EVENT } from "../../API/Password/api";
 
 const Header = () => {
     const [theme, setTheme] = useState(document.documentElement.getAttribute("data-theme") || "light");
     const [showAuthForm, setShowAuthForm] = useState<boolean>(false);
+    const [authMode, setAuthMode] = useState<"SignUp" | "SignIn">("SignUp");
     const { state, dispatch } = useStore();
     const isSidebarOpen = state.sidebarOpen;
 
 
     const handleLogin = () => {
+        setAuthMode("SignUp");
         setShowAuthForm(true);
     };
+
+    // Other pages (e.g. after resetting a password) can ask for the login dialog
+    useEffect(() => {
+        // Straight to "Login": they already have an account
+        const open = () => { setAuthMode("SignIn"); setShowAuthForm(true); };
+        window.addEventListener(OPEN_LOGIN_EVENT, open);
+        return () => window.removeEventListener(OPEN_LOGIN_EVENT, open);
+    }, []);
 
     useEffect(() => {
         const updateTheme = () => {
@@ -79,7 +90,7 @@ const Header = () => {
                             )}
                         </div>
                     </div>
-                    {showAuthForm && <AuthForm isOpen={showAuthForm} onClose={() => setShowAuthForm(false)} />}
+                    {showAuthForm && <AuthForm isOpen={showAuthForm} initialMode={authMode} onClose={() => setShowAuthForm(false)} />}
                 </div>
             </div>
         </div>

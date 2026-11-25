@@ -364,6 +364,11 @@ interface Nudge { key: string; mod: string; icon: string; title: string; text: s
 
 const nudgesFor = (d: HomeData): Nudge[] => {
     const out: Nudge[] = [];
+    // Without a recovery code a forgotten password can't be reset, so this comes first
+    if (d.recovery && !d.recovery.hasCode) {
+        out.push({ key: "recovery", mod: "stride", icon: "bx-key", title: "Save a recovery code",
+            text: "It's the only way to reset your password if you forget it. Takes a minute.", to: "/account" });
+    }
     const s = d.streak;
     if (s?.atRisk && s.current > 0) {
         out.push({ key: "streak", mod: "tribe", icon: "bxs-flame", title: `Your ${s.current}-day streak ends tonight`,
