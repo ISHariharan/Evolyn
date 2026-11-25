@@ -1,0 +1,138 @@
+/* Tribe weight tab: sharing switch, change chart, people list.
+   Series colours are a validated categorical palette (colour-blind safe neighbours),
+   in a fixed order by joining order; dark mode has its own steps. */
+
+.wt-share {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.wt-chart {
+  --wt-1: #2a78d6; --wt-2: #eb6834; --wt-3: #1baf7a; --wt-4: #eda100;
+  --wt-5: #e87ba4; --wt-6: #008300; --wt-7: #6250d6; --wt-8: #e34948;
+  margin-top: 0.75rem;
+}
+
+[data-theme="dark"] .wt-chart,
+[data-theme="dark"] .wt-people {
+  --wt-1: #3987e5; --wt-2: #d95926; --wt-3: #199e70; --wt-4: #c98500;
+  --wt-5: #d55181; --wt-6: #0ca30c; --wt-7: #9085e9; --wt-8: #e66767;
+}
+
+.wt-people {
+  --wt-1: #2a78d6; --wt-2: #eb6834; --wt-3: #1baf7a; --wt-4: #eda100;
+  --wt-5: #e87ba4; --wt-6: #008300; --wt-7: #6250d6; --wt-8: #e34948;
+}
+
+@for $i from 1 through 8 {
+  .wt-c#{$i - 1} { --wt: var(--wt-#{$i}); }
+}
+
+.wt-legend {
+  list-style: none;
+  margin: 0 0 0.5rem;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  font-size: 12px;
+  color: var(--text-color);
+
+  li { display: inline-flex; align-items: center; gap: 0.375rem; }
+}
+
+.wt-swatch {
+  display: inline-block;
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  background: var(--wt);
+
+  &--none { background: transparent; border: 1px dashed var(--text-color-light); }
+}
+
+.wt-plot { position: relative; }
+.wt-plot svg { display: block; width: 100%; height: auto; overflow: visible; }
+
+.wt-grid { stroke: var(--divider); stroke-width: 1; }
+.wt-zero { stroke: var(--text-color-light); stroke-width: 1; }
+.wt-today { stroke: var(--text-color-light); stroke-width: 1; stroke-dasharray: 3 3; }
+.wt-cross { stroke: var(--title-color); stroke-width: 1; opacity: 0.5; pointer-events: none; }
+.wt-axis { font-size: 11px; fill: var(--text-color); font-family: var(--body-font); }
+
+.wt-line {
+  fill: none;
+  stroke: var(--wt);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+// 8px markers with a 2px ring in the card colour, so overlapping points stay readable
+.wt-dot { fill: var(--wt); stroke: var(--container-color); stroke-width: 2; }
+
+// Direct labels wear text colours; the line beside them carries the colour
+.wt-label { font-size: 12px; fill: var(--title-color); font-family: var(--body-font); font-weight: 500; }
+
+.wt-tooltip {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  min-width: 150px;
+  padding: 0.5rem 0.625rem;
+  border: 1px solid var(--divider);
+  border-radius: 8px;
+  background: var(--container-color);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  font-size: 12px;
+  color: var(--text-color);
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+
+  strong { color: var(--title-color); font-weight: var(--font-medium); }
+  > span { display: flex; align-items: center; gap: 0.375rem; white-space: nowrap; }
+  b { color: var(--title-color); font-weight: var(--font-medium); }
+  em { font-style: normal; color: var(--text-color-light); }
+}
+
+.wt-people {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  li {
+    display: grid;
+    grid-template-columns: 12px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.625rem 0;
+    border-top: 1px solid var(--divider);
+  }
+  li:first-child { border-top: 0; }
+  li.is-hidden { color: var(--text-color-light); }
+}
+
+.wt-people__name {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 14px;
+  color: var(--title-color);
+  min-width: 0;
+
+  small { font-size: 12px; color: var(--text-color); }
+}
+.is-hidden .wt-people__name { color: var(--text-color); }
+
+.wt-people__change {
+  font-size: 15px;
+  font-weight: var(--font-semi-bold);
+  color: var(--title-color);
+  font-variant-numeric: tabular-nums;
+}

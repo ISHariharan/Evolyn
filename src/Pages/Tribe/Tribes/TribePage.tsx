@@ -11,11 +11,12 @@ import { Bone } from "../../Expenses/Skeletons";
 import { tribeInitials } from "./MyTribes";
 import TribeMembers from "./TribeMembers";
 import TribeFeed from "./TribeFeed";
+import WeightTab from "./WeightTab";
 import TribeOverviewTab from "./TribeOverviewTab";
 import StreakRulesForm from "./StreakRulesForm";
 import ChallengesTab from "../Challenges/ChallengesTab";
 
-type Tab = "overview" | "activity" | "challenges" | "members";
+type Tab = "overview" | "activity" | "challenges" | "weight" | "members";
 
 /** /tribe/tribes/:tribeId - one tribe. Members only (the server checks). */
 const TribePage = () => {
@@ -25,7 +26,7 @@ const TribePage = () => {
     // The tab is in the address (?tab=members) so a refresh or shared link keeps it
     const [params, setParams] = useSearchParams();
     const tabParam = params.get("tab");
-    const tab: Tab = tabParam === "members" || tabParam === "activity" || tabParam === "challenges" ? tabParam : "overview";
+    const tab: Tab = tabParam === "members" || tabParam === "activity" || tabParam === "challenges" || tabParam === "weight" ? tabParam : "overview";
     const showTab = (t: Tab) => setParams(t === "overview" ? {} : { tab: t }, { replace: true });
 
     const [tribe, setTribe] = useState<TribeDetail | null>(null);
@@ -138,6 +139,10 @@ const TribePage = () => {
                                 className={tab === "challenges" ? "is-active" : ""} onClick={() => showTab("challenges")}>
                             Challenges
                         </button>
+                        <button type="button" role="tab" aria-selected={tab === "weight"}
+                                className={tab === "weight" ? "is-active" : ""} onClick={() => showTab("weight")}>
+                            Weight
+                        </button>
                         <button type="button" role="tab" aria-selected={tab === "members"}
                                 className={tab === "members" ? "is-active" : ""} onClick={() => showTab("members")}>
                             Members ({tribe.memberCount})
@@ -147,6 +152,7 @@ const TribePage = () => {
                     {tab === "overview" && <TribeOverviewTab tribeId={tribe.tribeId} archived={tribe.archived} />}
                     {tab === "activity" && <TribeFeed tribeId={tribe.tribeId} />}
                     {tab === "challenges" && <ChallengesTab tribeId={tribe.tribeId} archived={tribe.archived} />}
+                    {tab === "weight" && <WeightTab tribeId={tribe.tribeId} />}
                     {tab === "members" && <TribeMembers tribe={tribe} onChange={setTribe} />}
 
                     {tab === "members" && !tribe.archived && (

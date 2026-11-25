@@ -6,7 +6,8 @@ import { Bone } from "../../Expenses/Skeletons";
 
 /**
  * "Today's weight": shows the latest saved weight and lets you save today's.
- * Saving twice on the same day corrects it. Only you can see this.
+ * Saving twice on the same day corrects it. Only you see the weight; tribes see its
+ * change only if you turn sharing on (a tribe's Weight tab).
  */
 const TodayWeightCard = ({ userId, onSaved }: { userId: string; onSaved?: (entry: WeightEntry) => void }) => {
     const [latest, setLatest] = useState<WeightEntry | null | undefined>(undefined); // undefined = loading
@@ -84,7 +85,7 @@ const TodayWeightCard = ({ userId, onSaved }: { userId: string; onSaved?: (entry
             </form>
             {errors.length > 0 && <p className="ex-errors" role="alert" style={{ margin: 0 }}>{errors.join(", ")}</p>}
             {saved && <p className="tr-success" role="status">Saved.</p>}
-            <p className="tr-note">Only you can see your weight.</p>
+            <p className="tr-note">Only you can see your weight. You can share how it changes (never the weight) from a tribe's Weight tab.</p>
         </section>
     );
 };
