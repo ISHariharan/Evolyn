@@ -91,6 +91,7 @@ export interface FeedItem {
     durationMinutes: number;
     distanceKm: number | null;
     kcal: number | null;
+    kcalEntered: boolean;       // entered by the person (e.g. from a watch), not estimated
 }
 
 export interface FeedPage {

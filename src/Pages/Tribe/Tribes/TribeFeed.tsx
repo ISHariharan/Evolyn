@@ -109,6 +109,7 @@ const TribeFeed = ({ tribeId }: { tribeId: string }) => {
                                         {timeOf(a.startedAt)} · {duration(a.durationMinutes)}
                                         {a.distanceKm != null ? ` · ${Number(a.distanceKm)} km` : ""}
                                         {!a.countsForGoals ? " · doesn't count for goals" : ""}
+                                        {a.kcalEntered ? " · calories entered" : ""}
                                     </span>
                                 </div>
                                 <span className="tr-activity__kcal">

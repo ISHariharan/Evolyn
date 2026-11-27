@@ -219,12 +219,15 @@ const TribeOverview = () => {
                                                 {a.distanceKm != null ? ` · ${Number(a.distanceKm)} km` : ""}
                                                 {a.visibility === "PRIVATE" ? " · only you" : ""}
                                                 {!counts(a) ? " · doesn't count for goals" : ""}
+                                                {a.kcalEntered ? " · calories entered" : ""}
                                             </span>
                                             {a.notes && <span className="tr-activity__notes">{a.notes}</span>}
                                         </div>
                                         <span
                                             className="tr-activity__kcal"
-                                            title={a.calculation
+                                            title={a.kcalEntered
+                                                ? "You entered these calories"
+                                                : a.calculation?.weightRecordedOn
                                                 ? `MET ${Number(a.calculation.met).toFixed(1)} × ${Number(a.calculation.weightKg)} kg × ${Number(a.calculation.hours)} h (weight from ${formatDate(a.calculation.weightRecordedOn)})`
                                                 : undefined}
                                         >

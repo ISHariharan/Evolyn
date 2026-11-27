@@ -35,7 +35,8 @@ const defaultStart = () => {
  *   /tribe/activities/:activityId/edit     -> Edit (loads it first, adds Delete)
  *
  * The calories shown while typing are a preview (MET x weight x time); the
- * server does the real calculation when you save.
+ * server does the real calculation when you save. People who have the number from
+ * a watch or a gym machine can enter it instead; tribes see it as "calories entered".
  */
 const LogActivity = () => {
     const { state } = useStore();
@@ -54,6 +55,7 @@ const LogActivity = () => {
     const [minutes, setMinutes] = useState("60");
     const [distance, setDistance] = useState("");
     const [notes, setNotes] = useState("");
+    const [entered, setEntered] = useState(""); // calories burned, if they have the number
     const [visibility, setVisibility] = useState<"TRIBES" | "PRIVATE">("TRIBES");
 
     const [errors, setErrors] = useState<string[]>([]);
@@ -82,6 +84,7 @@ const LogActivity = () => {
                 setMinutes(String(a.data.durationMinutes));
                 setDistance(a.data.distanceKm != null ? String(a.data.distanceKm) : "");
                 setNotes(a.data.notes ?? "");
+                setEntered(a.data.kcalEntered && a.data.kcal != null ? String(a.data.kcal) : "");
                 setVisibility(a.data.visibility);
             }
             setCatalogue(cat.data);
@@ -110,6 +113,8 @@ const LogActivity = () => {
     const validMinutes = Number.isInteger(mins) && mins >= 1 && mins <= 1440;
     const estimate =
         activity && weight && validMinutes ? Math.round(activity.met * Number(weight.weightKg) * (mins / 60)) : null;
+    const enteredKcal = entered.trim() ? Number(entered) : null;
+    const validEntered = enteredKcal == null || (Number.isInteger(enteredKcal) && enteredKcal >= 1 && enteredKcal <= 5000);
 
     const save = async (allowOverlap: boolean) => {
         if (!code) {
@@ -120,6 +125,10 @@ const LogActivity = () => {
             setErrors(["Duration must be between 1 minute and 24 hours"]);
             return;
         }
+        if (!validEntered) {
+            setErrors(["Calories burned must be a whole number between 1 and 5,000 kcal"]);
+            return;
+        }
         const input: ActivityInput = {
             activityCode: code,
             startedAt,
@@ -128,6 +137,7 @@ const LogActivity = () => {
             notes: notes.trim() || undefined,
             visibility,
             allowOverlap: allowOverlap || undefined,
+            enteredKcal: enteredKcal ?? undefined,
         };
         setSaving(true);
         setErrors([]);
@@ -189,7 +199,7 @@ const LogActivity = () => {
                 <div>
                     <Link to="/tribe" className="ex-back"><i className="bx bx-chevron-left" aria-hidden="true"></i>Tribe</Link>
                     <h1 className="ex-title">{isEdit ? "Edit activity" : "Log an activity"}</h1>
-                    <p className="ex-subtitle">Calories are estimated from the activity, your weight and the time.</p>
+                    <p className="ex-subtitle">Calories are estimated from the activity, your weight and the time, or you can enter your own.</p>
                 </div>
             </header>
 
@@ -261,6 +271,28 @@ const LogActivity = () => {
                     </label>
 
                     <label className="ex-field">
+                        <span>Calories burned (optional)</span>
+                        <div className="ex-money" style={{ maxWidth: 200 }}>
+                            <input
+                                type="number"
+                                inputMode="numeric"
+                                step="1"
+                                min="1"
+                                max="5000"
+                                placeholder={estimate != null ? String(estimate) : undefined}
+                                aria-invalid={!validEntered}
+                                aria-describedby="log-kcal-hint"
+                                value={entered}
+                                onChange={(e) => setEntered(e.target.value)}
+                            />
+                            <span>kcal</span>
+                        </div>
+                        <small id="log-kcal-hint" className="tr-note">
+                            From your watch or a gym machine. Leave it empty to use the estimate.
+                        </small>
+                    </label>
+
+                    <label className="ex-field">
                         <span>Notes (optional)</span>
                         <textarea maxLength={500} value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="e.g. evening practice, two matches" />
                     </label>
@@ -308,8 +340,22 @@ const LogActivity = () => {
 
                 <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
                     <section className="ex-card" aria-live="polite">
-                        <h2 className="ex-card__title">Estimated calories</h2>
-                        {estimate != null && activity && weight ? (
+                        <h2 className="ex-card__title">{enteredKcal != null ? "Calories" : "Estimated calories"}</h2>
+                        {enteredKcal != null && validEntered ? (
+                            <>
+                                <p className="tr-weight__now">{enteredKcal.toLocaleString("en-IN")} kcal</p>
+                                <p className="tr-note">
+                                    You entered this, so it's used instead of the estimate. Your tribes see it marked
+                                    "calories entered".
+                                    {estimate != null ? ` The estimate would be ${estimate.toLocaleString("en-IN")} kcal.` : ""}
+                                </p>
+                                {heading && !heading.countsForGoals && (
+                                    <p className="tr-warning" style={{ marginTop: "0.75rem", marginBottom: 0 }}>
+                                        {heading.name} activities are saved, but don't count towards tribe goals.
+                                    </p>
+                                )}
+                            </>
+                        ) : estimate != null && activity && weight ? (
                             <>
                                 <p className="tr-weight__now">{estimate.toLocaleString("en-IN")} kcal</p>
                                 <p className="tr-calc">
@@ -327,12 +373,12 @@ const LogActivity = () => {
                                 )}
                             </>
                         ) : weight === null ? (
-                            <p className="ex-muted">Save your weight to see the estimate.</p>
+                            <p className="ex-muted">Save your weight to see the estimate, or enter the calories you burned.</p>
                         ) : (
                             <p className="ex-muted">Choose an activity and how long it took.</p>
                         )}
                     </section>
-                    {(weight === null || needsWeight) && <TodayWeightCard userId={userId} />}
+                    {(weight === null || needsWeight) && enteredKcal == null && <TodayWeightCard userId={userId} />}
                 </div>
             </div>
 
